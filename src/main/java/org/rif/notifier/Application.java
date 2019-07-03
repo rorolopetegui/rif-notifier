@@ -7,16 +7,19 @@ import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfigurat
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executor;
 
 @EnableScheduling
+@EnableAsync
 @SpringBootApplication(
-        exclude = {
-                MongoAutoConfiguration.class,
-                MongoDataAutoConfiguration.class,
-        },
-        scanBasePackages = {"org.rif.notifier.controllers", "org.rif.notifier.services", "org.rif.notifier.managers", "org.rif.notifier.scheduled", "org.rif.notifier.repositories"},
+        scanBasePackages = {"org.rif.notifier.datafetcher","org.rif.notifier.controllers", "org.rif.notifier.services",
+                "org.rif.notifier.managers", "org.rif.notifier.scheduled", "org.rif.notifier.repositories"},
         scanBasePackageClasses = {
                 WebConfiguration.class,
         })
@@ -27,6 +30,18 @@ public class Application extends SpringBootServletInitializer {
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(Application.class);
     }
+
+    @Bean
+    public Executor taskExecutor() {
+        final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        //TODO move to properties
+        executor.setCorePoolSize(7);
+        executor.setMaxPoolSize(8);
+        executor.setQueueCapacity(11);
+        executor.initialize();
+        return executor;
+    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

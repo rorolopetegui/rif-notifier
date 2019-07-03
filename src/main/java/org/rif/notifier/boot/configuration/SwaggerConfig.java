@@ -21,7 +21,7 @@ public class SwaggerConfig {
 
     //Docket configuration
 
-    private final String BASE_PACKAGE_REQUEST_SELECTORS_PATH = "org.rif.org.rif.notifier.controllers";
+    private final String BASE_PACKAGE_REQUEST_SELECTORS_PATH = "org.rif.notifier.controllers";
 
     // Tags information for resources
 

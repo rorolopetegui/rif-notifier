@@ -72,6 +72,13 @@
         </dependency>
 
 
+        <!-- Blockchain -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>4.2.0</version>
+        </dependency>
+
         <!-- Documentation -->
 
         <dependency>

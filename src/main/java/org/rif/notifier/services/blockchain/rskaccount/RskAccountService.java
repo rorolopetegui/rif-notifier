@@ -13,11 +13,11 @@ import org.web3j.crypto.WalletUtils;
 @Component
 public class RskAccountService {
 
-  @Value("${lumino.explorer.api.account.paassword}")
-  private String luminoExplorerApiAccountPassword;
+  @Value("${rif.notifier.account.paassword}")
+  private String notifierAccountPassword;
 
-  @Value("${lumino.explorer.api.account.file}")
-  private String luminoExplorerApiAccountFile;
+  @Value("${rif.notifier.account.file}")
+  private String notifierApiAccountFile;
 
   private Credentials rskAccountCredentials;
 
@@ -26,9 +26,9 @@ public class RskAccountService {
   public Credentials getRskAccountCredentials() {
     if (rskAccountCredentials == null) {
       try {
-        Resource res = resourceLoader.getResource("classpath:" + luminoExplorerApiAccountFile);
+        Resource res = resourceLoader.getResource("classpath:" + notifierAccountPassword);
         rskAccountCredentials =
-            WalletUtils.loadCredentials(luminoExplorerApiAccountPassword, res.getFile());
+            WalletUtils.loadCredentials(notifierApiAccountFile, res.getFile());
       } catch (Exception e) {
         return null;
       }
