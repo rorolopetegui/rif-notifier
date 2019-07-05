@@ -1,5 +1,6 @@
-package org.rif.notifier.services.blockchain;
+package org.rif.notifier.services.blockchain.generic.rootstock;
 
+import org.rif.notifier.services.blockchain.generic.ethereum.EthereumBasedService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;

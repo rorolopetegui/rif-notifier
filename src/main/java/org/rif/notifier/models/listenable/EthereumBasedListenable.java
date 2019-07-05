@@ -50,4 +50,14 @@ public class EthereumBasedListenable extends Listenable {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
+
+    @Override
+    public String toString() {
+        return "EthereumBasedListenable{" +
+                "eventFields=" + eventFields +
+                ", eventName='" + eventName + '\'' +
+                ", kind=" + kind +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }

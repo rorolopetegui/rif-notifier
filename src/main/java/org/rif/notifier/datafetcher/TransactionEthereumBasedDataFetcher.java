@@ -24,9 +24,10 @@ public class TransactionEthereumBasedDataFetcher extends EthereumBasedDataFetche
     @Async
     @Override
     public CompletableFuture<List<FetchedTransaction>> fetch(EthereumBasedListenable ethereumBasedListenable, Web3j web3j) {
-        logger.info("Transactions start ===================");
+        long start  = System.currentTimeMillis();
+        logger.info(Thread.currentThread().getId() + " - Starting reading transactions for subscription: "+ ethereumBasedListenable);
         long count = 0l;
-        for(long x=0;x<Integer.MAX_VALUE ;x++){
+        for(long x=0;x<Math.random()*10000000 ;x++){
             count+=1;
         }
         return CompletableFuture.supplyAsync(() -> {
@@ -37,12 +38,13 @@ public class TransactionEthereumBasedDataFetcher extends EthereumBasedDataFetche
                ft.transaction = t;
                transactions.add(ft);
            }
-            logger.info("Transactions "+transactions.size());
+           long end = System.currentTimeMillis();
+           logger.info(Thread.currentThread().getId() + " - End Trasaction data fetching time = "+ (end-start));
            return transactions;
 
         }).exceptionally(throwable -> {
-            logger.error(throwable.toString());
-            return null;
+            logger.error(Thread.currentThread().getId() + " - Error fetching transaction data for subscription: "+ ethereumBasedListenable, throwable);
+            return new ArrayList<>();
         });
 
     }

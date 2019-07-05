@@ -1,4 +1,4 @@
-package org.rif.notifier.services.blockchain;
+package org.rif.notifier.services.blockchain.generic;
 
 import org.rif.notifier.models.datafetching.FetchedBlock;
 import org.rif.notifier.models.datafetching.FetchedEvent;

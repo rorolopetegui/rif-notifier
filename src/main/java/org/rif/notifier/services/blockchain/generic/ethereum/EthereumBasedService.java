@@ -1,4 +1,4 @@
-package org.rif.notifier.services.blockchain;
+package org.rif.notifier.services.blockchain.generic.ethereum;
 
 import org.rif.notifier.datafetcher.BlockEthereumBasedDataFetcher;
 import org.rif.notifier.datafetcher.ContractEventEthereumBasedDataFetcher;
@@ -7,6 +7,7 @@ import org.rif.notifier.models.datafetching.FetchedBlock;
 import org.rif.notifier.models.datafetching.FetchedEvent;
 import org.rif.notifier.models.datafetching.FetchedTransaction;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
+import org.rif.notifier.services.blockchain.generic.BlockchainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public abstract class EthereumBasedService extends BlockchainService<EthereumBasedListenable>{
+public abstract class EthereumBasedService extends BlockchainService<EthereumBasedListenable> {
 
     protected String blockchainEndpoint;
 

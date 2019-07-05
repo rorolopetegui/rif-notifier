@@ -35,26 +35,21 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
     public CompletableFuture<List<FetchedEvent>> fetch(EthereumBasedListenable ethereumBasedListenable, Web3j web3j) {
        return  CompletableFuture.supplyAsync(() -> {
            long start  = System.currentTimeMillis();
-               logger.info(Thread.currentThread().getId() + " - Starting reading events for subscription: "+ ethereumBasedListenable);
-           long count = 0l;
-           for(long x=0;x<Integer.MAX_VALUE ;x++){
-               count+=1;
-           }
-           List<FetchedEvent> fetchedEventData = null;
+           logger.info(Thread.currentThread().getId() + " - Starting reading events for subscription: "+ ethereumBasedListenable);
+           List<FetchedEvent> fetchedEventData = new ArrayList<>();
            try {
                fetchedEventData = getLogs(web3j,null, null, ethereumBasedListenable.getAddress(), ethereumBasedListenable.getEventName(), ethereumBasedListenable.getEventFields());
            } catch (Exception e) {
-               logger.error("Error fetching contract data for subscription: "+ ethereumBasedListenable, e);
-               return null;
+               logger.error(Thread.currentThread().getId() + " - Error fetching contract data for subscription: "+ ethereumBasedListenable, e);
+               return new ArrayList<FetchedEvent>();
            }
-               System.out.println("Events " + fetchedEventData.size());
-               long end = System.currentTimeMillis();
-               logger.info(Thread.currentThread().getId() + " - End Contract Data fetching time = "+ (end-start));
-               return fetchedEventData;
+           long end = System.currentTimeMillis();
+           logger.info(Thread.currentThread().getId() + " - End Contract Data fetching time = "+ (end-start));
+           return fetchedEventData;
 
        }).exceptionally(throwable -> {
            logger.error("Error fetching contract data for subscription: "+ ethereumBasedListenable, throwable);
-           return null;
+           return new ArrayList<>();
        });
     }
 
