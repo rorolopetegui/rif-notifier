@@ -1,28 +1,27 @@
-package org.rif.notifier.models.subscription;
+package org.rif.notifier.models.listenable;
 
 import org.web3j.abi.TypeReference;
 
 import java.util.List;
 
-public class SubscriptionChannel {
-    private String address;
-    private AvailableSubscriptionChannels kind;
+public class EthereumBasedListenable extends Listenable {
+
+    private List<TypeReference<?>> eventFields;
+    private String eventName;
+    private EthereumBasedListenableTypes kind;
+
+    public EthereumBasedListenable(String address, EthereumBasedListenableTypes kind, List<TypeReference<?>> eventFields, String eventName) {
+        super(address);
+        this.kind = kind;
+        this.eventFields = eventFields;
+        this.eventName = eventName;
+    }
 
     public List<TypeReference<?>> getEventFields() {
         return eventFields;
     }
 
 
-
-    private List<TypeReference<?>> eventFields;
-    private String eventName;
-
-    public SubscriptionChannel(String address, AvailableSubscriptionChannels kind,  List<TypeReference<?>> eventFields, String eventName) {
-        this.address = address;
-        this.kind = kind;
-        this.eventFields = eventFields;
-        this.eventName = eventName;
-    }
 
     public String getAddress() {
         return address;
@@ -32,11 +31,11 @@ public class SubscriptionChannel {
         this.address = address;
     }
 
-    public AvailableSubscriptionChannels getKind() {
+    public EthereumBasedListenableTypes getKind() {
         return kind;
     }
 
-    public void setKind(AvailableSubscriptionChannels kind) {
+    public void setKind(EthereumBasedListenableTypes kind) {
         this.kind = kind;
     }
 

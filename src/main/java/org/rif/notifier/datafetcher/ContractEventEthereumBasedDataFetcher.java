@@ -1,8 +1,10 @@
 package org.rif.notifier.datafetcher;
 
-import org.rif.notifier.datafetcher.events.EventData;
 import org.rif.notifier.models.datafetching.FetchedData;
-import org.rif.notifier.models.subscription.SubscriptionChannel;
+import org.rif.notifier.models.datafetching.FetchedEvent;
+import org.rif.notifier.models.listenable.EthereumBasedListenable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.EventEncoder;
@@ -10,6 +12,7 @@ import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.EthFilter;
@@ -22,47 +25,51 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class ContractEventDataFetcher extends DataFetcher {
+public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetcher {
+
+    private static final Logger logger = LoggerFactory.getLogger(ContractEventEthereumBasedDataFetcher.class);
 
 
     @Async
     @Override
-    public CompletableFuture<FetchedData> fetch(SubscriptionChannel subscriptionChannel) {
-        System.out.println(super.web3j);
-        long start  = System.currentTimeMillis();
-        System.out.println(Thread.currentThread().getId() +" - Start Contract Data fetching");
+    public CompletableFuture<List<FetchedEvent>> fetch(EthereumBasedListenable ethereumBasedListenable, Web3j web3j) {
+       return  CompletableFuture.supplyAsync(() -> {
+           long start  = System.currentTimeMillis();
+               logger.info(Thread.currentThread().getId() + " - Starting reading events for subscription: "+ ethereumBasedListenable);
+           long count = 0l;
+           for(long x=0;x<Integer.MAX_VALUE ;x++){
+               count+=1;
+           }
+           List<FetchedEvent> fetchedEventData = null;
+           try {
+               fetchedEventData = getLogs(web3j,null, null, ethereumBasedListenable.getAddress(), ethereumBasedListenable.getEventName(), ethereumBasedListenable.getEventFields());
+           } catch (Exception e) {
+               logger.error("Error fetching contract data for subscription: "+ ethereumBasedListenable, e);
+               return null;
+           }
+               System.out.println("Events " + fetchedEventData.size());
+               long end = System.currentTimeMillis();
+               logger.info(Thread.currentThread().getId() + " - End Contract Data fetching time = "+ (end-start));
+               return fetchedEventData;
 
-        long count = 0l;
-        for(long x=0;x<Integer.MAX_VALUE ;x++){
-            count+=1;
-        }
-        long end = System.currentTimeMillis();
-        System.out.println(Thread.currentThread().getId() + " - End Contract Data fetching time = "+ (end-start));
-
-        FetchedData result = new FetchedData();
-        result.data = String.valueOf(count);
-        try {
-            List<EventData> eventData = getLogs(null, null, subscriptionChannel.getAddress(), subscriptionChannel.getEventName(), subscriptionChannel.getEventFields());
-            System.out.println("Events " + eventData.size());
-        }catch (Exception e ){
-            e.printStackTrace();
-        }
-
-       return  CompletableFuture.completedFuture(result);
+       }).exceptionally(throwable -> {
+           logger.error("Error fetching contract data for subscription: "+ ethereumBasedListenable, throwable);
+           return null;
+       });
     }
 
-    private List<EventData> getLogs(BigInteger from, BigInteger to, String contractAddress, String eventName, List<TypeReference<?>> eventFields)
+    private List<FetchedEvent> getLogs(Web3j web3j, BigInteger from, BigInteger to, String contractAddress, String eventName, List<TypeReference<?>> eventFields)
             throws Exception {
-        // Create event object to add it as a Filter
-        Event event = createEvent(eventName, eventFields);
+        // Create event object to add its signature as a Filter
+        Event event =  new Event(eventName, eventFields);
 
         // Encode event signature
         String encodedEventSignature = EventEncoder.encode(event);
 
         // Apply filter, retrieve the logs
-        EthLog filterLogs = applyFilterForEvent(encodedEventSignature, contractAddress, from, to);
+        EthLog filterLogs = applyFilterForEvent(web3j, encodedEventSignature, contractAddress, from, to);
 
-        List<EventData> events = new ArrayList<>();
+        List<FetchedEvent> events = new ArrayList<>();
 
         // Decode event from logs
         for (EthLog.LogResult logResult : filterLogs.getLogs()) {
@@ -90,17 +97,14 @@ public class ContractEventDataFetcher extends DataFetcher {
             // Get non indexed values (Decode data)
             values.addAll(FunctionReturnDecoder.decode(log.getData(), event.getNonIndexedParameters()));
 
-            events.add(new EventData(eventName, values, log.getBlockNumber(), contractAddress));
+            events.add(new FetchedEvent(eventName, values, log.getBlockNumber(), contractAddress));
         }
         return events;
     }
 
-    private Event createEvent(String eventName, List<TypeReference<?>> eventFields) {
-        return new Event(eventName, eventFields);
-    }
 
     private EthLog applyFilterForEvent(
-            String encodedEventSignature, String contractAddress, BigInteger from, BigInteger to)
+           Web3j web3j, String encodedEventSignature, String contractAddress, BigInteger from, BigInteger to)
             throws Exception {
 
         EthFilter ethFilter =
@@ -111,6 +115,6 @@ public class ContractEventDataFetcher extends DataFetcher {
 
         ethFilter.addSingleTopic(encodedEventSignature);
 
-        return this.web3j.ethGetLogs(ethFilter).send();
+        return web3j.ethGetLogs(ethFilter).send();
     }
 }

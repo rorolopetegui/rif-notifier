@@ -1,11 +1,11 @@
-package org.rif.notifier.datafetcher.events;
+package org.rif.notifier.models.datafetching;
 import org.web3j.abi.datatypes.Type;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
-public class EventData {
+public class FetchedEvent {
     private List<Type> values;
     private BigInteger blockNumber;
 
@@ -13,7 +13,7 @@ public class EventData {
 
     private String contractAddress;
 
-    public EventData(
+    public FetchedEvent(
             String eventName, List<Type> values, BigInteger blockNumber, String contractAddress) {
         this.eventName = eventName;
         this.values = values;
@@ -39,7 +39,7 @@ public class EventData {
 
     @Override
     public String toString() {
-        return "EventData{"
+        return "FetchedEvent{"
                 + "values="
                 + values.toString()
                 + ", blockNumber="
@@ -53,11 +53,11 @@ public class EventData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EventData eventData = (EventData) o;
+        FetchedEvent fetchedEvent = (FetchedEvent) o;
         // compares by channel id
-        return Objects.equals(values.get(0), eventData.values.get(0))
-                && Objects.equals(eventName, eventData.eventName)
-                && Objects.equals(contractAddress, eventData.contractAddress);
+        return Objects.equals(values.get(0), fetchedEvent.values.get(0))
+                && Objects.equals(eventName, fetchedEvent.eventName)
+                && Objects.equals(contractAddress, fetchedEvent.contractAddress);
     }
 
     @Override
