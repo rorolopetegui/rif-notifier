@@ -42,7 +42,7 @@ public abstract class EthereumBasedService extends BlockchainService<EthereumBas
 
     @Override
     public CompletableFuture<List<FetchedTransaction>>getTransactions(EthereumBasedListenable listenable, BigInteger from, BigInteger to) throws ExecutionException, InterruptedException {
-         return transactionDataFetcher.fetch(listenable, web3j);
+         return transactionDataFetcher.fetch(listenable,from, to, web3j);
     }
 
     @Override
@@ -52,7 +52,7 @@ public abstract class EthereumBasedService extends BlockchainService<EthereumBas
 
     @Override
     public CompletableFuture<List<FetchedEvent>> getContractEvents(EthereumBasedListenable listenable, BigInteger from, BigInteger to) throws ExecutionException, InterruptedException {
-        return contractEventDataFetcher.fetch(listenable, web3j);
+        return contractEventDataFetcher.fetch(listenable, from, to, web3j);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.rif.notifier.datafetcher;
 
-import org.rif.notifier.models.datafetching.FetchedData;
 import org.rif.notifier.models.datafetching.FetchedEvent;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
 import org.slf4j.Logger;
@@ -32,13 +31,13 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
 
     @Async
     @Override
-    public CompletableFuture<List<FetchedEvent>> fetch(EthereumBasedListenable ethereumBasedListenable, Web3j web3j) {
+    public CompletableFuture<List<FetchedEvent>> fetch(EthereumBasedListenable ethereumBasedListenable, BigInteger from, BigInteger to, Web3j web3j) {
        return  CompletableFuture.supplyAsync(() -> {
            long start  = System.currentTimeMillis();
            logger.info(Thread.currentThread().getId() + " - Starting reading events for subscription: "+ ethereumBasedListenable);
            List<FetchedEvent> fetchedEventData = new ArrayList<>();
            try {
-               fetchedEventData = getLogs(web3j,null, null, ethereumBasedListenable.getAddress(), ethereumBasedListenable.getEventName(), ethereumBasedListenable.getEventFields());
+               fetchedEventData = getLogs(web3j,from, to, ethereumBasedListenable.getAddress(), ethereumBasedListenable.getEventName(), ethereumBasedListenable.getEventFields());
            } catch (Exception e) {
                logger.error(Thread.currentThread().getId() + " - Error fetching contract data for subscription: "+ ethereumBasedListenable, e);
                return new ArrayList<FetchedEvent>();

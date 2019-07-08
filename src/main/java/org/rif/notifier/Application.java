@@ -34,7 +34,7 @@ public class Application extends SpringBootServletInitializer {
     @Bean
     public Executor taskExecutor() {
         final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        //TODO move to properties
+        //TODO move to properties of the configurator
         executor.setCorePoolSize(7);
         executor.setMaxPoolSize(8);
         executor.setQueueCapacity(11);

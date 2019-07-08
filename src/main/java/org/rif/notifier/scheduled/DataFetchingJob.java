@@ -1,8 +1,12 @@
 package org.rif.notifier.scheduled;
 
-import org.rif.notifier.datamanagers.RawDataManager;
-import org.rif.notifier.models.listenable.EthereumBasedListenableTypes;
+import org.rif.notifier.datamanagers.DbManagerFacade;
+import org.rif.notifier.models.datafetching.FetchedBlock;
+import org.rif.notifier.models.datafetching.FetchedEvent;
+import org.rif.notifier.models.datafetching.FetchedTransaction;
+import org.rif.notifier.models.entities.RawData;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
+import org.rif.notifier.models.listenable.EthereumBasedListenableTypes;
 import org.rif.notifier.services.blockchain.generic.rootstock.RskBlockchainService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Component
 public class DataFetchingJob {
@@ -28,52 +33,87 @@ public class DataFetchingJob {
     private RskBlockchainService rskBlockchainService;
 
     @Autowired
-    private RawDataManager rawDataManager;
+    private DbManagerFacade dbManagerFacade;
 
-    @Scheduled(fixedRate = 5000, initialDelay = 2000)
+    //TODO should execute according to the notifier configuration
+    @Scheduled(fixedRate = 30000, initialDelay = 2000)
     public void run() throws Exception {
-        // TODO Mocked data, must read
-        List<EthereumBasedListenable> ethereumBasedListenables = Arrays.asList(new EthereumBasedListenable("0x5159345aab821172e795d56274d0f5fdfdc6abd9", EthereumBasedListenableTypes.CONTRACT_EVENT,  Arrays.asList(
-                new TypeReference<Address>(true) {},
-                new TypeReference<Address>(true) {},
-                new TypeReference<Uint256>() {}), "Transfer"),
+
+        // TODO Mocked data, must be provided by the subscription manager
+        List<EthereumBasedListenable> ethereumBasedListenables = Arrays.asList(new EthereumBasedListenable("0x5159345aab821172e795d56274d0f5fdfdc6abd9", EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
+                new TypeReference<Address>(true) {
+                },
+                new TypeReference<Address>(true) {
+                },
+                new TypeReference<Uint256>() {
+                }), "Transfer"),
                 new EthereumBasedListenable(null, EthereumBasedListenableTypes.NEW_BLOCK, null, null)
-                ,new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null));
+                , new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null));
 
-        //TODO from-to blocks
+        // Get latest block for this run
+        BigInteger to = rskBlockchainService.getLastBlock();
+        BigInteger from = to.subtract(new BigInteger("5"));// must read latest from db for now it queries latest 5 blocks
+
         //Fetching
-        long start  = System.currentTimeMillis();
-         List<CompletableFuture<?>> fetchingTasks = new ArrayList<>();
-         for (EthereumBasedListenable subscriptionChannel : ethereumBasedListenables){
-             try{
-                 switch (subscriptionChannel.getKind()){
-                     case NEW_BLOCK:
-                         fetchingTasks.add(rskBlockchainService.getBlocks(subscriptionChannel, null, null));
-                         break;
-                     case CONTRACT_EVENT:
-                         fetchingTasks.add( rskBlockchainService.getContractEvents(subscriptionChannel, null, null));
-                         break;
-                     case NEW_TRANSACTIONS:
-                         fetchingTasks.add(rskBlockchainService.getTransactions(subscriptionChannel, null, null));
-                         break;
-                 }
-             }catch (Exception e){
-                 logger.error("Error during DataFetching job: ",e);
-             }
+        logger.info(Thread.currentThread().getId() + String.format(" - Starting fetching from %s to %s", from, to));
+
+        long start = System.currentTimeMillis();
+        List<CompletableFuture<List<FetchedBlock>>> blockTasks = new ArrayList<>();
+        List<CompletableFuture<List<FetchedTransaction>>> transactionTasks = new ArrayList<>();
+        List<CompletableFuture<List<FetchedEvent>>> eventTasks = new ArrayList<>();
+
+
+        for (EthereumBasedListenable subscriptionChannel : ethereumBasedListenables) {
+            try {
+                switch (subscriptionChannel.getKind()) {
+                    case NEW_BLOCK:
+                        blockTasks.add(rskBlockchainService.getBlocks(subscriptionChannel, from, to));
+                        break;
+                    case CONTRACT_EVENT:
+                        eventTasks.add(rskBlockchainService.getContractEvents(subscriptionChannel, from, to));
+                        break;
+                    case NEW_TRANSACTIONS:
+                        transactionTasks.add(rskBlockchainService.getTransactions(subscriptionChannel, from, to));
+                        break;
+                }
+            } catch (Exception e) {
+                logger.error("Error during DataFetching job: ", e);
+            }
         }
 
-         // Save the data when data is fetched
-        for(CompletableFuture cp : fetchingTasks){
-           Object o = cp.whenComplete((o1, o2) -> {
-               long end = System.currentTimeMillis();
-               logger.info(Thread.currentThread().getId() + " - End task = "+ (end-start));
-               //TODO each method of fetching should return a wrapper that gets the type in order to parse the data, or.. we can serialize the object in a generic way.
-               rawDataManager.insert("Event", "Blablabla", false, new BigInteger("22"));
-               System.out.println("Completed "+o1);
-           });
 
-        }
+        transactionTasks.forEach(listCompletableFuture -> {
+            listCompletableFuture.whenComplete((fetchedTransactions, throwable) -> {
+                long end = System.currentTimeMillis();
+                logger.info(Thread.currentThread().getId() + " - End fetching transactions task = " + (end - start));
+                logger.info(Thread.currentThread().getId() + " - Completed fetching transactions: " + fetchedTransactions);
 
+                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber())).
+                        collect(Collectors.toList());
+                if(!rawTrs.isEmpty()){
+                    dbManagerFacade.saveRawDataBatch(rawTrs);
+                }
+
+            });
+        });
+
+        eventTasks.forEach(listCompletableFuture -> {
+            listCompletableFuture.whenComplete((fetchedEvents, throwable) -> {
+                long end = System.currentTimeMillis();
+                logger.info(Thread.currentThread().getId() + " - End fetching events task = " + (end - start));
+                logger.info(Thread.currentThread().getId() + " - Completed fetching events: " + fetchedEvents);
+
+                List<RawData> rawEvts = fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), fetchedEvent.toString(), false, fetchedEvent.getBlockNumber())).
+                        collect(Collectors.toList());
+                if(!rawEvts.isEmpty()){
+                    dbManagerFacade.saveRawDataBatch(rawEvts);
+                }
+
+            });
+        });
 
     }
+
+
+
 }
