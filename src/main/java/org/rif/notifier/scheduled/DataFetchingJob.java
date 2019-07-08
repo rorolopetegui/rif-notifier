@@ -1,5 +1,7 @@
 package org.rif.notifier.scheduled;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.rif.notifier.datamanagers.DbManagerFacade;
 import org.rif.notifier.models.datafetching.FetchedBlock;
 import org.rif.notifier.models.datafetching.FetchedEvent;
@@ -87,10 +89,11 @@ public class DataFetchingJob {
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching transactions task = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching transactions: " + fetchedTransactions);
-
                 List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber())).
                         collect(Collectors.toList());
                 if(!rawTrs.isEmpty()){
+
+
                     dbManagerFacade.saveRawDataBatch(rawTrs);
                 }
 
@@ -102,12 +105,18 @@ public class DataFetchingJob {
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching events task = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching events: " + fetchedEvents);
-
-                List<RawData> rawEvts = fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), fetchedEvent.toString(), false, fetchedEvent.getBlockNumber())).
-                        collect(Collectors.toList());
-                if(!rawEvts.isEmpty()){
-                    dbManagerFacade.saveRawDataBatch(rawEvts);
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    String rawEvent = mapper.writeValueAsString(fetchedEvents.get(0));
+                    List<RawData> rawEvts = fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), rawEvent, false, fetchedEvent.getBlockNumber())).
+                            collect(Collectors.toList());
+                    if(!rawEvts.isEmpty()){
+                        dbManagerFacade.saveRawDataBatch(rawEvts);
+                    }
+                } catch (JsonProcessingException e) {
+                    logger.error("Error converting contract event data to string: ", throwable);
                 }
+
 
             });
         });
