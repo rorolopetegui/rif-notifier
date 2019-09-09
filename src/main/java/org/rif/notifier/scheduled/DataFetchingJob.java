@@ -37,18 +37,16 @@ public class DataFetchingJob {
     @Autowired
     private DbManagerFacade dbManagerFacade;
 
-    //TODO should execute according to the notifier configuration
-    @Scheduled(fixedRate = 30000, initialDelay = 2000)
+    @Scheduled(fixedRateString = "${notifier.run.fixedRate}", initialDelayString = "${notifier.run.fixedDelay}")
     public void run() throws Exception {
-
         // TODO Mocked data, must be provided by the subscription manager
-        List<EthereumBasedListenable> ethereumBasedListenables = Arrays.asList(new EthereumBasedListenable("0x5159345aab821172e795d56274d0f5fdfdc6abd9", EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
+        List<EthereumBasedListenable> ethereumBasedListenables = Arrays.asList(new EthereumBasedListenable("0xf4af6e52b1bcbbe31d1332eb32d463fb10bded27", EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
                 new TypeReference<Address>(true) {
                 },
-                new TypeReference<Address>(true) {
+                new TypeReference<org.web3j.abi.datatypes.Utf8String>() {
                 },
                 new TypeReference<Uint256>() {
-                }), "Transfer"),
+                }), "LogSellArticle"),
                 new EthereumBasedListenable(null, EthereumBasedListenableTypes.NEW_BLOCK, null, null)
                 , new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null));
 

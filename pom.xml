@@ -76,7 +76,7 @@
         <dependency>
             <groupId>com.github.marcosmartinez7</groupId>
             <artifactId>web3j</artifactId>
-            <version>rsk-compatible</version>
+            <version>master</version>
         </dependency>
 
         <dependency>

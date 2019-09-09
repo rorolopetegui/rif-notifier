@@ -26,7 +26,7 @@ public class BlockEthereumBasedDataFetcher extends EthereumBasedDataFetcher {
         //TODO not implemented yet!
 
         long end = System.currentTimeMillis();
-        logger.info(Thread.currentThread().getId() + " - End Contract Data fetching time = " + (end - start));
+        logger.info(Thread.currentThread().getId() + " - End block events for subscription = " + (end - start));
         return CompletableFuture.completedFuture(new ArrayList<>());
     }
 
