@@ -21,7 +21,16 @@ public class RawData {
 
     private BigInteger block;
 
+    public RawData(){}
+
     public RawData(String type, String data, boolean processed, BigInteger block) {
+        this.type = type;
+        this.data = data;
+        this.processed = processed;
+        this.block = block;
+    }
+    public RawData(String id, String type, String data, boolean processed, BigInteger block) {
+        this.id = id;
         this.type = type;
         this.data = data;
         this.processed = processed;

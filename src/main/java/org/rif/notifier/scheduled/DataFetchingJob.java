@@ -37,7 +37,7 @@ public class DataFetchingJob {
     @Autowired
     private DbManagerFacade dbManagerFacade;
 
-    @Scheduled(fixedRateString = "${notifier.run.fixedRate}", initialDelayString = "${notifier.run.fixedDelay}")
+    @Scheduled(fixedRateString = "${notifier.run.fixedRateFetchingJob}", initialDelayString = "${notifier.run.fixedDelayFetchingJob}")
     public void run() throws Exception {
         // TODO Mocked data, must be provided by the subscription manager
         List<EthereumBasedListenable> ethereumBasedListenables = Arrays.asList(new EthereumBasedListenable("0xf4af6e52b1bcbbe31d1332eb32d463fb10bded27", EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(

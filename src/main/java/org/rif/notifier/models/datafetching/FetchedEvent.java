@@ -12,7 +12,7 @@ public class FetchedEvent {
     private String eventName;
 
     private String contractAddress;
-
+    public FetchedEvent(){}
     public FetchedEvent(
             String eventName, List<Type> values, BigInteger blockNumber, String contractAddress) {
         this.eventName = eventName;
