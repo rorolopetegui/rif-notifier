@@ -21,20 +21,25 @@ public class RawData {
 
     private BigInteger block;
 
+    @Column(name = "id_topic")
+    private int idTopic;
+
     public RawData(){}
 
-    public RawData(String type, String data, boolean processed, BigInteger block) {
+    public RawData(String type, String data, boolean processed, BigInteger block, int idTopic) {
         this.type = type;
         this.data = data;
         this.processed = processed;
         this.block = block;
+        this.idTopic = idTopic;
     }
-    public RawData(String id, String type, String data, boolean processed, BigInteger block) {
+    public RawData(String id, String type, String data, boolean processed, BigInteger block, int idTopic) {
         this.id = id;
         this.type = type;
         this.data = data;
         this.processed = processed;
         this.block = block;
+        this.idTopic = idTopic;
     }
 
     public String getId() {
@@ -71,5 +76,17 @@ public class RawData {
 
     public void setBlock(BigInteger block) {
         this.block = block;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getIdTopic() {
+        return idTopic;
+    }
+
+    public void setIdTopic(int idTopic) {
+        this.idTopic = idTopic;
     }
 }

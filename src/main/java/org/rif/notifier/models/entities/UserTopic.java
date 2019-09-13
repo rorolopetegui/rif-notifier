@@ -18,6 +18,11 @@ public class UserTopic {
     @Column(name = "id_topic")
     private int idTopic;
 
+    //FK to subscription
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="subscription")
+    private Subscription subscription;
+
     public UserTopic(){}
 
     public String getId() {
@@ -42,5 +47,13 @@ public class UserTopic {
 
     public void setIdTopic(int idTopic) {
         this.idTopic = idTopic;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 }

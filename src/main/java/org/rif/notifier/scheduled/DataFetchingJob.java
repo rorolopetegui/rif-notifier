@@ -87,7 +87,7 @@ public class DataFetchingJob {
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching transactions task = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching transactions: " + fetchedTransactions);
-                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber())).
+                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), 5)).
                         collect(Collectors.toList());
                 if(!rawTrs.isEmpty()){
 
@@ -106,7 +106,7 @@ public class DataFetchingJob {
                 ObjectMapper mapper = new ObjectMapper();
                 try {
                     String rawEvent = mapper.writeValueAsString(fetchedEvents.get(0));
-                    List<RawData> rawEvts = fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), rawEvent, false, fetchedEvent.getBlockNumber())).
+                    List<RawData> rawEvts = fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), rawEvent, false, fetchedEvent.getBlockNumber(), 5)).
                             collect(Collectors.toList());
                     if(!rawEvts.isEmpty()){
                         dbManagerFacade.saveRawDataBatch(rawEvts);
@@ -114,13 +114,7 @@ public class DataFetchingJob {
                 } catch (JsonProcessingException e) {
                     logger.error("Error converting contract event data to string: ", throwable);
                 }
-
-
             });
         });
-
     }
-
-
-
 }

@@ -1,6 +1,7 @@
 package org.rif.notifier.models.entities;
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Subscription {
@@ -20,6 +21,9 @@ public class Subscription {
     private String userAddress;
 
     private int type;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "subscription", cascade = CascadeType.ALL)
+    private List<UserTopic> userTopic ;
 
     public String getId() {
         return id;
@@ -67,5 +71,13 @@ public class Subscription {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public List<UserTopic> getUserTopic() {
+        return userTopic;
+    }
+
+    public void setUserTopic(List<UserTopic> userTopic) {
+        this.userTopic = userTopic;
     }
 }

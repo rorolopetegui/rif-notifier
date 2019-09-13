@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface UserTopicRepository extends JpaRepository<UserTopic, String> {
     public List<UserTopic> findByUserAddress(String user_address);
+
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,18 +30,18 @@ public class DbManagerFacade {
     @Autowired
     private NotificationManager notificationManager;
 
-    public RawData saveRawData(String type, String data, boolean processed, BigInteger block){
-       return rawDataManager.insert(type,data,processed, block);
+    public RawData saveRawData(String type, String data, boolean processed, BigInteger block, int idTopic){
+       return rawDataManager.insert(type,data,processed, block, idTopic);
     }
 
     @Transactional
     public List<RawData> saveRawDataBatch(List<RawData> rawData){
-        return rawData.stream().map(rawData1 -> rawDataManager.insert(rawData1.getType(), rawData1.getData(), rawData1.isProcessed(), rawData1.getBlock())).collect(Collectors.toList());
+        return rawData.stream().map(rawData1 -> rawDataManager.insert(rawData1.getType(), rawData1.getData(), rawData1.isProcessed(), rawData1.getBlock(), rawData1.getIdTopic())).collect(Collectors.toList());
     }
 
     @Transactional
     public List<RawData> updateRawDataBatch(List<RawData> rawData){
-        return rawData.stream().map(rawData1 -> rawDataManager.update(rawData1.getId(), rawData1.getType(), rawData1.getData(), rawData1.isProcessed(), rawData1.getBlock())).collect(Collectors.toList());
+        return rawData.stream().map(rawData1 -> rawDataManager.update(rawData1.getId(), rawData1.getType(), rawData1.getData(), rawData1.isProcessed(), rawData1.getBlock(), rawData1.getIdTopic())).collect(Collectors.toList());
     }
 
     public List<RawData> getAllRawData(){
@@ -59,8 +60,16 @@ public class DbManagerFacade {
         return rawDataManager.getRawDataByTypeAndProcessed(type, processed);
     }
 
+    public List<RawData> getRawDataFilteredByTopic(){
+        return new ArrayList<>();
+    }
+
     public List<Subscription> getAllActiveSubscriptions(){
         return subscriptionManager.getActiveSubscriptions();
+    }
+
+    public List<Subscription> getActiveSubscriptionsByTopicId(int idTopic){
+        return subscriptionManager.getActiveSubscriptionsByTopicId(idTopic);
     }
 
     public List<UserTopic> getUserTopics(String address){

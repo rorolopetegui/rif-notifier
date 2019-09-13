@@ -15,14 +15,14 @@ public class RawDataManager {
     @Autowired
     private RawDataRepositorty rawDataRepositorty;
 
-    public RawData insert(String type, String data, boolean processed, BigInteger block){
-        RawData rd = new RawData(type, data, processed, block);
+    public RawData insert(String type, String data, boolean processed, BigInteger block, int idTopic){
+        RawData rd = new RawData(type, data, processed, block, idTopic);
         RawData result = rawDataRepositorty.save(rd);
         return result;
     }
 
-    public RawData update(String id, String type, String data, boolean processed, BigInteger block){
-        RawData rd = new RawData(id, type, data, processed, block);
+    public RawData update(String id, String type, String data, boolean processed, BigInteger block, int idTopic){
+        RawData rd = new RawData(id, type, data, processed, block, idTopic);
         RawData result = rawDataRepositorty.save(rd);
         return result;
     }
