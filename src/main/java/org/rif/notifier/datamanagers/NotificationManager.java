@@ -5,7 +5,9 @@ import org.rif.notifier.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class NotificationManager {
@@ -17,5 +19,11 @@ public class NotificationManager {
         Notification result = notificationRepository.save(ntf);
         return result;
 
+    }
+
+    public List<Notification> getNotificationsByUserAddress(String user_address){
+        List<Notification> lst = new ArrayList<>();
+        notificationRepository.findByToAddress(user_address).forEach(lst::add);
+        return lst;
     }
 }

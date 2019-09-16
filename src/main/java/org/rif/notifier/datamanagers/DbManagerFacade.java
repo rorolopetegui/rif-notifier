@@ -72,6 +72,10 @@ public class DbManagerFacade {
         return subscriptionManager.getActiveSubscriptionsByTopicId(idTopic);
     }
 
+    public Subscription getSubscriptionByAddress(String user_address){
+        return subscriptionManager.getSubscriptionByAddress(user_address);
+    }
+
     public List<UserTopic> getUserTopics(String address){
         return userTopicManager.getUserTopics(address);
     }
@@ -87,5 +91,9 @@ public class DbManagerFacade {
     @Transactional
     public List<Notification> saveNotificationBatch(List<Notification> notifications){
         return notifications.stream().map(notification1 -> notificationManager.insert(notification1.getTo_address(), notification1.getTimestamp(), notification1.isSended(), notification1.getData())).collect(Collectors.toList());
+    }
+
+    public List<Notification> getNotificationByUserAddress(String user_address){
+        return notificationManager.getNotificationsByUserAddress(user_address);
     }
 }

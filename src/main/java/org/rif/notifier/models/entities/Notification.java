@@ -2,6 +2,7 @@ package org.rif.notifier.models.entities;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,7 +15,8 @@ public class Notification {
     @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String id;
 
-    private String to_address;
+    @Column(name = "to_address")
+    private String toAddress;
 
     private Date timestamp;
 
@@ -25,7 +27,7 @@ public class Notification {
     public Notification(){}
 
     public Notification(String to_address, Date timestamp, boolean sended, String data) {
-        this.to_address = to_address;
+        this.toAddress = to_address;
         this.timestamp = timestamp;
         this.sended = sended;
         this.data = data;
@@ -40,11 +42,11 @@ public class Notification {
     }
 
     public String getTo_address() {
-        return to_address;
+        return toAddress;
     }
 
     public void setTo_address(String to_address) {
-        this.to_address = to_address;
+        this.toAddress = to_address;
     }
 
     public Date getTimestamp() {
