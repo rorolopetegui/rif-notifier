@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class NotificationManager {
+public class NotifEntityManager {
     @Autowired
     private NotificationRepository notificationRepository;
 

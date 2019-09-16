@@ -28,7 +28,7 @@ public class DbManagerFacade {
     private TopicParamsManager topicParamsManager;
 
     @Autowired
-    private NotificationManager notificationManager;
+    private NotifEntityManager notifEntityManager;
 
     public RawData saveRawData(String type, String data, boolean processed, BigInteger block, int idTopic){
        return rawDataManager.insert(type,data,processed, block, idTopic);
@@ -90,10 +90,10 @@ public class DbManagerFacade {
 
     @Transactional
     public List<Notification> saveNotificationBatch(List<Notification> notifications){
-        return notifications.stream().map(notification1 -> notificationManager.insert(notification1.getTo_address(), notification1.getTimestamp(), notification1.isSended(), notification1.getData())).collect(Collectors.toList());
+        return notifications.stream().map(notification1 -> notifEntityManager.insert(notification1.getTo_address(), notification1.getTimestamp(), notification1.isSended(), notification1.getData())).collect(Collectors.toList());
     }
 
     public List<Notification> getNotificationByUserAddress(String user_address){
-        return notificationManager.getNotificationsByUserAddress(user_address);
+        return notifEntityManager.getNotificationsByUserAddress(user_address);
     }
 }

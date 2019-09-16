@@ -1,4 +1,7 @@
 package org.rif.notifier.models.entities;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -22,8 +25,13 @@ public class Subscription {
 
     private int type;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "subscription", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<UserTopic> userTopic ;
+
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<NotificationPreferences> notificationPreferences ;
 
     public String getId() {
         return id;
@@ -79,5 +87,13 @@ public class Subscription {
 
     public void setUserTopic(List<UserTopic> userTopic) {
         this.userTopic = userTopic;
+    }
+
+    public List<NotificationPreferences> getNotificationPreferences() {
+        return notificationPreferences;
+    }
+
+    public void setNotificationPreferences(List<NotificationPreferences> notificationPreferences) {
+        this.notificationPreferences = notificationPreferences;
     }
 }
