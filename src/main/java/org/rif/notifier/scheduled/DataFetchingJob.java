@@ -2,11 +2,12 @@ package org.rif.notifier.scheduled;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.rif.notifier.datafetcher.MockDatafetcher;
 import org.rif.notifier.datamanagers.DbManagerFacade;
 import org.rif.notifier.models.datafetching.FetchedBlock;
 import org.rif.notifier.models.datafetching.FetchedEvent;
 import org.rif.notifier.models.datafetching.FetchedTransaction;
-import org.rif.notifier.models.entities.RawData;
+import org.rif.notifier.models.entities.*;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
 import org.rif.notifier.models.listenable.EthereumBasedListenableTypes;
 import org.rif.notifier.services.blockchain.generic.rootstock.RskBlockchainService;
@@ -15,16 +16,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.generated.Uint256;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 
 @Component
 public class DataFetchingJob {
@@ -40,16 +38,33 @@ public class DataFetchingJob {
     @Scheduled(fixedRateString = "${notifier.run.fixedRateFetchingJob}", initialDelayString = "${notifier.run.fixedDelayFetchingJob}")
     public void run() throws Exception {
         // TODO Mocked data, must be provided by the subscription manager
-        List<EthereumBasedListenable> ethereumBasedListenables = Arrays.asList(new EthereumBasedListenable("0xf4af6e52b1bcbbe31d1332eb32d463fb10bded27", EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
-                new TypeReference<Address>(true) {
-                },
-                new TypeReference<org.web3j.abi.datatypes.Utf8String>() {
-                },
-                new TypeReference<Uint256>() {
-                }), "LogSellArticle"),
-                new EthereumBasedListenable(null, EthereumBasedListenableTypes.NEW_BLOCK, null, null)
-                , new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null));
-
+        List<EthereumBasedListenable> ethereumBasedListenables = new ArrayList<>();
+        List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
+        Boolean alreadyAdded;
+        for(Subscription sub : activeSubs){
+            List<UserTopic> userTopics = sub.getUserTopic();
+            for(UserTopic uTopic : userTopics){
+                alreadyAdded = false;
+                EthereumBasedListenable newListeneable = MockDatafetcher.getEthereumBasedListenableFromTopic(uTopic);
+                //Performing some checks to not insert when its already in the list
+                if(newListeneable.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)){
+                    alreadyAdded = ethereumBasedListenables.stream().filter(item ->
+                            item.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)
+                            && item.getAddress().equals(newListeneable.getAddress())
+                    ).findAny().isPresent();
+                }else if(newListeneable.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)){
+                    alreadyAdded = ethereumBasedListenables.stream().filter(item ->
+                            item.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)
+                    ).findAny().isPresent();
+                }else{
+                    alreadyAdded = ethereumBasedListenables.stream().filter(item ->
+                            item.getKind().equals(EthereumBasedListenableTypes.NEW_BLOCK)
+                    ).findAny().isPresent();
+                }
+                if(!alreadyAdded)
+                    ethereumBasedListenables.add(newListeneable);
+            }
+        }
         // Get latest block for this run
         BigInteger to = rskBlockchainService.getLastBlock();
         BigInteger from = to.subtract(new BigInteger("5"));// must read latest from db for now it queries latest 5 blocks
@@ -90,8 +105,6 @@ public class DataFetchingJob {
                 List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), 5)).
                         collect(Collectors.toList());
                 if(!rawTrs.isEmpty()){
-
-
                     dbManagerFacade.saveRawDataBatch(rawTrs);
                 }
 

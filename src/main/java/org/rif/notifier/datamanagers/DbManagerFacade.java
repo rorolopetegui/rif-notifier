@@ -25,9 +25,6 @@ public class DbManagerFacade {
     private TopicManager topicManager;
 
     @Autowired
-    private TopicParamsManager topicParamsManager;
-
-    @Autowired
     private NotifEntityManager notifEntityManager;
 
     public RawData saveRawData(String type, String data, boolean processed, BigInteger block, int idTopic){
@@ -82,10 +79,6 @@ public class DbManagerFacade {
 
     public Topic getTopicById(int Id){
         return topicManager.getTopicById(Id);
-    }
-
-    public List<TopicParams> getTopicParamsByIdTopic(int Id){
-        return topicParamsManager.getTopicParamsByIdTopic(Id);
     }
 
     @Transactional

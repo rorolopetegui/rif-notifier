@@ -9,8 +9,10 @@ public class TopicParams {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
 
-    @Column(name = "id_topic")
-    private int idTopic;
+    //@Column(name = "id_topic")
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="id_topic")
+    private Topic topic;
 
     private String type;
 
@@ -21,6 +23,11 @@ public class TopicParams {
     @Column(name = "value_type")
     private String valueType;
 
+    //FK to Topic
+    /*@ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="id_topic")
+    private Topic topic;*/
+
     public int getId() {
         return id;
     }
@@ -29,12 +36,12 @@ public class TopicParams {
         this.id = id;
     }
 
-    public int getIdTopic() {
-        return idTopic;
+    public Topic getIdTopic() {
+        return topic;
     }
 
-    public void setIdTopic(int idTopic) {
-        this.idTopic = idTopic;
+    public void setIdTopic(Topic topic) {
+        this.topic = topic;
     }
 
     public String getType() {

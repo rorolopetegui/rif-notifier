@@ -15,10 +15,11 @@ public class UserTopic {
     @Column(name = "user_address")
     private String userAddress;
 
-    @Column(name = "id_topic")
-    private int idTopic;
+    //@Column(name = "id_topic")
+    @ManyToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name="id_topic")
+    private Topic topic;
 
-    //FK to subscription
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="subscription")
     private Subscription subscription;
@@ -41,12 +42,12 @@ public class UserTopic {
         this.userAddress = userAddress;
     }
 
-    public int getIdTopic() {
-        return idTopic;
+    public Topic getTopic() {
+        return topic;
     }
 
-    public void setIdTopic(int idTopic) {
-        this.idTopic = idTopic;
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 
     public Subscription getSubscription() {
