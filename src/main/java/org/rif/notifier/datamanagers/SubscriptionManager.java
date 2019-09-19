@@ -19,6 +19,12 @@ public class SubscriptionManager {
         return lst;
     }
 
+    public List<Subscription> getActiveAndWithCounterSubscriptions(){
+        List<Subscription> lst = new ArrayList<>();
+        subscriptionRepositorty.findByActiveAndNotifCounterGreaterThan(1, 0).forEach(lst::add);
+        return lst;
+    }
+
     public List<Subscription> getActiveSubscriptionsByTopicId(int idTopic){
         List<Subscription> lst = new ArrayList<>();
         subscriptionRepositorty.findByIdTopicAndSubscriptionActive(idTopic).forEach(lst::add);

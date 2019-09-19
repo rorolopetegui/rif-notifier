@@ -25,6 +25,9 @@ public class Subscription {
 
     private int type;
 
+    @Column(name = "notif_counter")
+    private int notifCounter;
+
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<UserTopic> userTopic ;
@@ -95,5 +98,13 @@ public class Subscription {
 
     public void setNotificationPreferences(List<NotificationPreferences> notificationPreferences) {
         this.notificationPreferences = notificationPreferences;
+    }
+
+    public int getNotifCounter() {
+        return notifCounter;
+    }
+
+    public void setNotifCounter(int notifCounter) {
+        this.notifCounter = notifCounter;
     }
 }

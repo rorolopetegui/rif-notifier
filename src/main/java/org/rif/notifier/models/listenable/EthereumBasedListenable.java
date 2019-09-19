@@ -9,12 +9,14 @@ public class EthereumBasedListenable extends Listenable {
     private List<TypeReference<?>> eventFields;
     private String eventName;
     private EthereumBasedListenableTypes kind;
+    private int topicId;
 
-    public EthereumBasedListenable(String address, EthereumBasedListenableTypes kind, List<TypeReference<?>> eventFields, String eventName) {
+    public EthereumBasedListenable(String address, EthereumBasedListenableTypes kind, List<TypeReference<?>> eventFields, String eventName, int topicId) {
         super(address);
         this.kind = kind;
         this.eventFields = eventFields;
         this.eventName = eventName;
+        this.topicId = topicId;
     }
 
     public List<TypeReference<?>> getEventFields() {
@@ -51,6 +53,14 @@ public class EthereumBasedListenable extends Listenable {
         this.eventName = eventName;
     }
 
+    public int getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(int topicId) {
+        this.topicId = topicId;
+    }
+
     @Override
     public String toString() {
         return "EthereumBasedListenable{" +
@@ -58,6 +68,7 @@ public class EthereumBasedListenable extends Listenable {
                 ", eventName='" + eventName + '\'' +
                 ", kind=" + kind +
                 ", address='" + address + '\'' +
+                ", topicId='" + topicId + '\'' +
                 '}';
     }
 }

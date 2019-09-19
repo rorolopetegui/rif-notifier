@@ -1,11 +1,14 @@
 package org.rif.notifier.datafetcher;
 
+import org.rif.notifier.models.web3Extensions.RSKTypeReference;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.TopicParams;
 import org.rif.notifier.models.entities.UserTopic;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
 import org.rif.notifier.models.listenable.EthereumBasedListenableTypes;
 import org.rif.notifier.util.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.web3j.abi.TypeReference;
 
 import java.util.ArrayList;
@@ -15,6 +18,11 @@ import java.util.stream.Collectors;
 import static org.rif.notifier.constants.EventTypeConstants.*;
 
 public class MockDatafetcher {
+
+    private static final Logger logger = LoggerFactory.getLogger(MockDatafetcher.class);
+
+    private static final String PATH_TO_TYPES = "org.web3j.abi.datatypes.";
+
     private static EthereumBasedListenable CreateContractEventListeneable(UserTopic uTopic) throws ClassNotFoundException {
         List<TypeReference<?>> params = new ArrayList<>();
         Topic tp = uTopic.getTopic();
@@ -28,17 +36,20 @@ public class MockDatafetcher {
                 .collect(Collectors.toList());
         for(TopicParams param : topicParams){
             String value = param.getValueType();
+            boolean indexed = param.getIndexed();
             Class myClass;
             //Get the reflection of the datatype
-            if(Utils.isClass("org.web3j.abi.datatypes." + value)){
-                myClass = Class.forName("org.web3j.abi.datatypes." + value);
+            if(Utils.isClass(PATH_TO_TYPES + value)){
+                myClass = Class.forName(PATH_TO_TYPES + value);
             }else{
-                myClass = Class.forName("org.web3j.abi.datatypes.generated." + value);
+                myClass = Class.forName(PATH_TO_TYPES + "generated." + value);
             }
-            TypeReference<?> paramReference = TypeReference.create(myClass);
+
+            TypeReference paramReference = RSKTypeReference.createWithIndexed(myClass, indexed);
+
             params.add(paramReference);
         }
-        return new EthereumBasedListenable(address, EthereumBasedListenableTypes.CONTRACT_EVENT, params, eventName);
+        return new EthereumBasedListenable(address, EthereumBasedListenableTypes.CONTRACT_EVENT, params, eventName, tp.getId());
     }
 
     public static EthereumBasedListenable getEthereumBasedListenableFromTopic(UserTopic uTopic) throws ClassNotFoundException {
@@ -48,10 +59,10 @@ public class MockDatafetcher {
                 rtn = CreateContractEventListeneable(uTopic);
                 break;
             case NEW_BLOCK:
-                rtn = new EthereumBasedListenable(null, EthereumBasedListenableTypes.NEW_BLOCK, null, null);
+                rtn = new EthereumBasedListenable(null, EthereumBasedListenableTypes.NEW_BLOCK, null, null, uTopic.getTopic().getId());
                 break;
             case NEW_TRANSACTIONS:
-                rtn = new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null);
+                rtn = new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null, uTopic.getTopic().getId());
                 break;
         }
         return rtn;

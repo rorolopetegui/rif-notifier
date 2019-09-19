@@ -39,7 +39,7 @@ public class DataFetchingJob {
     public void run() throws Exception {
         // TODO Mocked data, must be provided by the subscription manager
         List<EthereumBasedListenable> ethereumBasedListenables = new ArrayList<>();
-        List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
+        List<Subscription> activeSubs = dbManagerFacade.getActiveAndWithCounterSubscriptions();
         Boolean alreadyAdded;
         for(Subscription sub : activeSubs){
             List<UserTopic> userTopics = sub.getUserTopic();
@@ -102,7 +102,7 @@ public class DataFetchingJob {
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching transactions task = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching transactions: " + fetchedTransactions);
-                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), 5)).
+                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), fetchedTransaction.getTopicId())).
                         collect(Collectors.toList());
                 if(!rawTrs.isEmpty()){
                     dbManagerFacade.saveRawDataBatch(rawTrs);
@@ -119,7 +119,7 @@ public class DataFetchingJob {
                 ObjectMapper mapper = new ObjectMapper();
                 try {
                     String rawEvent = mapper.writeValueAsString(fetchedEvents.get(0));
-                    List<RawData> rawEvts = fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), rawEvent, false, fetchedEvent.getBlockNumber(), 5)).
+                    List<RawData> rawEvts = fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), rawEvent, false, fetchedEvent.getBlockNumber(), fetchedEvent.getTopicId())).
                             collect(Collectors.toList());
                     if(!rawEvts.isEmpty()){
                         dbManagerFacade.saveRawDataBatch(rawEvts);

@@ -23,6 +23,8 @@ public class TopicParams {
     @Column(name = "value_type")
     private String valueType;
 
+    private Boolean indexed;
+
     //FK to Topic
     /*@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="id_topic")
@@ -74,5 +76,21 @@ public class TopicParams {
 
     public void setValueType(String valueType) {
         this.valueType = valueType;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+
+    public void setTopic(Topic topic) {
+        this.topic = topic;
+    }
+
+    public Boolean getIndexed() {
+        return indexed;
+    }
+
+    public void setIndexed(Boolean indexed) {
+        this.indexed = indexed;
     }
 }

@@ -37,7 +37,7 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
            logger.info(Thread.currentThread().getId() + " - Starting reading events for subscription: "+ ethereumBasedListenable);
            List<FetchedEvent> fetchedEventData = new ArrayList<>();
            try {
-               fetchedEventData = getLogs(web3j,from, to, ethereumBasedListenable.getAddress(), ethereumBasedListenable.getEventName(), ethereumBasedListenable.getEventFields());
+               fetchedEventData = getLogs(web3j,from, to, ethereumBasedListenable.getAddress(), ethereumBasedListenable.getEventName(), ethereumBasedListenable.getEventFields(), ethereumBasedListenable.getTopicId());
            } catch (Exception e) {
                logger.error(Thread.currentThread().getId() + " - Error fetching contract data for subscription: "+ ethereumBasedListenable, e);
                return new ArrayList<FetchedEvent>();
@@ -52,7 +52,7 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
        });
     }
 
-    private List<FetchedEvent> getLogs(Web3j web3j, BigInteger from, BigInteger to, String contractAddress, String eventName, List<TypeReference<?>> eventFields)
+    private List<FetchedEvent> getLogs(Web3j web3j, BigInteger from, BigInteger to, String contractAddress, String eventName, List<TypeReference<?>> eventFields, int topicId)
             throws Exception {
         // Create event object to add its signature as a Filter
         Event event =  new Event(eventName, eventFields);
@@ -91,7 +91,7 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
             // Get non indexed values (Decode data)
             values.addAll(FunctionReturnDecoder.decode(log.getData(), event.getNonIndexedParameters()));
 
-            events.add(new FetchedEvent(eventName, values, log.getBlockNumber(), contractAddress));
+            events.add(new FetchedEvent(eventName, values, log.getBlockNumber(), contractAddress, topicId));
         }
         return events;
     }

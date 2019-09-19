@@ -15,6 +15,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Stri
 
     List<Subscription> findByActive(int active);
 
+    List<Subscription> findByActiveAndNotifCounterGreaterThan(int active, int notifCounter);
+
     @Query(value = "SELECT * FROM subscription A JOIN user_topic B ON A.user_address=B.user_address AND A.active = 1 AND B.id_topic = ?1", nativeQuery = true)
     List<Subscription> findByIdTopicAndSubscriptionActive(int id);
 }

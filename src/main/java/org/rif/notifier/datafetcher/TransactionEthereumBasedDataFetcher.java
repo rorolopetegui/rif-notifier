@@ -30,7 +30,7 @@ public class TransactionEthereumBasedDataFetcher extends EthereumBasedDataFetche
             List<FetchedTransaction> transactions = new ArrayList<>();
            Iterable<Transaction> obs = web3j.replayPastTransactionsFlowable(DefaultBlockParameter.valueOf(from), DefaultBlockParameter.valueOf(to)).blockingLatest();
            for(Transaction t : obs){
-               FetchedTransaction ft = new FetchedTransaction(t);
+               FetchedTransaction ft = new FetchedTransaction(t, ethereumBasedListenable.getTopicId());
                transactions.add(ft);
            }
            long end = System.currentTimeMillis();

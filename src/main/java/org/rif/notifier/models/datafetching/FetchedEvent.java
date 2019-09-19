@@ -12,13 +12,17 @@ public class FetchedEvent {
     private String eventName;
 
     private String contractAddress;
+
+    private int topicId;
+
     public FetchedEvent(){}
     public FetchedEvent(
-            String eventName, List<Type> values, BigInteger blockNumber, String contractAddress) {
+            String eventName, List<Type> values, BigInteger blockNumber, String contractAddress, int topicId) {
         this.eventName = eventName;
         this.values = values;
         this.blockNumber = blockNumber;
         this.contractAddress = contractAddress;
+        this.topicId = topicId;
     }
 
     public List<Type> getValues() {
@@ -37,6 +41,10 @@ public class FetchedEvent {
         return contractAddress;
     }
 
+    public int getTopicId() {
+        return topicId;
+    }
+
     @Override
     public String toString() {
         return "FetchedEvent{"
@@ -46,6 +54,8 @@ public class FetchedEvent {
                 + blockNumber
                 + ", eventName="
                 + eventName
+                + ", topicId="
+                + topicId
                 + '}';
     }
 
