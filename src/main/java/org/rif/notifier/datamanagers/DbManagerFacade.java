@@ -73,12 +73,8 @@ public class DbManagerFacade {
         return subscriptionManager.getActiveSubscriptionsByTopicId(idTopic);
     }
 
-    public Subscription getSubscriptionByAddress(String user_address){
+    public List<Subscription> getSubscriptionByAddress(String user_address){
         return subscriptionManager.getSubscriptionByAddress(user_address);
-    }
-
-    public List<UserTopic> getUserTopics(String address){
-        return userTopicManager.getUserTopics(address);
     }
 
     public Topic getTopicById(int Id){

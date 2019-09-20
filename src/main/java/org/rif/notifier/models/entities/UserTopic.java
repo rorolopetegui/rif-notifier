@@ -12,16 +12,12 @@ public class UserTopic {
     @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "user_address")
-    private String userAddress;
-
-    //@Column(name = "id_topic")
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="id_topic")
     private Topic topic;
 
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="subscription")
+    @JoinColumn(name="id_subscription")
     private Subscription subscription;
 
     public UserTopic(){}
@@ -32,14 +28,6 @@ public class UserTopic {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getUserAddress() {
-        return userAddress;
-    }
-
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
     }
 
     public Topic getTopic() {

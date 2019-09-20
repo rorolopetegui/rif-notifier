@@ -48,18 +48,19 @@ public class DataFetchingJob {
                 EthereumBasedListenable newListeneable = MockDatafetcher.getEthereumBasedListenableFromTopic(uTopic);
                 //Performing some checks to not insert when its already in the list
                 if(newListeneable.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)){
-                    alreadyAdded = ethereumBasedListenables.stream().filter(item ->
+                    alreadyAdded = ethereumBasedListenables.stream().anyMatch(item ->
                             item.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)
                             && item.getAddress().equals(newListeneable.getAddress())
-                    ).findAny().isPresent();
+                            && item.getEventName().equals(newListeneable.getEventName())
+                    );
                 }else if(newListeneable.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)){
-                    alreadyAdded = ethereumBasedListenables.stream().filter(item ->
+                    alreadyAdded = ethereumBasedListenables.stream().anyMatch(item ->
                             item.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)
-                    ).findAny().isPresent();
+                    );
                 }else{
-                    alreadyAdded = ethereumBasedListenables.stream().filter(item ->
+                    alreadyAdded = ethereumBasedListenables.stream().anyMatch(item ->
                             item.getKind().equals(EthereumBasedListenableTypes.NEW_BLOCK)
-                    ).findAny().isPresent();
+                    );
                 }
                 if(!alreadyAdded)
                     ethereumBasedListenables.add(newListeneable);
@@ -76,9 +77,9 @@ public class DataFetchingJob {
         List<CompletableFuture<List<FetchedBlock>>> blockTasks = new ArrayList<>();
         List<CompletableFuture<List<FetchedTransaction>>> transactionTasks = new ArrayList<>();
         List<CompletableFuture<List<FetchedEvent>>> eventTasks = new ArrayList<>();
-
-
         for (EthereumBasedListenable subscriptionChannel : ethereumBasedListenables) {
+            subscriptionChannel.getEventFields().stream().forEach(item -> {
+            });
             try {
                 switch (subscriptionChannel.getKind()) {
                     case NEW_BLOCK:

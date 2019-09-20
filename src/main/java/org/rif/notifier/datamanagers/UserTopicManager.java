@@ -13,10 +13,4 @@ public class UserTopicManager {
 
     @Autowired
     private UserTopicRepository userTopicRepository;
-
-    public List<UserTopic> getUserTopics(String userAddress){
-        List<UserTopic> lst = new ArrayList<>();
-        userTopicRepository.findByUserAddress(userAddress).forEach(lst::add);
-        return lst;
-    }
 }

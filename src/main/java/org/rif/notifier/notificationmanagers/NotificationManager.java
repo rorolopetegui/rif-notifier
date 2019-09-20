@@ -8,6 +8,8 @@ import org.rif.notifier.notificationmanagers.services.NotificationService;
 import org.rif.notifier.notificationmanagers.services.impl.MailNotification;
 import org.rif.notifier.notificationmanagers.services.impl.PushAndroid;
 import org.rif.notifier.notificationmanagers.services.impl.PushIOS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +21,20 @@ import static org.rif.notifier.constants.NotificationConstants.*;
 @Service
 public class NotificationManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(NotificationManager.class);
+
     @Autowired
     private DbManagerFacade dbManagerFacade;
 
     public List<Notification> getNotificationsForAddress(String address){
         List<Notification> lst = new ArrayList<>();
-        Subscription sub = dbManagerFacade.getSubscriptionByAddress(address);
-        if(sub.getActive() == 1)
-            lst = dbManagerFacade.getNotificationByUserAddress(address);
+        List<Subscription> subsUser = dbManagerFacade.getSubscriptionByAddress(address);
+        if(subsUser.size() > 0) {
+            //This will need to be migrated by topic
+            Subscription sub = subsUser.stream().filter(item -> item.getActive() == 1).findFirst().get();
+            if (sub.getActive() == 1)
+                lst = dbManagerFacade.getNotificationByUserAddress(address);
+        }
         return lst;
     }
 

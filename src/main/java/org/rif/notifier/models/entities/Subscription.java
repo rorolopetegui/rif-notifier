@@ -12,9 +12,6 @@ public class Subscription {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private String id;
 
-    @Column(name = "id_topic")
-    private int idTopic;
-
     @Column(name = "active_until")
     private Date activeUntil;
 
@@ -42,14 +39,6 @@ public class Subscription {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public int getIdTopic() {
-        return idTopic;
-    }
-
-    public void setIdTopic(int idTopic) {
-        this.idTopic = idTopic;
     }
 
     public Date getActiveUntil() {

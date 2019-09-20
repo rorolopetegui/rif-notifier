@@ -31,7 +31,7 @@ public class SubscriptionManager {
         return lst;
     }
 
-    public Subscription getSubscriptionByAddress(String user_address){
+    public List<Subscription> getSubscriptionByAddress(String user_address){
         return subscriptionRepositorty.findByUserAddress(user_address);
     }
 }
