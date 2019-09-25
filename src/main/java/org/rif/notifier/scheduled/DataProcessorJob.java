@@ -1,6 +1,9 @@
 package org.rif.notifier.scheduled;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.rif.notifier.datamanagers.DbManagerFacade;
+import org.rif.notifier.models.datafetching.FetchedData;
+import org.rif.notifier.models.datafetching.FetchedEvent;
 import org.rif.notifier.models.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.rif.notifier.constants.EventTypeConstants.*;
@@ -29,17 +33,16 @@ public class DataProcessorJob {
         if (rawData.size() > 0) {
             logger.info(Thread.currentThread().getId() + String.format(" - Rawdata not processed = %d", rawData.size()));
             List<Notification> ntfsData = new ArrayList<>();
-
             rawData.stream().forEach(rawData1 -> {
                 String dataForNotification = "";
                 List<Subscription> activeSubs = dbManagerFacade.getActiveSubscriptionsByTopicId(rawData1.getIdTopic());
                 logger.info(Thread.currentThread().getId() + String.format(" - Active subscriptions for the topic_id (%d) = %d", rawData1.getIdTopic(), activeSubs.size()));
                 for (Subscription sub : activeSubs) {
-                    if (!processedRows.stream().filter(item -> item.getId().equals(rawData1.getId())).findFirst().isPresent())
+                    if (!processedRows.stream().anyMatch(item -> item.getId().equals(rawData1.getId())))
                         processedRows.add(rawData1);
 
                     //Here we can add some logic to each type of event
-                    switch ("") {
+                    switch (rawData1.getType()) {
                         case CONTRACT_EVENT:
                             //break;
                         case NEW_TRANSACTIONS:

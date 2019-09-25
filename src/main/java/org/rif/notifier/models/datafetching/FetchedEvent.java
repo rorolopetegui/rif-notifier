@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 
-public class FetchedEvent {
+public class FetchedEvent extends FetchedData {
     private List<Type> values;
     private BigInteger blockNumber;
 
@@ -13,16 +13,15 @@ public class FetchedEvent {
 
     private String contractAddress;
 
-    private int topicId;
-
     public FetchedEvent(){}
+
     public FetchedEvent(
             String eventName, List<Type> values, BigInteger blockNumber, String contractAddress, int topicId) {
+        super(topicId);
         this.eventName = eventName;
         this.values = values;
         this.blockNumber = blockNumber;
         this.contractAddress = contractAddress;
-        this.topicId = topicId;
     }
 
     public List<Type> getValues() {
@@ -41,10 +40,6 @@ public class FetchedEvent {
         return contractAddress;
     }
 
-    public int getTopicId() {
-        return topicId;
-    }
-
     @Override
     public String toString() {
         return "FetchedEvent{"
@@ -55,7 +50,7 @@ public class FetchedEvent {
                 + ", eventName="
                 + eventName
                 + ", topicId="
-                + topicId
+                + super.getTopicId()
                 + '}';
     }
 

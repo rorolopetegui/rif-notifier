@@ -2,15 +2,13 @@ package org.rif.notifier.models.datafetching;
 
 import org.web3j.protocol.core.methods.response.Transaction;
 
-public class FetchedTransaction {
-
-    private int topicId;
+public class FetchedTransaction extends FetchedData {
 
     private Transaction transaction;
 
     public FetchedTransaction(Transaction transaction, int topicId) {
+        super(topicId);
         this.transaction = transaction;
-        this.topicId = topicId;
     }
 
     public Transaction getTransaction() {
@@ -21,20 +19,12 @@ public class FetchedTransaction {
         this.transaction = transaction;
     }
 
-    public int getTopicId() {
-        return topicId;
-    }
-
-    public void setTopicId(int topicId) {
-        this.topicId = topicId;
-    }
-
     //TODO modify tostring because web3j transaction toString isnt implemented.
     @Override
     public String toString() {
         return "FetchedTransaction{" +
                 "transaction=" + transaction +
-                ",topicId=" + topicId +
+                ",topicId=" + super.getTopicId() +
                 '}';
     }
 }

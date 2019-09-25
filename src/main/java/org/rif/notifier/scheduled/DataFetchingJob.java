@@ -78,8 +78,6 @@ public class DataFetchingJob {
         List<CompletableFuture<List<FetchedTransaction>>> transactionTasks = new ArrayList<>();
         List<CompletableFuture<List<FetchedEvent>>> eventTasks = new ArrayList<>();
         for (EthereumBasedListenable subscriptionChannel : ethereumBasedListenables) {
-            subscriptionChannel.getEventFields().stream().forEach(item -> {
-            });
             try {
                 switch (subscriptionChannel.getKind()) {
                     case NEW_BLOCK:

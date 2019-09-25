@@ -1,5 +1,6 @@
 package org.rif.notifier.datamanagers;
 
+import org.rif.notifier.models.datafetching.FetchedData;
 import org.rif.notifier.models.entities.Notification;
 import org.rif.notifier.repositories.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
