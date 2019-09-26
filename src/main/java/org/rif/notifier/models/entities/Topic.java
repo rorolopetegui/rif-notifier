@@ -5,6 +5,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Topic {
@@ -59,14 +60,18 @@ public class Topic {
         this.hash = hash;
     }
 
-    public int getHashCode(){
-        int hash = 7;
-        hash = 31 * hash + type.hashCode();
-        if(topicParams.size() > 0){
-            for(TopicParams param : topicParams) {
-                hash = 31 * hash + param.getHashCode();
-            }
-        }
-        return hash;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Topic topic = (Topic) o;
+        return id == topic.id &&
+                type.equals(topic.type) &&
+                topicParams.equals(topic.topicParams);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, topicParams);
     }
 }

@@ -64,10 +64,10 @@ public class SubscribeController {
             //Check if the user did subscribe
             Subscription sub = dbManagerFacade.getSubscriptionByAddress(us.getAddress());
             if(sub != null) {
-                tp = dbManagerFacade.getTopicByHashCode("" + topic.getHashCode());
+                tp = dbManagerFacade.getTopicByHashCode("" + topic.hashCode());
                 if (tp == null) {
                     //Generate Topic and params
-                    tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.getHashCode());
+                    tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode());
                     for(TopicParams param : topic.getTopicParams()){
                         dbManagerFacade.saveTopicParams(
                                 tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed()
