@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
+import org.rif.notifier.datamanagers.DbManagerFacade;
 import org.rif.notifier.models.entities.Notification;
+import org.rif.notifier.models.entities.User;
 import org.rif.notifier.notificationmanagers.NotificationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +29,23 @@ public class NotificationController {
     @Autowired
     private NotificationManager notificationManager;
 
+    @Autowired
+    private DbManagerFacade dbManagerFacade;
+
     @ApiOperation(value = "Retrieve notifications for a address",
             response = Notification.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/getNotifications", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
-    public ResponseEntity<List<Notification>> GetNotifications(@RequestParam(name = "apikey", required=false) String apiKey) {
+    public ResponseEntity<List<Notification>> GetNotifications(@RequestParam(name = "apikey") String apiKey) {
         List<Notification> notifications = new ArrayList<>();
         if(apiKey != null && !apiKey.isEmpty()){
-            notifications = notificationManager.getNotificationsForAddress(apiKey);
+            User us = dbManagerFacade.getUserByApiKey(apiKey);
+            if(us != null){
+                notifications = notificationManager.getNotificationsForAddress(us.getAddress());
+            }else{
+                //Return error, user does not exist
+            }
+
         }
         return new ResponseEntity<>(notifications, HttpStatus.OK);
     }
