@@ -13,4 +13,12 @@ public class TopicManager {
     public Topic getTopicById(int Id){
         return topicRepository.findById(Id);
     }
+
+    public Topic getTopicByHashCode(String hash){
+        return topicRepository.findByHash(hash);
+    }
+
+    public Topic insert(Topic tp){
+        return topicRepository.save(tp);
+    }
 }

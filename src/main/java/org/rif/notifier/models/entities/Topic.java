@@ -16,6 +16,8 @@ public class Topic {
 
     private String type;
 
+    private String hash;
+
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<TopicParams> topicParams ;
@@ -42,5 +44,24 @@ public class Topic {
 
     public void setTopicParams(List<TopicParams> topicParams) {
         this.topicParams = topicParams;
+    }
+
+    public String getHash() {
+        return hash;
+    }
+
+    public void setHash(String hash) {
+        this.hash = hash;
+    }
+
+    public int getHashCode(){
+        int hash = 7;
+        hash = 31 * hash + type.hashCode();
+        if(topicParams.size() > 0){
+            for(TopicParams param : topicParams) {
+                hash = 31 * hash + param.getHashCode();
+            }
+        }
+        return hash;
     }
 }

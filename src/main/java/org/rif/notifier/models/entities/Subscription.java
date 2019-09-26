@@ -22,8 +22,7 @@ public class Subscription {
 
     private int type;
 
-    @Column(name = "notif_counter")
-    private int notifCounter;
+    private String state;
 
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -32,6 +31,16 @@ public class Subscription {
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<NotificationPreferences> notificationPreferences ;
+
+    public Subscription() {}
+
+    public Subscription(Date activeUntil, int active, String userAddress, int type, String state) {
+        this.activeUntil = activeUntil;
+        this.active = active;
+        this.userAddress = userAddress;
+        this.type = type;
+        this.state = state;
+    }
 
     public String getId() {
         return id;
@@ -89,11 +98,11 @@ public class Subscription {
         this.notificationPreferences = notificationPreferences;
     }
 
-    public int getNotifCounter() {
-        return notifCounter;
+    public String getState() {
+        return state;
     }
 
-    public void setNotifCounter(int notifCounter) {
-        this.notifCounter = notifCounter;
+    public void setState(String state) {
+        this.state = state;
     }
 }

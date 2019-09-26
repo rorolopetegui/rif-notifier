@@ -39,7 +39,7 @@ public class DataFetchingJob {
     public void run() throws Exception {
         // TODO Mocked data, must be provided by the subscription manager
         List<EthereumBasedListenable> ethereumBasedListenables = new ArrayList<>();
-        List<Subscription> activeSubs = dbManagerFacade.getActiveAndWithCounterSubscriptions();
+        List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
         Boolean alreadyAdded;
         for(Subscription sub : activeSubs){
             List<UserTopic> userTopics = sub.getUserTopic();

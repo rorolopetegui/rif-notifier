@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,9 @@ public class DbManagerFacade {
 
     @Autowired
     private NotifEntityManager notifEntityManager;
+
+    @Autowired
+    private UserManager userManager;
 
     public RawData saveRawData(String type, String data, boolean processed, BigInteger block, int idTopic){
        return rawDataManager.insert(type,data,processed, block, idTopic);
@@ -65,20 +69,28 @@ public class DbManagerFacade {
         return subscriptionManager.getActiveSubscriptions();
     }
 
-    public List<Subscription> getActiveAndWithCounterSubscriptions(){
-        return subscriptionManager.getActiveAndWithCounterSubscriptions();
-    }
-
     public List<Subscription> getActiveSubscriptionsByTopicId(int idTopic){
         return subscriptionManager.getActiveSubscriptionsByTopicId(idTopic);
     }
 
-    public List<Subscription> getSubscriptionByAddress(String user_address){
+    public Subscription getSubscriptionByAddress(String user_address){
         return subscriptionManager.getSubscriptionByAddress(user_address);
+    }
+
+    public Subscription saveSubscription(Date activeUntil, int active, String userAddress, int type, String state) {
+        return subscriptionManager.insert(activeUntil, active, userAddress, type, state);
     }
 
     public Topic getTopicById(int Id){
         return topicManager.getTopicById(Id);
+    }
+
+    public Topic getTopicByHashCode(String hash){
+        return topicManager.getTopicByHashCode(hash);
+    }
+
+    public Topic saveTopic(Topic tp){
+        return topicManager.insert(tp);
     }
 
     @Transactional
@@ -88,5 +100,17 @@ public class DbManagerFacade {
 
     public List<Notification> getNotificationByUserAddress(String user_address){
         return notifEntityManager.getNotificationsByUserAddress(user_address);
+    }
+
+    public User saveUser(String address, String apiKey){
+        return userManager.insert(address, apiKey);
+    }
+
+    public User getUserByApiKey(String apiKey){
+        return userManager.getUserByApikey(apiKey);
+    }
+
+    public UserTopic saveUserTopic(Topic topic, Subscription sub){
+        return userTopicManager.insert(topic, sub);
     }
 }

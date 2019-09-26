@@ -28,10 +28,9 @@ public class NotificationManager {
 
     public List<Notification> getNotificationsForAddress(String address){
         List<Notification> lst = new ArrayList<>();
-        List<Subscription> subsUser = dbManagerFacade.getSubscriptionByAddress(address);
-        if(subsUser.size() > 0) {
+        Subscription sub = dbManagerFacade.getSubscriptionByAddress(address);
+        if(sub != null) {
             //This will need to be migrated by topic
-            Subscription sub = subsUser.stream().filter(item -> item.getActive() == 1).findFirst().get();
             if (sub.getActive() == 1)
                 lst = dbManagerFacade.getNotificationByUserAddress(address);
         }

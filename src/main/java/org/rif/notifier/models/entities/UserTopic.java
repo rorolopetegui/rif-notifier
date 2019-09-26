@@ -22,6 +22,11 @@ public class UserTopic {
 
     public UserTopic(){}
 
+    public UserTopic(Topic topic, Subscription sub){
+        this.topic = topic;
+        this.subscription = sub;
+    }
+
     public String getId() {
         return id;
     }

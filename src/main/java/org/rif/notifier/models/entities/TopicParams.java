@@ -9,7 +9,6 @@ public class TopicParams {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
 
-    //@Column(name = "id_topic")
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="id_topic")
     private Topic topic;
@@ -24,11 +23,6 @@ public class TopicParams {
     private String valueType;
 
     private Boolean indexed;
-
-    //FK to Topic
-    /*@ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="id_topic")
-    private Topic topic;*/
 
     public int getId() {
         return id;
@@ -92,5 +86,15 @@ public class TopicParams {
 
     public void setIndexed(Boolean indexed) {
         this.indexed = indexed;
+    }
+
+    public int getHashCode(){
+        int hash = 7;
+        hash = 31 * hash + type.hashCode();
+        hash = 31 * hash + value.hashCode();
+        hash = 31 * hash + order;
+        hash = 31 * hash + valueType.hashCode();
+        hash = 31 * hash + indexed.hashCode();
+        return hash;
     }
 }
