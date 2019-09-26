@@ -1,4 +1,4 @@
-package org.rif.notifier.datamanagers;
+package org.rif.notifier.managers.datamanagers;
 
 import org.rif.notifier.models.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;

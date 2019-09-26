@@ -1,4 +1,4 @@
-package org.rif.notifier.notificationmanagers.services;
+package org.rif.notifier.managers.services;
 
 import org.rif.notifier.models.entities.Notification;
 

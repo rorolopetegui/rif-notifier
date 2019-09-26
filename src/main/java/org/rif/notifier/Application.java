@@ -19,7 +19,7 @@ import java.util.concurrent.Executor;
 @EnableAsync
 @SpringBootApplication(
         scanBasePackages = {"org.rif.notifier.datafetcher","org.rif.notifier.controllers", "org.rif.notifier.services",
-                "org.rif.notifier.managers", "org.rif.notifier.datamanagers", "org.rif.notifier.scheduled", "org.rif.notifier.repositories",
+                "org.rif.notifier.managers", "org.rif.notifier.managers.datamanagers", "org.rif.notifier.scheduled", "org.rif.notifier.repositories",
                 "org.rif.notifier.notificationmanagers"},
         scanBasePackageClasses = {
                 WebConfiguration.class,

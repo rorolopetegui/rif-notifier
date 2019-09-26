@@ -1,14 +1,12 @@
 package org.rif.notifier.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
-import org.rif.notifier.datamanagers.DbManagerFacade;
+import org.rif.notifier.managers.datamanagers.DbManagerFacade;
 import org.rif.notifier.models.entities.Notification;
 import org.rif.notifier.models.entities.User;
-import org.rif.notifier.notificationmanagers.NotificationManager;
+import org.rif.notifier.managers.NotificationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

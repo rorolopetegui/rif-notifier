@@ -1,4 +1,4 @@
-package org.rif.notifier.datamanagers;
+package org.rif.notifier.managers.datamanagers;
 
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.repositories.TopicRepository;

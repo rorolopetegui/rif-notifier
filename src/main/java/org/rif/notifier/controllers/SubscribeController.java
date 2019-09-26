@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.constants.SubscriptionConstants;
-import org.rif.notifier.datamanagers.DbManagerFacade;
+import org.rif.notifier.managers.datamanagers.DbManagerFacade;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.*;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
@@ -76,7 +76,8 @@ public class SubscribeController {
                 }
                 //Subscribe user to this topic
                 UserTopic ut = dbManagerFacade.saveUserTopic(tp, sub);
-                resp.setData(ut);
+                //This line is throwing error cause the UT is too heavy
+                //resp.setData(ut);
             }else{
                 //Return an error because the user still did not create the subscription
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);

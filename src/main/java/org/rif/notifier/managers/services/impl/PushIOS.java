@@ -1,7 +1,7 @@
-package org.rif.notifier.notificationmanagers.services.impl;
+package org.rif.notifier.managers.services.impl;
 
 import org.rif.notifier.models.entities.Notification;
-import org.rif.notifier.notificationmanagers.services.NotificationService;
+import org.rif.notifier.managers.services.NotificationService;
 
 import java.util.List;
 
