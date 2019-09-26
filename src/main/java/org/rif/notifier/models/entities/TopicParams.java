@@ -11,19 +11,22 @@ public class TopicParams {
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(optional = false, fetch=FetchType.EAGER)
     @JoinColumn(name="id_topic")
     private Topic topic;
 
+    @Column(name = "param_type")
     private String type;
 
     private String value;
 
+    @Column(name = "param_order")
     private int order;
 
     @Column(name = "value_type")
     private String valueType;
 
+    @Column(name = "is_indexed")
     private boolean indexed;
 
     public TopicParams(){}
