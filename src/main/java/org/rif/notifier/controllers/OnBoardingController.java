@@ -37,8 +37,13 @@ public class OnBoardingController {
     public ResponseEntity<String> register(@RequestParam(name = "address") String address) {
         String apiKey = "";
         if(address != null && !address.isEmpty()){
-            apiKey = Utils.generateNewToken();
-            dbManagerFacade.saveUser(address, apiKey);
+            if(dbManagerFacade.getUserByAddress(address) == null) {
+                apiKey = Utils.generateNewToken();
+                dbManagerFacade.saveUser(address, apiKey);
+            }else{
+                //User already have an apikey
+                //return new ResponseEntity<>(apiKey, HttpStatus.);
+            }
         }
         return new ResponseEntity<>(apiKey, HttpStatus.OK);
     }
@@ -48,12 +53,13 @@ public class OnBoardingController {
     @RequestMapping(value = "/subscribe", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<String> subscribe(
-            @RequestParam(name = "type", required=false) int type,
+            @RequestParam(name = "type", required=false) String type,
             @RequestParam(name = "apikey") String apiKey) {
         String ret = "";
         User us = dbManagerFacade.getUserByApiKey(apiKey);
         if(us != null){
-            Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), type, SubscriptionConstants.PENDING_PAYMENT);
+            int myType = Integer.valueOf(type);
+            Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), myType, SubscriptionConstants.PENDING_PAYMENT);
 
             //Pending to generate a lumino-invoice
             ret = LuminoInvoice.generateInvoice(us.getAddress());
@@ -72,7 +78,7 @@ public class OnBoardingController {
         Topic tp = null;
         User us = dbManagerFacade.getUserByApiKey(apiKey);
         logger.info(Thread.currentThread().getId() + "======= Checking if the user api key corresponds to a user");
-        if(us != null){
+        if(us != null && false){
             //Check if the user did subscribe
             Subscription sub = dbManagerFacade.getSubscriptionByAddress(us.getAddress());
             if(sub != null) {
@@ -81,7 +87,7 @@ public class OnBoardingController {
                 if (tp == null) {
                     logger.info(Thread.currentThread().getId() + "======= Generating topic, cause it doesnt exists");
                     //Generate Topic and params
-                    tp = dbManagerFacade.saveTopic(tp);
+                    tp = dbManagerFacade.saveTopic(topic);
                 }
                 logger.info(Thread.currentThread().getId() + "======= Subscribing to topic");
                 //Subscribe user to this topic
@@ -93,6 +99,6 @@ public class OnBoardingController {
             }
         }
 
-        return new ResponseEntity<>(tp, HttpStatus.OK);
+        return new ResponseEntity<>(topic, HttpStatus.OK);
     }
 }

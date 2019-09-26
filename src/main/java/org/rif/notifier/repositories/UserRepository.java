@@ -9,4 +9,6 @@ import java.util.List;
 @Service
 public interface UserRepository extends JpaRepository<User, String> {
     public User findByApiKey(String apiKey);
+
+    public User findByAddress(String address);
 }

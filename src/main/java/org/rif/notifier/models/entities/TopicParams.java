@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "topic_params")
 public class TopicParams {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne(fetch=FetchType.EAGER)

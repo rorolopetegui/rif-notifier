@@ -6,8 +6,8 @@ import javax.persistence.*;
 @Table(name = "notification_preference")
 public class NotificationPreferences {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+    private int id;
 
     @Column(name="user_address")
     private String userAddress;
@@ -20,11 +20,11 @@ public class NotificationPreferences {
     @JoinColumn(name="subscription")
     private Subscription subscription;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -11,12 +11,16 @@ public class UserManager {
     private UserRepository userRepository;
 
     public User insert(String address, String apiKey){
-        User rd = new User(address, "");
+        User rd = new User(address, apiKey);
         User result = userRepository.save(rd);
         return result;
     }
 
     public User getUserByApikey(String apiKey){
         return userRepository.findByApiKey(apiKey);
+    }
+
+    public User getUserByAddress(String address){
+        return userRepository.findByAddress(address);
     }
 }

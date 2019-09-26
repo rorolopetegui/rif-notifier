@@ -110,6 +110,10 @@ public class DbManagerFacade {
         return userManager.getUserByApikey(apiKey);
     }
 
+    public User getUserByAddress(String address){
+        return userManager.getUserByAddress(address);
+    }
+
     public UserTopic saveUserTopic(Topic topic, Subscription sub){
         return userTopicManager.insert(topic, sub);
     }

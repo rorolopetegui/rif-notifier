@@ -9,8 +9,9 @@ import java.util.List;
 @Entity
 public class Subscription {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
 
     @Column(name = "active_until")
     private Date activeUntil;
@@ -42,11 +43,11 @@ public class Subscription {
         this.state = state;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

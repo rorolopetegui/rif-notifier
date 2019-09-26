@@ -1,16 +1,20 @@
 package org.rif.notifier.datamanagers;
+
 import org.rif.notifier.models.entities.Subscription;
 import org.rif.notifier.repositories.SubscriptionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class SubscriptionManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(SubscriptionManager.class);
 
     @Autowired
     private SubscriptionRepository subscriptionRepositorty;
@@ -32,8 +36,11 @@ public class SubscriptionManager {
     }
 
     public Subscription insert(Date activeUntil, int active, String userAddress, int type, String state) {
+        logger.info(Thread.currentThread().getId() + "======= 1");
         Subscription sub = new Subscription(activeUntil, active, userAddress, type, state);
+        logger.info(Thread.currentThread().getId() + "======= 2");
         Subscription result = subscriptionRepositorty.save(sub);
+        logger.info(Thread.currentThread().getId() + "======= 3");
         return result;
     }
 }
