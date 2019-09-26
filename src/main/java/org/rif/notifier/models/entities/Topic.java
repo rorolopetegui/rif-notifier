@@ -20,6 +20,13 @@ public class Topic {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<TopicParams> topicParams ;
 
+    public Topic(){}
+
+    public Topic(String type, String hash){
+        this.type = type;
+        this.hash = hash;
+    }
+
     public int getId() {
         return id;
     }

@@ -5,10 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.SubscriptionConstants;
 import org.rif.notifier.datamanagers.DbManagerFacade;
-import org.rif.notifier.models.entities.Subscription;
-import org.rif.notifier.models.entities.Topic;
-import org.rif.notifier.models.entities.User;
-import org.rif.notifier.models.entities.UserTopic;
+import org.rif.notifier.models.entities.*;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
 import org.rif.notifier.util.Utils;
 import org.slf4j.Logger;
@@ -78,7 +75,7 @@ public class OnBoardingController {
         Topic tp = null;
         User us = dbManagerFacade.getUserByApiKey(apiKey);
         logger.info(Thread.currentThread().getId() + "======= Checking if the user api key corresponds to a user");
-        if(us != null && false){
+        if(us != null){
             //Check if the user did subscribe
             Subscription sub = dbManagerFacade.getSubscriptionByAddress(us.getAddress());
             if(sub != null) {
@@ -86,8 +83,21 @@ public class OnBoardingController {
                 tp = dbManagerFacade.getTopicByHashCode("" + topic.getHashCode());
                 if (tp == null) {
                     logger.info(Thread.currentThread().getId() + "======= Generating topic, cause it doesnt exists");
+                    logger.info(Thread.currentThread().getId() + "======= Topic type: " + topic.getType());
+                    logger.info(Thread.currentThread().getId() + "======= Topic hash: " + topic.getHashCode());
                     //Generate Topic and params
-                    tp = dbManagerFacade.saveTopic(topic);
+                    logger.info(Thread.currentThread().getId() + "======= GENERATING PARAMS FOR TOPIC");
+                    tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.getHashCode());
+                    for(TopicParams param : tp.getTopicParams()){
+                        logger.info(Thread.currentThread().getId() + "=======Param type: " + param.getType());
+                        logger.info(Thread.currentThread().getId() + "=======Param Value: " + param.getType());
+                        logger.info(Thread.currentThread().getId() + "=======Param Order: " + param.getType());
+                        logger.info(Thread.currentThread().getId() + "=======Param ValueType: " + param.getType());
+                        logger.info(Thread.currentThread().getId() + "=======Param Indexed: " + param.getType());
+                        dbManagerFacade.saveTopicParams(
+                                tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed()
+                        );
+                    }
                 }
                 logger.info(Thread.currentThread().getId() + "======= Subscribing to topic");
                 //Subscribe user to this topic
@@ -99,6 +109,6 @@ public class OnBoardingController {
             }
         }
 
-        return new ResponseEntity<>(topic, HttpStatus.OK);
+        return new ResponseEntity<>(tp, HttpStatus.OK);
     }
 }

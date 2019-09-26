@@ -26,6 +26,9 @@ public class DbManagerFacade {
     private TopicManager topicManager;
 
     @Autowired
+    private TopicParamsManager topicParamsManager;
+
+    @Autowired
     private NotifEntityManager notifEntityManager;
 
     @Autowired
@@ -89,8 +92,12 @@ public class DbManagerFacade {
         return topicManager.getTopicByHashCode(hash);
     }
 
-    public Topic saveTopic(Topic tp){
-        return topicManager.insert(tp);
+    public Topic saveTopic(String type, String hash){
+        return topicManager.insert(type, hash);
+    }
+
+    public TopicParams saveTopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed){
+        return topicParamsManager.insert(topic, type, value, order, valueType, indexed);
     }
 
     @Transactional

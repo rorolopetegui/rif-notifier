@@ -1,5 +1,7 @@
 package org.rif.notifier.models.entities;
 
+import org.web3j.abi.datatypes.Bool;
+
 import javax.persistence.*;
 
 @Entity
@@ -22,7 +24,18 @@ public class TopicParams {
     @Column(name = "value_type")
     private String valueType;
 
-    private Boolean indexed;
+    private boolean indexed;
+
+    public TopicParams(){}
+
+    public TopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed){
+        this.topic = topic;
+        this.type = type;
+        this.value = value;
+        this.order = order;
+        this.valueType = valueType;
+        this.indexed = indexed;
+    }
 
     public int getId() {
         return id;
@@ -80,11 +93,11 @@ public class TopicParams {
         this.topic = topic;
     }
 
-    public Boolean getIndexed() {
+    public boolean getIndexed() {
         return indexed;
     }
 
-    public void setIndexed(Boolean indexed) {
+    public void setIndexed(boolean indexed) {
         this.indexed = indexed;
     }
 
@@ -94,7 +107,7 @@ public class TopicParams {
         hash = 31 * hash + value.hashCode();
         hash = 31 * hash + order;
         hash = 31 * hash + valueType.hashCode();
-        hash = 31 * hash + indexed.hashCode();
+        hash = 31 * hash + (indexed ? 1 : 0);
         return hash;
     }
 }

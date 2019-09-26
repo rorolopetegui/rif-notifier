@@ -18,7 +18,8 @@ public class TopicManager {
         return topicRepository.findByHash(hash);
     }
 
-    public Topic insert(Topic tp){
+    public Topic insert(String type, String hash){
+        Topic tp = new Topic(type, hash);
         return topicRepository.save(tp);
     }
 }

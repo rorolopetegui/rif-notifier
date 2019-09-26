@@ -36,11 +36,8 @@ public class SubscriptionManager {
     }
 
     public Subscription insert(Date activeUntil, int active, String userAddress, int type, String state) {
-        logger.info(Thread.currentThread().getId() + "======= 1");
         Subscription sub = new Subscription(activeUntil, active, userAddress, type, state);
-        logger.info(Thread.currentThread().getId() + "======= 2");
         Subscription result = subscriptionRepositorty.save(sub);
-        logger.info(Thread.currentThread().getId() + "======= 3");
         return result;
     }
 }
