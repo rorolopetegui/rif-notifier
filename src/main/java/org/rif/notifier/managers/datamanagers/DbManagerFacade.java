@@ -31,6 +31,9 @@ public class DbManagerFacade {
     @Autowired
     private UserManager userManager;
 
+    @Autowired
+    private DataFetcherManager dataFetcherManager;
+
     public RawData saveRawData(String type, String data, boolean processed, BigInteger block, int idTopic){
        return rawDataManager.insert(type,data,processed, block, idTopic);
     }
@@ -124,5 +127,13 @@ public class DbManagerFacade {
 
     public User getUserByAddress(String address){
         return userManager.getUserByAddress(address);
+    }
+
+    public DataFetcherEntity saveLastBlock(BigInteger lastBlock){
+        return dataFetcherManager.insert(lastBlock);
+    }
+
+    public BigInteger getLastBlock(){
+        return dataFetcherManager.get();
     }
 }
