@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -42,10 +43,10 @@ public class DataFetchingJob {
         List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
         Boolean alreadyAdded;
         for(Subscription sub : activeSubs){
-            List<UserTopic> userTopics = sub.getUserTopic();
-            for(UserTopic uTopic : userTopics){
+            Set<Topic> subTopics = sub.getTopics();
+            for(Topic tp : subTopics){
                 alreadyAdded = false;
-                EthereumBasedListenable newListeneable = MockDatafetcher.getEthereumBasedListenableFromTopic(uTopic);
+                EthereumBasedListenable newListeneable = MockDatafetcher.getEthereumBasedListenableFromTopic(tp);
                 //Performing some checks to not insert when its already in the list
                 if(newListeneable.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)){
                     alreadyAdded = ethereumBasedListenables.stream().anyMatch(item ->

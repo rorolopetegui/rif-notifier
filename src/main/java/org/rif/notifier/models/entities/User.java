@@ -3,8 +3,10 @@ package org.rif.notifier.models.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "notif_users")
 public class User {
 
     @Id

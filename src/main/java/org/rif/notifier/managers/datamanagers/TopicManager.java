@@ -1,5 +1,6 @@
 package org.rif.notifier.managers.datamanagers;
 
+import org.rif.notifier.models.entities.Subscription;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.repositories.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,12 @@ public class TopicManager {
         return topicRepository.findByHash(hash);
     }
 
-    public Topic insert(String type, String hash){
-        Topic tp = new Topic(type, hash);
+    public Topic insert(String type, String hash, Subscription sub){
+        Topic tp = new Topic(type, hash, sub);
+        return topicRepository.save(tp);
+    }
+
+    public Topic update(Topic tp){
         return topicRepository.save(tp);
     }
 }

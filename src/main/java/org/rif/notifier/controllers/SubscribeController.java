@@ -42,6 +42,7 @@ public class SubscribeController {
 
             //Pending to generate a lumino-invoice
             ret = LuminoInvoice.generateInvoice(us.getAddress());
+            resp.setData(ret);
         }else{
             resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
             resp.setStatus(HttpStatus.CONFLICT);
@@ -67,16 +68,18 @@ public class SubscribeController {
                 tp = dbManagerFacade.getTopicByHashCode("" + topic.hashCode());
                 if (tp == null) {
                     //Generate Topic and params
-                    tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode());
+                    tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode(), sub);
                     for(TopicParams param : topic.getTopicParams()){
                         dbManagerFacade.saveTopicParams(
                                 tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed()
                         );
                     }
+                }else{
+                    //Add topic-subscription relationship
+                    tp.addSubscription(sub);
+                    dbManagerFacade.updateTopic(tp);
                 }
-                //Subscribe user to this topic
-                UserTopic ut = dbManagerFacade.saveUserTopic(tp, sub);
-                //This line is throwing error cause the UT is too heavy
+                //This line is throwing error cause the Json is too large
                 //resp.setData(ut);
             }else{
                 //Return an error because the user still did not create the subscription

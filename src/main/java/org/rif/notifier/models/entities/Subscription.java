@@ -3,14 +3,12 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 public class Subscription {
     @Id
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
 
     @Column(name = "active_until")
@@ -25,9 +23,9 @@ public class Subscription {
 
     private String state;
 
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<UserTopic> userTopic ;
+    //Setted to EAGER, at the start of DataFetchingJob we iterate through Topics, and if it's lazy, it throws errors
+    @ManyToMany(mappedBy = "subscriptions", fetch=FetchType.EAGER)
+    private Set<Topic> topics = new HashSet<>();
 
     @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -83,14 +81,6 @@ public class Subscription {
         this.type = type;
     }
 
-    public List<UserTopic> getUserTopic() {
-        return userTopic;
-    }
-
-    public void setUserTopic(List<UserTopic> userTopic) {
-        this.userTopic = userTopic;
-    }
-
     public List<NotificationPreferences> getNotificationPreferences() {
         return notificationPreferences;
     }
@@ -105,5 +95,13 @@ public class Subscription {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public Set<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(Set<Topic> topics) {
+        this.topics = topics;
     }
 }

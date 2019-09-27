@@ -20,9 +20,6 @@ public class DbManagerFacade {
     private SubscriptionManager subscriptionManager;
 
     @Autowired
-    private UserTopicManager userTopicManager;
-
-    @Autowired
     private TopicManager topicManager;
 
     @Autowired
@@ -84,6 +81,10 @@ public class DbManagerFacade {
         return subscriptionManager.insert(activeUntil, active, userAddress, type, state);
     }
 
+    public Subscription updateSubscription(Subscription sub) {
+        return subscriptionManager.update(sub);
+    }
+
     public Topic getTopicById(int Id){
         return topicManager.getTopicById(Id);
     }
@@ -92,8 +93,12 @@ public class DbManagerFacade {
         return topicManager.getTopicByHashCode(hash);
     }
 
-    public Topic saveTopic(String type, String hash){
-        return topicManager.insert(type, hash);
+    public Topic saveTopic(String type, String hash, Subscription sub){
+        return topicManager.insert(type, hash, sub);
+    }
+
+    public Topic updateTopic(Topic tp){
+        return topicManager.update(tp);
     }
 
     public TopicParams saveTopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed){
@@ -119,9 +124,5 @@ public class DbManagerFacade {
 
     public User getUserByAddress(String address){
         return userManager.getUserByAddress(address);
-    }
-
-    public UserTopic saveUserTopic(Topic topic, Subscription sub){
-        return userTopicManager.insert(topic, sub);
     }
 }

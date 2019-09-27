@@ -1,8 +1,7 @@
 package org.rif.notifier.models.entities;
 
-import org.web3j.abi.datatypes.Bool;
-
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "topic_params")
@@ -104,13 +103,8 @@ public class TopicParams {
         this.indexed = indexed;
     }
 
-    public int getHashCode(){
-        int hash = 7;
-        hash = 31 * hash + type.hashCode();
-        hash = 31 * hash + value.hashCode();
-        hash = 31 * hash + order;
-        hash = 31 * hash + valueType.hashCode();
-        hash = 31 * hash + (indexed ? 1 : 0);
-        return hash;
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, value, order, valueType, indexed);
     }
 }

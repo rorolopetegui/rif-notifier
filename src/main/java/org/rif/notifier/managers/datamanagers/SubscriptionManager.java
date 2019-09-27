@@ -40,4 +40,9 @@ public class SubscriptionManager {
         Subscription result = subscriptionRepositorty.save(sub);
         return result;
     }
+
+    public Subscription update(Subscription sub) {
+        Subscription result = subscriptionRepositorty.save(sub);
+        return result;
+    }
 }

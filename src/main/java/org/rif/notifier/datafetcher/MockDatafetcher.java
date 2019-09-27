@@ -3,7 +3,6 @@ package org.rif.notifier.datafetcher;
 import org.rif.notifier.models.web3Extensions.RSKTypeReference;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.TopicParams;
-import org.rif.notifier.models.entities.UserTopic;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
 import org.rif.notifier.models.listenable.EthereumBasedListenableTypes;
 import org.rif.notifier.util.Utils;
@@ -23,9 +22,8 @@ public class MockDatafetcher {
 
     private static final String PATH_TO_TYPES = "org.web3j.abi.datatypes.";
 
-    private static EthereumBasedListenable CreateContractEventListeneable(UserTopic uTopic) throws ClassNotFoundException {
+    private static EthereumBasedListenable CreateContractEventListeneable(Topic tp) throws ClassNotFoundException {
         List<TypeReference<?>> params = new ArrayList<>();
-        Topic tp = uTopic.getTopic();
         //Streaming to get the address, eventName and parameters to create the listeneable
         String address = tp.getTopicParams().stream()
                 .filter(item -> item.getType().equals("CONTRACT_ADDRESS")).findFirst().get().getValue();
@@ -52,17 +50,17 @@ public class MockDatafetcher {
         return new EthereumBasedListenable(address, EthereumBasedListenableTypes.CONTRACT_EVENT, params, eventName, tp.getId());
     }
 
-    public static EthereumBasedListenable getEthereumBasedListenableFromTopic(UserTopic uTopic) throws ClassNotFoundException {
+    public static EthereumBasedListenable getEthereumBasedListenableFromTopic(Topic tp) throws ClassNotFoundException {
         EthereumBasedListenable rtn = null;
-        switch (uTopic.getTopic().getType()){
+        switch (tp.getType()){
             case CONTRACT_EVENT:
-                rtn = CreateContractEventListeneable(uTopic);
+                rtn = CreateContractEventListeneable(tp);
                 break;
             case NEW_BLOCK:
-                rtn = new EthereumBasedListenable(null, EthereumBasedListenableTypes.NEW_BLOCK, null, null, uTopic.getTopic().getId());
+                rtn = new EthereumBasedListenable(null, EthereumBasedListenableTypes.NEW_BLOCK, null, null, tp.getId());
                 break;
             case NEW_TRANSACTIONS:
-                rtn = new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null, uTopic.getTopic().getId());
+                rtn = new EthereumBasedListenable("0x2", EthereumBasedListenableTypes.NEW_TRANSACTIONS, null, null, tp.getId());
                 break;
         }
         return rtn;
