@@ -1,23 +1,23 @@
 package org.rif.notifier.models.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigInteger;
 
 @Entity
+@Table(name = "datafetcher")
 public class DataFetcherEntity {
+
     @Id
-    public int id;
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+    private int id;
 
     @Column(name = "last_block")
-    public BigInteger lastBlock;
+    private BigInteger lastBlock;
 
     public DataFetcherEntity() {}
 
-    public DataFetcherEntity(int id, BigInteger lastBlock) {
+    public DataFetcherEntity(int id) {
         this.id = id;
-        this.lastBlock = lastBlock;
     }
 
     public int getId() {

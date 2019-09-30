@@ -69,7 +69,9 @@ public class DataFetchingJob {
         }
         // Get latest block for this run
         BigInteger to = rskBlockchainService.getLastBlock();
-        BigInteger from = to.subtract(new BigInteger("5"));// must read latest from db for now it queries latest 5 blocks
+        //BigInteger from = to.subtract(new BigInteger("5"));// must read latest from db for now it queries latest 5 blocks
+        BigInteger from = dbManagerFacade.getLastBlock();
+        dbManagerFacade.saveLastBlock(to);
 
         //Fetching
         logger.info(Thread.currentThread().getId() + String.format(" - Starting fetching from %s to %s", from, to));
