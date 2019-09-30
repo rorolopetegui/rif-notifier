@@ -23,10 +23,10 @@ DROP TABLE IF EXISTS `datafetcher`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `datafetcher` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `last_block` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,6 +35,7 @@ CREATE TABLE `datafetcher` (
 
 LOCK TABLES `datafetcher` WRITE;
 /*!40000 ALTER TABLE `datafetcher` DISABLE KEYS */;
+INSERT INTO `datafetcher` VALUES (1,3861);
 /*!40000 ALTER TABLE `datafetcher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -79,7 +80,7 @@ CREATE TABLE `notif_users` (
 
 LOCK TABLES `notif_users` WRITE;
 /*!40000 ALTER TABLE `notif_users` DISABLE KEYS */;
-INSERT INTO `notif_users` VALUES ('0x0','hgdvNp6C0VUI3io_Zmy0ocqhwx-B8OND'),('0x1','j-44B1Rp3QvH9x8Qwj9CMQPfGY7XIlMz');
+INSERT INTO `notif_users` VALUES ('0x0','hgdvNp6C0VUI3io_Zmy0ocqhwx-B8OND'),('0x1','j-44B1Rp3QvH9x8Qwj9CMQPfGY7XIlMz'),('0x2','L4FtaLSMUXCNKCwRAMMjhy7R1GRRcyb-');
 /*!40000 ALTER TABLE `notif_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,7 +200,7 @@ CREATE TABLE `subscription` (
   `type` int(11) DEFAULT '0',
   `state` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -321,4 +322,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-27 16:55:49
+-- Dump completed on 2019-09-30 18:02:17
