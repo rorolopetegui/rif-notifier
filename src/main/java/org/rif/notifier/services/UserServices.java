@@ -15,6 +15,10 @@ public class UserServices {
         return dbManagerFacade.getUserByAddress(address) != null;
     }
 
+    public User getUserByApiKey(String apiKey){
+        return dbManagerFacade.getUserByApiKey(apiKey);
+    }
+
     public User saveUser(String address){
         String apiKey = Utils.generateNewToken();
         return dbManagerFacade.saveUser(address, apiKey);

@@ -8,6 +8,8 @@ import org.rif.notifier.constants.SubscriptionConstants;
 import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.*;
+import org.rif.notifier.services.SubscribeServices;
+import org.rif.notifier.services.UserServices;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,12 @@ public class SubscribeController {
     private static final Logger logger = LoggerFactory.getLogger(SubscribeController.class);
 
     @Autowired
+    private SubscribeServices subscribeServices;
+
+    @Autowired
+    private UserServices userServices;
+
+    @Autowired
     private DbManagerFacade dbManagerFacade;
 
     @ApiOperation(value = "Generate a subscription with an Apikey",
@@ -34,15 +42,9 @@ public class SubscribeController {
             @RequestParam(name = "type", required=false) String type,
             @RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
-        String ret = "";
-        User us = dbManagerFacade.getUserByApiKey(apiKey);
+        User us = userServices.getUserByApiKey(apiKey);
         if(us != null){
-            int myType = Integer.valueOf(type);
-            Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), myType, SubscriptionConstants.PENDING_PAYMENT);
-
-            //Pending to generate a lumino-invoice
-            ret = LuminoInvoice.generateInvoice(us.getAddress());
-            resp.setData(ret);
+            resp.setData(subscribeServices.createSubscription(us, Integer.valueOf(type)));
         }else{
             resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
             resp.setStatus(HttpStatus.CONFLICT);
