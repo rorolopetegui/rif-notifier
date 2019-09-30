@@ -1,5 +1,6 @@
-package org.rif.notifier.managers.datamanagers;
+package org.rif.notifier.managers;
 
+import org.rif.notifier.managers.datamanagers.*;
 import org.rif.notifier.models.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

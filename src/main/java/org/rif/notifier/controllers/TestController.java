@@ -17,8 +17,6 @@ import org.rif.notifier.repositories.*;
 @RestController
 public class TestController {
 
-    private static final String BASE_CONTROLLER_PATH = "/test";
-
     @Autowired
     private TestRepository testRepository;
 

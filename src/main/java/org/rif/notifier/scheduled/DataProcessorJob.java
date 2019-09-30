@@ -1,6 +1,6 @@
 package org.rif.notifier.scheduled;
 
-import org.rif.notifier.managers.datamanagers.DbManagerFacade;
+import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

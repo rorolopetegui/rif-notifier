@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.constants.SubscriptionConstants;
-import org.rif.notifier.managers.datamanagers.DbManagerFacade;
+import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.*;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
@@ -28,11 +28,11 @@ public class SubscribeController {
 
     @ApiOperation(value = "Generate a subscription with an Apikey",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
-    @RequestMapping(value = "/subscribe", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @RequestMapping(value = "/subscribe", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> subscribe(
             @RequestParam(name = "type", required=false) String type,
-            @RequestParam(name = "apikey") String apiKey) {
+            @RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
         String ret = "";
         User us = dbManagerFacade.getUserByApiKey(apiKey);
@@ -56,7 +56,7 @@ public class SubscribeController {
     @RequestMapping(value = "/subscribeToTopic", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> subscribeToTopic(
-            @RequestParam(name = "apikey") String apiKey,
+            @RequestHeader(value="apiKey") String apiKey,
             @RequestBody Topic topic) {
         DTOResponse resp = new DTOResponse();
         Topic tp = null;

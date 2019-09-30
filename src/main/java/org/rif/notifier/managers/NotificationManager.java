@@ -1,6 +1,5 @@
 package org.rif.notifier.managers;
 
-import org.rif.notifier.managers.datamanagers.DbManagerFacade;
 import org.rif.notifier.models.entities.Notification;
 import org.rif.notifier.models.entities.NotificationPreferences;
 import org.rif.notifier.models.entities.Subscription;

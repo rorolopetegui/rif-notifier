@@ -3,7 +3,7 @@ package org.rif.notifier.controllers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
-import org.rif.notifier.managers.datamanagers.DbManagerFacade;
+import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.entities.Notification;
 import org.rif.notifier.models.entities.User;
 import org.rif.notifier.managers.NotificationManager;
@@ -20,7 +20,6 @@ import java.util.List;
 @Api(tags = {"Notification Resource"})
 @RestController
 public class NotificationController {
-    private static final String BASE_CONTROLLER_PATH = "/getNotifications";
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
