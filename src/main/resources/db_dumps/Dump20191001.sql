@@ -35,7 +35,7 @@ CREATE TABLE `datafetcher` (
 
 LOCK TABLES `datafetcher` WRITE;
 /*!40000 ALTER TABLE `datafetcher` DISABLE KEYS */;
-INSERT INTO `datafetcher` VALUES (1,3861);
+INSERT INTO `datafetcher` VALUES (1,16066);
 /*!40000 ALTER TABLE `datafetcher` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,7 +80,7 @@ CREATE TABLE `notif_users` (
 
 LOCK TABLES `notif_users` WRITE;
 /*!40000 ALTER TABLE `notif_users` DISABLE KEYS */;
-INSERT INTO `notif_users` VALUES ('0x0','hgdvNp6C0VUI3io_Zmy0ocqhwx-B8OND'),('0x1','j-44B1Rp3QvH9x8Qwj9CMQPfGY7XIlMz'),('0x2','L4FtaLSMUXCNKCwRAMMjhy7R1GRRcyb-');
+INSERT INTO `notif_users` VALUES ('0x0','hgdvNp6C0VUI3io_Zmy0ocqhwx-B8OND'),('0x1','j-44B1Rp3QvH9x8Qwj9CMQPfGY7XIlMz');
 /*!40000 ALTER TABLE `notif_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -200,7 +200,7 @@ CREATE TABLE `subscription` (
   `type` int(11) DEFAULT '0',
   `state` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -248,7 +248,7 @@ CREATE TABLE `topic` (
   `type` varchar(45) NOT NULL,
   `hash` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +257,7 @@ CREATE TABLE `topic` (
 
 LOCK TABLES `topic` WRITE;
 /*!40000 ALTER TABLE `topic` DISABLE KEYS */;
-INSERT INTO `topic` VALUES (10,'CONTRACT_EVENT','1385929594'),(11,'CONTRACT_EVENT','1644534250');
+INSERT INTO `topic` VALUES (20,'CONTRACT_EVENT','1385929594');
 /*!40000 ALTER TABLE `topic` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -274,10 +274,10 @@ CREATE TABLE `topic_params` (
   `param_type` enum('CONTRACT_ADDRESS','EVENT_NAME','EVENT_PARAM') NOT NULL,
   `value` varchar(45) NOT NULL,
   `param_order` int(11) DEFAULT '0',
-  `value_type` varchar(45) NOT NULL,
+  `value_type` varchar(45) DEFAULT 'string',
   `is_indexed` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -286,7 +286,7 @@ CREATE TABLE `topic_params` (
 
 LOCK TABLES `topic_params` WRITE;
 /*!40000 ALTER TABLE `topic_params` DISABLE KEYS */;
-INSERT INTO `topic_params` VALUES (11,10,'CONTRACT_ADDRESS','0x96463f6463771ed9f9d730986501b17127823fd2',0,'string',0),(12,10,'EVENT_NAME','LogSellArticle',0,'string',0),(13,10,'EVENT_PARAM','seller',0,'Address',1),(14,10,'EVENT_PARAM','article',0,'Utf8String',0),(15,10,'EVENT_PARAM','price',0,'Uint256',0),(16,11,'CONTRACT_ADDRESS','0x96463f6463771ed9f9d730986501b17127823fd2',0,'string',0),(17,11,'EVENT_NAME','LogUpdateArticle',0,'string',0),(18,11,'EVENT_PARAM','article',0,'Utf8String',0),(19,11,'EVENT_PARAM','description',0,'Utf8String',0),(20,11,'EVENT_PARAM','price',0,'Uint256',0);
+INSERT INTO `topic_params` VALUES (46,20,'CONTRACT_ADDRESS','0x96463f6463771ed9f9d730986501b17127823fd2',0,'string',0),(47,20,'EVENT_NAME','LogSellArticle',0,'string',0),(48,20,'EVENT_PARAM','seller',0,'Address',1),(49,20,'EVENT_PARAM','article',0,'Utf8String',0),(50,20,'EVENT_PARAM','price',0,'Uint256',0);
 /*!40000 ALTER TABLE `topic_params` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,7 +309,7 @@ CREATE TABLE `user_topic` (
 
 LOCK TABLES `user_topic` WRITE;
 /*!40000 ALTER TABLE `user_topic` DISABLE KEYS */;
-INSERT INTO `user_topic` VALUES (10,'8'),(10,'7'),(11,'7'),(11,'8');
+INSERT INTO `user_topic` VALUES (20,'8');
 /*!40000 ALTER TABLE `user_topic` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -322,4 +322,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-09-30 18:02:17
+-- Dump completed on 2019-10-01 17:04:33

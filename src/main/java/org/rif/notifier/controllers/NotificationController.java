@@ -3,7 +3,9 @@ package org.rif.notifier.controllers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
+import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.managers.DbManagerFacade;
+import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.Notification;
 import org.rif.notifier.models.entities.User;
 import org.rif.notifier.managers.NotificationManager;
@@ -30,20 +32,23 @@ public class NotificationController {
     private DbManagerFacade dbManagerFacade;
 
     @ApiOperation(value = "Retrieve notifications for a address",
-            response = Notification.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/getNotifications", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
-    public ResponseEntity<List<Notification>> GetNotifications(@RequestHeader(value="apiKey") String apiKey) {
+    public ResponseEntity<DTOResponse> GetNotifications(@RequestHeader(value="apiKey") String apiKey) {
+        DTOResponse resp = new DTOResponse();
         List<Notification> notifications = new ArrayList<>();
         if(apiKey != null && !apiKey.isEmpty()){
             User us = dbManagerFacade.getUserByApiKey(apiKey);
             if(us != null){
                 notifications = notificationManager.getNotificationsForAddress(us.getAddress());
+                resp.setData(notifications);
             }else{
                 //Return error, user does not exist
+                resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
+                resp.setStatus(HttpStatus.CONFLICT);
             }
-
         }
-        return new ResponseEntity<>(notifications, HttpStatus.OK);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }

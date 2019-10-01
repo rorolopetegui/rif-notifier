@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.ResponseConstants;
-import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.*;
 import org.rif.notifier.services.SubscribeServices;
@@ -37,7 +36,12 @@ public class SubscribeController {
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
         if(us != null){
-            resp.setData(subscribeServices.createSubscription(us, Integer.valueOf(type)));
+            if(subscribeServices.getSubscriptionByAddress(us.getAddress()) == null) {
+                resp.setData(subscribeServices.createSubscription(us, Integer.parseInt(type)));
+            }else{
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ADDED);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
         }else{
             resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
             resp.setStatus(HttpStatus.CONFLICT);

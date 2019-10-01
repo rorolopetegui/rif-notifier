@@ -6,7 +6,6 @@ import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.services.UserServices;
-import org.rif.notifier.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

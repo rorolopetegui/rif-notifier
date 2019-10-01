@@ -10,5 +10,7 @@ public interface ResponseConstants {
 
     String SUBSCRIPTION_NOT_FOUND = "Subscription not found, first try to subscribe";
 
+    String SUBSCRIPTION_ALREADY_ADDED = "This address is already subscribed";
+
     String TOPIC_VALIDATION_FAILED = "Topic structure failed, please review your json";
 }
