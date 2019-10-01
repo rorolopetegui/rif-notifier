@@ -9,4 +9,6 @@ public interface ResponseConstants {
     String APIKEY_ALREADY_ADDED = "The user is already registered";
 
     String SUBSCRIPTION_NOT_FOUND = "Subscription not found, first try to subscribe";
+
+    String TOPIC_VALIDATION_FAILED = "Topic structure failed, please review your json";
 }

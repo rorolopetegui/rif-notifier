@@ -33,7 +33,7 @@ public class NotificationController {
             response = Notification.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/getNotifications", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
-    public ResponseEntity<List<Notification>> GetNotifications(@RequestParam(name = "apikey") String apiKey) {
+    public ResponseEntity<List<Notification>> GetNotifications(@RequestHeader(value="apiKey") String apiKey) {
         List<Notification> notifications = new ArrayList<>();
         if(apiKey != null && !apiKey.isEmpty()){
             User us = dbManagerFacade.getUserByApiKey(apiKey);

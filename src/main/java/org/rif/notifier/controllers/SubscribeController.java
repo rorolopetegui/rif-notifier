@@ -27,9 +27,6 @@ public class SubscribeController {
     @Autowired
     private UserServices userServices;
 
-    @Autowired
-    private DbManagerFacade dbManagerFacade;
-
     @ApiOperation(value = "Generate a subscription with an Apikey",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/subscribe", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
@@ -57,13 +54,18 @@ public class SubscribeController {
             @RequestHeader(value="apiKey") String apiKey,
             @RequestBody Topic topic) {
         DTOResponse resp = new DTOResponse();
-        Topic tp = null;
         User us = userServices.getUserByApiKey(apiKey);
         if(us != null){
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if(sub != null) {
-                subscribeServices.subscribeToTopic(topic, sub);
+                if(subscribeServices.validateTopic(topic)){
+                    subscribeServices.subscribeToTopic(topic, sub);
+                }else{
+                    //Return an error because the user sends a wrong structure of topic
+                    resp.setMessage(ResponseConstants.TOPIC_VALIDATION_FAILED);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
             }else{
                 //Return an error because the user still did not create the subscription
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
