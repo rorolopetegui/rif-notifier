@@ -11,8 +11,8 @@ public class TopicParamsManager {
     @Autowired
     private TopicParamsRepository topicParamsRepository;
 
-    public TopicParams insert(Topic topic, String type, String value, int order, String valueType, boolean indexed){
-        TopicParams tp = new TopicParams(topic, type, value, order, valueType, indexed);
+    public TopicParams insert(Topic topic, String type, String value, int order, String valueType, boolean indexed, String filter){
+        TopicParams tp = new TopicParams(topic, type, value, order, valueType, indexed, filter);
         return topicParamsRepository.save(tp);
     }
 }

@@ -28,15 +28,18 @@ public class TopicParams {
     @Column(name = "is_indexed")
     private boolean indexed;
 
+    private String filter;
+
     public TopicParams(){}
 
-    public TopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed){
+    public TopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed, String filter){
         this.topic = topic;
         this.type = type;
         this.value = value;
         this.order = order;
         this.valueType = valueType;
         this.indexed = indexed;
+        this.filter = filter;
     }
 
     public int getId() {
@@ -103,8 +106,20 @@ public class TopicParams {
         this.indexed = indexed;
     }
 
+    public boolean isIndexed() {
+        return indexed;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(type, value, order, valueType, indexed);
+        return Objects.hash(type, value, order, valueType, indexed, filter);
     }
 }

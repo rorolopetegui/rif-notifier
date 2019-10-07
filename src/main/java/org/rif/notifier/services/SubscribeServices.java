@@ -46,7 +46,7 @@ public class SubscribeServices  {
             tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode(), sub);
             for(TopicParams param : topic.getTopicParams()){
                 dbManagerFacade.saveTopicParams(
-                        tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed()
+                        tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed(), param.getFilter()
                 );
             }
         }else{

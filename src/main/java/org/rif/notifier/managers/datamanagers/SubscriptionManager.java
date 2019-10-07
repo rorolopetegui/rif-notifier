@@ -31,6 +31,12 @@ public class SubscriptionManager {
         return lst;
     }
 
+    public List<Subscription> findByContractAddressAndSubscriptionActive(String address){
+        List<Subscription> lst = new ArrayList<>();
+        subscriptionRepositorty.findByContractAddressAndSubscriptionActive(address).forEach(lst::add);
+        return lst;
+    }
+
     public Subscription getSubscriptionByAddress(String user_address){
         return subscriptionRepositorty.findByUserAddress(user_address);
     }

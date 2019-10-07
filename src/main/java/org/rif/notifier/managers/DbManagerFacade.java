@@ -77,6 +77,10 @@ public class DbManagerFacade {
         return subscriptionManager.getActiveSubscriptionsByTopicId(idTopic);
     }
 
+    public List<Subscription> findByContractAddressAndSubscriptionActive(String address){
+        return subscriptionManager.findByContractAddressAndSubscriptionActive(address);
+    }
+
     public Subscription getSubscriptionByAddress(String user_address){
         return subscriptionManager.getSubscriptionByAddress(user_address);
     }
@@ -105,8 +109,8 @@ public class DbManagerFacade {
         return topicManager.update(tp);
     }
 
-    public TopicParams saveTopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed){
-        return topicParamsManager.insert(topic, type, value, order, valueType, indexed);
+    public TopicParams saveTopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed, String filter){
+        return topicParamsManager.insert(topic, type, value, order, valueType, indexed, filter);
     }
 
     @Transactional
