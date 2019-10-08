@@ -94,80 +94,83 @@ public class DataFetchingJob {
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching events task = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching events: " + fetchedEvents);
-                ObjectMapper mapper = new ObjectMapper();
                 try {
-                    String rawEvent = mapper.writeValueAsString(fetchedEvents.get(0));
-                    List<RawData> rawEvts = new ArrayList<>();
-                    try {
-                        EventRawData rwDt = mapper.readValue(rawEvent, EventRawData.class);
-                        List<Subscription> subs = dbManagerFacade.findByContractAddressAndSubscriptionActive(rwDt.getContractAddress());
-                        for(Subscription sub : subs) {
-                            //Here i have all topics with event name same as rawdata and same contract address
-                            sub.getTopics().stream().filter(item ->
-                                    item.getType().equals(CONTRACT_EVENT)
-                                            && item.getTopicParams().stream().anyMatch(param ->
-                                            param.getType().equals(CONTRACT_EVENT_NAME)
-                                                    && param.getValue().equals(rwDt.getEventName())
-                                    )
-                                            && item.getTopicParams().stream().anyMatch(param ->
-                                            param.getType().equals(CONTRACT_EVENT_ADDRESS)
-                                                    && param.getValue().equals(rwDt.getContractAddress())
-                                    )
-                            ).forEach(tp -> {
-                                rwDt.setTopicId(tp.getId());
-                                //One user can have lots of filters for the same event, so we need to check if this subscription has some filters to apply
-                                List<TopicParams> filterParams = new ArrayList<>();
-                                //Try getting the parameters to be filtered
-                                tp.getTopicParams().stream().filter(param ->
-                                        param.getType().equals(CONTRACT_EVENT_PARAM)
-                                                && param.getFilter() != null
-                                                && !param.getFilter().isEmpty()
-                                ).forEach(filterParams::add);
-                                fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), rwDt.toString(), false, fetchedEvent.getBlockNumber(), tp.getId()))
-                                .forEach(newItem -> {
-                                    AtomicBoolean tryAdd = new AtomicBoolean(true);
-                                    if (filterParams.size() > 0) {
-                                        //Got some filters to apply
-                                        filterParams.forEach(param -> {
-                                            //Param with filters
-                                            EventRawDataParam rawParam = rwDt.getValues().get(param.getOrder());
-                                            //This need to be checked in a function that checks the types as TYPE_NAME, etc
-                                            //Hardcoded because when retrieving from the listener the type is equals to string and not Utf8String
-                                            if (!((rawParam.getTypeAsString().toLowerCase().equals(param.getValueType().toLowerCase())
-                                                    || (param.getValueType().equals("Utf8String") && rawParam.getTypeAsString().equals(Utf8String.TYPE_NAME)))
-                                                    && rawParam.getValue().equals(param.getFilter()))
-                                            ) {
-                                                //Param is not the same type as the type getted by the listener or not got the same info
-                                                tryAdd.set(false);
-                                            }
-                                        });
-                                    }
-
-                                    //Checking if the data was filtered
-                                    if (tryAdd.get()) {
-                                        if (rawEvts.size() > 0) {
-                                            //Rawdata was not added and need to be added
-                                            if (rawEvts.stream().noneMatch(raw -> raw.getBlock().equals(newItem.getBlock()) && raw.getIdTopic() == tp.getId()))
-                                                rawEvts.add(newItem);
-                                        } else {
-                                            rawEvts.add(newItem);
-                                        }
-                                    }
-                                });
-                            });
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    if(!rawEvts.isEmpty()){
-                        dbManagerFacade.saveRawDataBatch(rawEvts);
-                    }
+                    processFetchedEvents(fetchedEvents);
                 } catch (JsonProcessingException e) {
                     logger.error("Error converting contract event data to string: ", throwable);
                 }
             });
         });
+    }
+
+    private void processFetchedEvents(List<FetchedEvent> fetchedEvents) throws JsonProcessingException{
+        ObjectMapper mapper = new ObjectMapper();
+        String rawEvent = mapper.writeValueAsString(fetchedEvents.get(0));
+        List<RawData> rawEvts = new ArrayList<>();
+        try {
+            EventRawData rwDt = mapper.readValue(rawEvent, EventRawData.class);
+            List<Subscription> subs = dbManagerFacade.findByContractAddressAndSubscriptionActive(rwDt.getContractAddress());
+            for (Subscription sub : subs) {
+                //Here i have all topics with event name same as rawdata and same contract address
+                sub.getTopics().stream().filter(item ->
+                        item.getType().equals(CONTRACT_EVENT)
+                                && item.getTopicParams().stream().anyMatch(param ->
+                                param.getType().equals(CONTRACT_EVENT_NAME)
+                                        && param.getValue().equals(rwDt.getEventName())
+                        )
+                                && item.getTopicParams().stream().anyMatch(param ->
+                                param.getType().equals(CONTRACT_EVENT_ADDRESS)
+                                        && param.getValue().equals(rwDt.getContractAddress())
+                        )
+                ).forEach(tp -> {
+                    rwDt.setTopicId(tp.getId());
+                    //One user can have lots of filters for the same event, so we need to check if this subscription has some filters to apply
+                    List<TopicParams> filterParams = new ArrayList<>();
+                    //Try getting the parameters to be filtered
+                    tp.getTopicParams().stream().filter(param ->
+                            param.getType().equals(CONTRACT_EVENT_PARAM)
+                                    && param.getFilter() != null
+                                    && !param.getFilter().isEmpty()
+                    ).forEach(filterParams::add);
+                    fetchedEvents.stream().map(fetchedEvent -> new RawData(EthereumBasedListenableTypes.CONTRACT_EVENT.toString(), rwDt.toString(), false, fetchedEvent.getBlockNumber(), tp.getId()))
+                            .forEach(newItem -> {
+                                AtomicBoolean tryAdd = new AtomicBoolean(true);
+                                if (filterParams.size() > 0) {
+                                    //Got some filters to apply
+                                    filterParams.forEach(param -> {
+                                        //Param with filters
+                                        EventRawDataParam rawParam = rwDt.getValues().get(param.getOrder());
+                                        //This need to be checked in a function that checks the types as TYPE_NAME, etc
+                                        //Hardcoded because when retrieving from the listener the type is equals to string and not Utf8String
+                                        if (!((rawParam.getTypeAsString().toLowerCase().equals(param.getValueType().toLowerCase())
+                                                || (param.getValueType().equals("Utf8String") && rawParam.getTypeAsString().equals(Utf8String.TYPE_NAME)))
+                                                && rawParam.getValue().equals(param.getFilter()))
+                                        ) {
+                                            //Param is not the same type as the type getted by the listener or not got the same info
+                                            tryAdd.set(false);
+                                        }
+                                    });
+                                }
+                                //Checking if the data was filtered
+                                if (tryAdd.get()) {
+                                    if (rawEvts.size() > 0) {
+                                        //Rawdata was not added and need to be added
+                                        if (rawEvts.stream().noneMatch(raw -> raw.getBlock().equals(newItem.getBlock()) && raw.getIdTopic() == tp.getId()))
+                                            rawEvts.add(newItem);
+                                    } else {
+                                        rawEvts.add(newItem);
+                                    }
+                                }
+                            });
+                });
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(!rawEvts.isEmpty()) {
+            dbManagerFacade.saveRawDataBatch(rawEvts);
+        }
     }
 
     private List<EthereumBasedListenable> getListeneables() throws ClassNotFoundException {
