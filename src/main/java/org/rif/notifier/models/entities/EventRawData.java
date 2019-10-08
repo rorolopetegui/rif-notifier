@@ -50,5 +50,16 @@ public class EventRawData {
     public void setContractAddress(String contractAddress) {
         this.contractAddress = contractAddress;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"topicId\":" + topicId +
+                ",\"values\":" + values +
+                ",\"blockNumber\":" + blockNumber +
+                ",\"eventName\":\"" + eventName + "\"" +
+                ",\"contractAddress\":\"" + contractAddress + "\"" +
+                '}';
+    }
 }
 

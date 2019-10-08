@@ -20,4 +20,12 @@ public class EventRawDataParam{
     public void setTypeAsString(String typeAsString) {
         this.typeAsString = typeAsString;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"value\":\"" + value + "\"" +
+                ",\"typeAsString\":\"" + typeAsString + "\"" +
+                "}";
+    }
 }
