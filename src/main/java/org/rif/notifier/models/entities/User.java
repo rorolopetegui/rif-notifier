@@ -37,4 +37,12 @@ public class User {
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "address=" + address +
+                ", apiKey=" + apiKey +
+                '}';
+    }
 }

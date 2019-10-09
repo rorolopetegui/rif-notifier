@@ -88,4 +88,15 @@ public class Topic {
     public int hashCode() {
         return Objects.hash(type, topicParams);
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"type\":\"" + type + "\"" +
+                ", \"hash\":\"" + hash + "\"" +
+                ", \"subscriptions\":" + subscriptions +
+                ", \"topicParams\":" + topicParams +
+                '}';
+    }
 }

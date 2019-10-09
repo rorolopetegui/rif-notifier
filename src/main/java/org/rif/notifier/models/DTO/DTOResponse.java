@@ -37,4 +37,13 @@ public class DTOResponse {
     public void setStatus(HttpStatus status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"message\":\"" + message + "\"" +
+                ", \"data\":\"" + data + "\"" +
+                ", \"status\":\"" + status + "\"" +
+                '}';
+    }
 }

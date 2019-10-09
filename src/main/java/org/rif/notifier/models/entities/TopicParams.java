@@ -122,4 +122,18 @@ public class TopicParams {
     public int hashCode() {
         return Objects.hash(type, value, order, valueType, indexed, filter);
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"topic\":" + topic +
+                ", \"type\":\"" + type + "\"" +
+                ", \"value\":\"" + value + "\"" +
+                ", \"order\":" + order +
+                ", \"valueType\":\"" + valueType + "\"" +
+                ", \"indexed\":" + indexed +
+                ", \"filter\":\"" + filter + "\"" +
+                '}';
+    }
 }
