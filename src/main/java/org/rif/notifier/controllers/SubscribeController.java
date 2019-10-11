@@ -91,6 +91,6 @@ public class SubscribeController {
             resp.setStatus(HttpStatus.CONFLICT);
         }
 
-        return new ResponseEntity<>(resp, HttpStatus.OK);
+        return new ResponseEntity<>(resp, resp.getStatus());
     }
 }

@@ -3,6 +3,7 @@ package org.rif.notifier.tests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.controllers.UserController;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.User;
@@ -37,19 +38,36 @@ public class UserControllerTest {
     public void canRegister() throws Exception {
         String address = "0x0";
         DTOResponse dto = new DTOResponse();
-        //String apiKey = Utils.generateNewToken();
-        //User us = new User(address, apiKey);
-        //dto.setData(us.toString());
-        //when(userServices.saveUser(address)).thenReturn(us);
+        when(userServices.userExists(address)).thenReturn(false);
         MvcResult result = mockMvc.perform(
                 post("/users")
                         .param("address", address)
         )
-        .andExpect(status().isOk())
-        .andReturn();
+                .andExpect(status().isOk())
+                .andReturn();
         DTOResponse dtResponse = new ObjectMapper().readValue(
                 result.getResponse().getContentAsByteArray(),
                 DTOResponse.class);
         assertEquals(dto.toString(), dtResponse.toString());
+    }
+    @Test
+    public void errorUserAlreadyRegistered() throws Exception {
+        String address = "0x0";
+        DTOResponse dto = new DTOResponse();
+        dto.setMessage(ResponseConstants.APIKEY_ALREADY_ADDED);
+        //String apiKey = Utils.generateNewToken();
+        //User us = new User(address, apiKey);
+        //dto.setData(us.toString());
+        when(userServices.userExists(address)).thenReturn(true);
+        MvcResult result = mockMvc.perform(
+                post("/users")
+                        .param("address", address)
+        )
+                .andExpect(status().isConflict())
+                .andReturn();
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
+        assertEquals(dto.getMessage(), dtResponse.getMessage());
     }
 }

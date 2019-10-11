@@ -1,22 +1,19 @@
 package org.rif.notifier.tests.mocked;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.rif.notifier.models.entities.Subscription;
+import org.rif.notifier.models.entities.Notification;
 import org.rif.notifier.models.entities.Topic;
-import org.rif.notifier.models.entities.TopicParams;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.rif.notifier.constants.EventTypeConstants.*;
-
 public class MockTestData {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    public final Topic mockTopic() throws IOException {
+    public Topic mockTopic() throws IOException {
         String sTp = "{" +
                 "\"type\": \"CONTRACT_EVENT\"," +
                 "\"topicParams\":[" +
@@ -58,7 +55,7 @@ public class MockTestData {
         return mapper.readValue(sTp, Topic.class);
     }
 
-    public final Topic mockInvalidTopic() throws IOException {
+    public Topic mockInvalidTopic() throws IOException {
         String sTp = "{" +
                 "\"type\": \"CONTRACT_EVENT\"," +
                 "\"topicParams\":[" +
@@ -94,4 +91,12 @@ public class MockTestData {
         return mapper.readValue(sTp, Topic.class);
     }
 
+    public List<Notification> mockNotifications(){
+        List<Notification> retLst = new ArrayList<>();
+        for(int i=0;i<10;i++) {
+            Notification notif = new Notification("0x0", new Date(), false, "{id: " + i + ", counter: " + i + "}");
+            retLst.add(notif);
+        }
+        return retLst;
+    }
 }

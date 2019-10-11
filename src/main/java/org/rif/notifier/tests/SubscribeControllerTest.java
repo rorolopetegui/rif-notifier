@@ -102,13 +102,14 @@ public class SubscribeControllerTest {
         dto.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
         String apiKey = Utils.generateNewToken();
         Topic tp = mockTestData.mockTopic();
+        when(userServices.getUserByApiKey(apiKey)).thenReturn(null);
         MvcResult result = mockMvc.perform(
                 post("/subscribeToTopic")
                         .contentType(APPLICATION_JSON_UTF8)
                         .header("apiKey", apiKey)
                         .content(tp.toString())
         )
-                .andExpect(status().isOk())
+                .andExpect(status().isConflict())
                 .andReturn();
         DTOResponse dtResponse = new ObjectMapper().readValue(
                 result.getResponse().getContentAsByteArray(),
@@ -131,7 +132,7 @@ public class SubscribeControllerTest {
                         .header("apiKey", apiKey)
                         .content(tp.toString())
         )
-                .andExpect(status().isOk())
+                .andExpect(status().isConflict())
                 .andReturn();
         DTOResponse dtResponse = new ObjectMapper().readValue(
                 result.getResponse().getContentAsByteArray(),
@@ -157,7 +158,7 @@ public class SubscribeControllerTest {
                         .header("apiKey", apiKey)
                         .content(tp.toString())
         )
-                .andExpect(status().isOk())
+                .andExpect(status().isConflict())
                 .andReturn();
         DTOResponse dtResponse = new ObjectMapper().readValue(
                 result.getResponse().getContentAsByteArray(),
