@@ -6,21 +6,16 @@ import org.junit.runner.RunWith;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.controllers.UserController;
 import org.rif.notifier.models.DTO.DTOResponse;
-import org.rif.notifier.models.entities.User;
 import org.rif.notifier.services.UserServices;
-import org.rif.notifier.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,9 +50,6 @@ public class UserControllerTest {
         String address = "0x0";
         DTOResponse dto = new DTOResponse();
         dto.setMessage(ResponseConstants.APIKEY_ALREADY_ADDED);
-        //String apiKey = Utils.generateNewToken();
-        //User us = new User(address, apiKey);
-        //dto.setData(us.toString());
         when(userServices.userExists(address)).thenReturn(true);
         MvcResult result = mockMvc.perform(
                 post("/users")
