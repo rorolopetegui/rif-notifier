@@ -1,9 +1,11 @@
 package org.rif.notifier.tests.mocked;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.rif.notifier.models.entities.Subscription;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.TopicParams;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,24 +13,85 @@ import java.util.List;
 import static org.rif.notifier.constants.EventTypeConstants.*;
 
 public class MockTestData {
-    public final Topic mockTopic(){
-        Subscription sub = new Subscription(new Date(), 1, "0x0", 0, "PAYED");
-        Topic tp = new Topic(CONTRACT_EVENT, "0", sub);
-        List<TopicParams> params = new ArrayList<>();
-        //Params for the topic
-        TopicParams contractAddress = new TopicParams(tp, CONTRACT_EVENT_ADDRESS, "0x0000001", 0, "string", false, "");
-        TopicParams eventName = new TopicParams(tp, CONTRACT_EVENT_NAME, "EventName", 0, "string", false, "");
-        TopicParams param1 = new TopicParams(tp, CONTRACT_EVENT_PARAM, "Param1", 0, "Address", true, "");
-        TopicParams param2 = new TopicParams(tp, CONTRACT_EVENT_PARAM, "Param2", 1, "Utf8String", false, "");
-        TopicParams param3 = new TopicParams(tp, CONTRACT_EVENT_PARAM, "Param3", 2, "Uint256", false, "");
-        params.add(contractAddress);
-        params.add(eventName);
-        params.add(param1);
-        params.add(param2);
-        params.add(param3);
 
-        tp.setTopicParams(params);
+    private ObjectMapper mapper = new ObjectMapper();
 
-        return tp;
+    public final Topic mockTopic() throws IOException {
+        String sTp = "{" +
+                "\"type\": \"CONTRACT_EVENT\"," +
+                "\"topicParams\":[" +
+                "{" +
+                "\"type\": \"CONTRACT_ADDRESS\"," +
+                "\"value\": \"0x5ea3dc5fb6f5167d5673e8a370e411cff9a4125f\"," +
+                "\"valueType\": \"string\"," +
+                "\"indexed\": 0" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_NAME\"," +
+                "\"value\": \"LogSellArticle\"," +
+                "\"valueType\": \"string\"," +
+                "\"indexed\": 0" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_PARAM\"," +
+                "\"value\": \"seller\"," +
+                "\"order\": 0," +
+                "\"valueType\": \"Address\"," +
+                "\"indexed\": 1" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_PARAM\"," +
+                "\"value\": \"article\"," +
+                "\"order\": 1," +
+                "\"valueType\": \"Utf8String\"," +
+                "\"indexed\": 0" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_PARAM\"," +
+                "\"value\": \"price\"," +
+                "\"order\": 2," +
+                "\"valueType\": \"Uint256\"," +
+                "\"indexed\": 0" +
+                "}" +
+                "]" +
+                "}";
+        return mapper.readValue(sTp, Topic.class);
     }
+
+    public final Topic mockInvalidTopic() throws IOException {
+        String sTp = "{" +
+                "\"type\": \"CONTRACT_EVENT\"," +
+                "\"topicParams\":[" +
+                "{" +
+                "\"type\": \"EVENT_NAME\"," +
+                "\"value\": \"LogSellArticle\"," +
+                "\"valueType\": \"string\"," +
+                "\"indexed\": 0" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_PARAM\"," +
+                "\"value\": \"seller\"," +
+                "\"order\": 0," +
+                "\"valueType\": \"Address\"," +
+                "\"indexed\": 1" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_PARAM\"," +
+                "\"value\": \"article\"," +
+                "\"order\": 1," +
+                "\"valueType\": \"Utf8String\"," +
+                "\"indexed\": 0" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_PARAM\"," +
+                "\"value\": \"price\"," +
+                "\"order\": 2," +
+                "\"valueType\": \"Uint256\"," +
+                "\"indexed\": 0" +
+                "}" +
+                "]" +
+                "}";
+        return mapper.readValue(sTp, Topic.class);
+    }
+
 }
