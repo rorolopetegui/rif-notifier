@@ -41,6 +41,10 @@ public class DataFetchingJob {
     @Autowired
     private DbManagerFacade dbManagerFacade;
 
+    /**
+     * Creates listeneables, then try to get the blockchain events related.
+     * When all the events are fetched try to process the rawdata getted calling methods
+     */
     @Scheduled(fixedRateString = "${notifier.run.fixedRateFetchingJob}", initialDelayString = "${notifier.run.fixedDelayFetchingJob}")
     public void run() throws Exception {
         // Get latest block for this run
@@ -102,6 +106,14 @@ public class DataFetchingJob {
         });
     }
 
+    /**
+     * Iterates through Subscription given a Contract Address.
+     * When iterating, it filters by the contract_address and takes all the topics related to that.
+     * Then it checks if the user has filters for that Topic, and in that case, it filters the data, if all correct, saves a new RawData in the DB
+     * When no filters apply, it directly saves the rawdata
+     * @param fetchedEvents Fetched events from the library
+     * @throws JsonProcessingException When trying to parse the rawEvent
+     */
     private void processFetchedEvents(List<FetchedEvent> fetchedEvents) throws JsonProcessingException{
         ObjectMapper mapper = new ObjectMapper();
         String rawEvent = mapper.writeValueAsString(fetchedEvents.get(0));
@@ -172,10 +184,16 @@ public class DataFetchingJob {
         }
     }
 
+    /**
+     * Gets all topics for active subscriptions an creates a List of listeneables for the library web3
+     * It performs checks if the topic was not already added to the list
+     * @return Returns a List<EthereumBasedListeneable> to listen to the blockchain events
+     * @throws ClassNotFoundException When trying to parse the web3-type creating the listeneable for contract events
+     */
     private List<EthereumBasedListenable> getListeneables() throws ClassNotFoundException {
         List<EthereumBasedListenable> ethereumBasedListenables = new ArrayList<>();
         List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
-        Boolean alreadyAdded;
+        boolean alreadyAdded;
         for(Subscription sub : activeSubs){
             Set<Topic> subTopics = sub.getTopics();
             for(Topic tp : subTopics){

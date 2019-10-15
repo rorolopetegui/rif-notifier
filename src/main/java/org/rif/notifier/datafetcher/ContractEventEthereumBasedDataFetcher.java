@@ -29,6 +29,14 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
     private static final Logger logger = LoggerFactory.getLogger(ContractEventEthereumBasedDataFetcher.class);
 
 
+    /**
+     * Generates a list of FetchedEvents from the blockchain, using the getLogs method
+     * @param ethereumBasedListenable
+     * @param from Block number from, to fetch
+     * @param to Block number to, to fetch
+     * @param web3j Library
+     * @return When finished it returns fetched events from the blockchain
+     */
     @Async
     @Override
     public CompletableFuture<List<FetchedEvent>> fetch(EthereumBasedListenable ethereumBasedListenable, BigInteger from, BigInteger to, Web3j web3j) {
@@ -52,6 +60,19 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
        });
     }
 
+    /**
+     * Prepares all data to get the log data, applies filters to get the log.
+     * The filters to be applied are the params in the method signature
+     * @param web3j Instance of Web3j
+     * @param from From block number
+     * @param to To Block number
+     * @param contractAddress ContractAddress filter to be applied
+     * @param eventName Event name filter to be applied
+     * @param eventFields Need to indicate for Contract Event the params of itself
+     * @param topicId Its used to save the fetchedEvent and to make a relationship between the topic that creates this listenable event
+     * @return Fetchedevents filtered
+     * @throws Exception
+     */
     private List<FetchedEvent> getLogs(Web3j web3j, BigInteger from, BigInteger to, String contractAddress, String eventName, List<TypeReference<?>> eventFields, int topicId)
             throws Exception {
         // Create event object to add its signature as a Filter
@@ -96,7 +117,9 @@ public class ContractEventEthereumBasedDataFetcher extends EthereumBasedDataFetc
         return events;
     }
 
-
+    /**
+     * Apply filters to event and calls web3j library to get the data filtered, returns a EthLog
+     */
     private EthLog applyFilterForEvent(
            Web3j web3j, String encodedEventSignature, String contractAddress, BigInteger from, BigInteger to)
             throws Exception {

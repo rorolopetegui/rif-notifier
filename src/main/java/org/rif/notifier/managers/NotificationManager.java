@@ -25,6 +25,11 @@ public class NotificationManager {
     @Autowired
     private DbManagerFacade dbManagerFacade;
 
+    /**
+     * Given an Address gets all the notifications
+     * @param address Address of a user to be notified
+     * @return List<Notification> with all the notifications of a user address
+     */
     public List<Notification> getNotificationsForAddress(String address){
         List<Notification> lst = new ArrayList<>();
         Subscription sub = dbManagerFacade.getSubscriptionByAddress(address);
@@ -36,6 +41,9 @@ public class NotificationManager {
         return lst;
     }
 
+    /**
+     * First implementation of a notificateUsers method, that will be called to send all notification by preferences indicated previously by the end-user
+     */
     public void notificateUsers(){
         List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
         for(Subscription sub : activeSubs){

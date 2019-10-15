@@ -19,8 +19,13 @@ public class DataProcessorJob {
 
     @Autowired
     private DbManagerFacade dbManagerFacade;
+
+    /**
+     * Gets all raw data not processed and makes the relationship with the subscription.
+     * It saves the result on the notification table, ready to be sended to the user.
+     */
     @Scheduled(fixedRateString = "${notifier.run.fixedRateProcessJob}", initialDelayString = "${notifier.run.fixedDelayProcessJob}")
-    public void run() throws Exception {
+    public void run() {
         //Rawdata to be marked as processed
         List<RawData> processedRows = new ArrayList<>();
 

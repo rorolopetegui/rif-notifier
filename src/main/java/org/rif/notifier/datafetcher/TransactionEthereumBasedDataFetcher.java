@@ -20,6 +20,10 @@ public class TransactionEthereumBasedDataFetcher extends EthereumBasedDataFetche
 
     private static final Logger logger = LoggerFactory.getLogger(TransactionEthereumBasedDataFetcher.class);
 
+    /**
+     * Gets all transactions from a block number to another.
+     * It returns a list of FetchedTransaction
+     */
     @Async
     @Override
     public CompletableFuture<List<FetchedTransaction>> fetch(EthereumBasedListenable ethereumBasedListenable, BigInteger from, BigInteger to, Web3j web3j) {
@@ -41,9 +45,5 @@ public class TransactionEthereumBasedDataFetcher extends EthereumBasedDataFetche
             logger.error(Thread.currentThread().getId() + " - Error fetching transaction data for subscription: "+ ethereumBasedListenable, throwable);
             return new ArrayList<>();
         });
-
     }
-
-
-
 }

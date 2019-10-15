@@ -25,8 +25,20 @@ public class SubscribeServices  {
 
     private static final Logger logger = LoggerFactory.getLogger(SubscribeServices.class);
 
+    /**
+     * Path to web3Types, will be used to check some parameters of a Topic
+     */
     private static final String PATH_TO_TYPES = "org.web3j.abi.datatypes.";
 
+    /**
+     * Creates a subscription for a user, and a given type of subscription.
+     * It creates a luminoInvoice that will be returned for the user to pay it.
+     * When the user pays the invoice, the subscription will be activated
+     * Actually we are not validating the subscription type, so it can be any number
+     * @param us User that will be associated with the subscription
+     * @param subType Subscription type
+     * @return LuminoInvoice string hash
+     */
     public String createSubscription(User us, int subType){
         Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), subType, SubscriptionConstants.PENDING_PAYMENT);
         //Pending to generate a lumino-invoice
@@ -38,13 +50,22 @@ public class SubscribeServices  {
         return dbManagerFacade.getSubscriptionByAddress(user_address);
     }
 
+    /**
+     * Makes the relation between subscription and topic.
+     * First checks if the Topic is already created, so if it is, it creates only the relation, in other case it applies logic to the topic sended
+     * At this moment the Topic needs to be correctly validated
+     * @param topic Topic type fully validated
+     * @param sub Subscription type, to be associated with the Topic sended
+     */
     public void subscribeToTopic(Topic topic, Subscription sub){
+        //Checks if the Topic already exists
         Topic tp = dbManagerFacade.getTopicByHashCode("" + topic.hashCode());
         if (tp == null) {
-            //Generate Topic and params
+            //Generate Topic with no params
             tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode(), sub);
             switch (topic.getType()) {
                 case CONTRACT_EVENT:
+                    //Generates params for the contract event
                     for (TopicParams param : topic.getTopicParams()) {
                         dbManagerFacade.saveTopicParams(
                                 tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed(), param.getFilter()
@@ -66,6 +87,13 @@ public class SubscribeServices  {
         //resp.setData(ut);
     }
 
+    /**
+     * Validates a given Topic, it checks if all required fields are correctly setted.
+     * For CONTRACT_EVENT it checks that it has all Params like CONTRACT_EVENT_ADDRESS, CONTRACT_EVENT_NAME and at least one CONTRACT_EVENT_PARAM
+     * In case of other types like NEW_TRANSACTIONS will be applied other logic
+     * @param topic Topic sended by a user, parsed by, to be checked in the method if it is correctly setted
+     * @return True in case that the Topic is correctly validated and has all the required fields, false if something's missed
+     */
     public boolean validateTopic(Topic topic){
         boolean ret = false;
         if(topic.getType() != null) {
@@ -82,8 +110,18 @@ public class SubscribeServices  {
         }
         return ret;
     }
-    //As this is a Contract, we need to check that the user sends a CONTRACT_ADDRESS, EVENT_NAME and at least 1 EVENT_PARAM
-    //Also we need to check that the value type of each param be a valid type of web3java
+
+    /**
+     * Checks all the required parameters for a Contract Event, returns false if some parameter is missed
+     * Required:
+     * -CONTRACT_ADDRESS (Checks if is just 1 param)
+     * -EVENT_NAME (Just 1 param)
+     * -EVENT_PARAM (Checks if is at least 1)
+     * For the EVENT_PARAMS checks if also has a valid web3-type
+     * When finding just 1 error, it breaks the for, and returns false
+     * @param params List of Params for a CONTRACT_EVENT
+     * @return True if all the required params are correctly setted
+     */
     private boolean validateContractEventParams(List<TopicParams> params){
         boolean ret = true;
         int counterAddress = 0, counterName = 0, counterParam = 0;
@@ -122,6 +160,12 @@ public class SubscribeServices  {
             ret = false;
         return ret;
     }
+
+    /**
+     * Checks if the given String is a correct Web3Type
+     * @param type String to be checked
+     * @return True if the type exists in the library
+     */
     private boolean isWeb3Type(String type) {
         boolean ret = false;
         if (Utils.isClass(PATH_TO_TYPES + type))
@@ -130,6 +174,5 @@ public class SubscribeServices  {
             ret = true;
 
         return ret;
-
     }
 }
