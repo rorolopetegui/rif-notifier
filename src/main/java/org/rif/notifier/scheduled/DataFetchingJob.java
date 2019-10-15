@@ -85,7 +85,6 @@ public class DataFetchingJob {
                 if(!rawTrs.isEmpty()){
                     dbManagerFacade.saveRawDataBatch(rawTrs);
                 }
-
             });
         });
 

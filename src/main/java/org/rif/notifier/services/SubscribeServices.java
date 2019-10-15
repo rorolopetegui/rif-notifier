@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.rif.notifier.constants.EventTypeConstants.*;
 
@@ -44,10 +43,19 @@ public class SubscribeServices  {
         if (tp == null) {
             //Generate Topic and params
             tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode(), sub);
-            for(TopicParams param : topic.getTopicParams()){
-                dbManagerFacade.saveTopicParams(
-                        tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed(), param.getFilter()
-                );
+            switch (topic.getType()) {
+                case CONTRACT_EVENT:
+                    for (TopicParams param : topic.getTopicParams()) {
+                        dbManagerFacade.saveTopicParams(
+                                tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed(), param.getFilter()
+                        );
+                    }
+                    break;
+                case PENDING_TRANSACTIONS:
+                case NEW_BLOCK:
+                case NEW_TRANSACTIONS:
+                    //Non of this topics types need params at this moment
+                    break;
             }
         }else{
             //Add topic-subscription relationship
