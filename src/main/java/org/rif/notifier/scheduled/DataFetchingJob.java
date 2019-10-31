@@ -1,6 +1,5 @@
 package org.rif.notifier.scheduled;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.rif.notifier.datafetcher.MockDatafetcher;
 import org.rif.notifier.managers.DbManagerFacade;
