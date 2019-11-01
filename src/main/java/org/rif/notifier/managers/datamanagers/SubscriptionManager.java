@@ -1,6 +1,7 @@
 package org.rif.notifier.managers.datamanagers;
 
 import org.rif.notifier.models.entities.Subscription;
+import org.rif.notifier.models.entities.SubscriptionType;
 import org.rif.notifier.repositories.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class SubscriptionManager {
         return subscriptionRepositorty.findByUserAddress(user_address);
     }
 
-    public Subscription insert(Date activeUntil, int active, String userAddress, int type, String state) {
+    public Subscription insert(Date activeUntil, int active, String userAddress, SubscriptionType type, String state) {
         Subscription sub = new Subscription(activeUntil, active, userAddress, type, state);
         Subscription result = subscriptionRepositorty.save(sub);
         return result;

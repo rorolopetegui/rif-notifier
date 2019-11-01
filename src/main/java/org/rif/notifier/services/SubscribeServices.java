@@ -37,7 +37,9 @@ public class SubscribeServices  {
      * @return LuminoInvoice string hash
      */
     public String createSubscription(User us, int subType){
-        Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), subType, SubscriptionConstants.PENDING_PAYMENT);
+        SubscriptionType iSubType = dbManagerFacade.getSubscriptionTypeByType(subType);
+        Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), iSubType, SubscriptionConstants.PENDING_PAYMENT);
+        NotificationCounter notifCount = dbManagerFacade.saveNotificationCounter(sub, sub.getType().getNotificationCounter());
         //Pending to generate a lumino-invoice
         String invoice = LuminoInvoice.generateInvoice(us.getAddress());
         return invoice;
@@ -90,8 +92,8 @@ public class SubscribeServices  {
      * @return if type exists
      */
     public boolean isSubscriptionTypeValid(int type){
-        List<SubscriptionType> lst = dbManagerFacade.getSubscriptionTypeByType(type);
-        return lst.size() > 0;
+        SubscriptionType subType = dbManagerFacade.getSubscriptionTypeByType(type);
+        return subType != null;
     }
 
     /**

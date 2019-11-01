@@ -19,7 +19,9 @@ public class Subscription {
     @Column(name = "user_address")
     private String userAddress;
 
-    private int type;
+    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "type", nullable = false)
+    private SubscriptionType type;
 
     private String state;
 
@@ -31,9 +33,13 @@ public class Subscription {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<NotificationPreferences> notificationPreferences ;
 
+    @OneToOne(mappedBy = "subscription")
+    @PrimaryKeyJoinColumn
+    private NotificationCounter notificationCounter;
+
     public Subscription() {}
 
-    public Subscription(Date activeUntil, int active, String userAddress, int type, String state) {
+    public Subscription(Date activeUntil, int active, String userAddress, SubscriptionType type, String state) {
         this.activeUntil = activeUntil;
         this.active = active;
         this.userAddress = userAddress;
@@ -73,11 +79,11 @@ public class Subscription {
         this.userAddress = userAddress;
     }
 
-    public int getType() {
+    public SubscriptionType getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(SubscriptionType type) {
         this.type = type;
     }
 
@@ -103,5 +109,13 @@ public class Subscription {
 
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
+    }
+
+    public NotificationCounter getNotificationCounter() {
+        return notificationCounter;
+    }
+
+    public void setNotificationCounter(NotificationCounter notificationCounter) {
+        this.notificationCounter = notificationCounter;
     }
 }

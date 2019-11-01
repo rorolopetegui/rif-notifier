@@ -1,24 +1,27 @@
 package org.rif.notifier.models.entities;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "subscription_type")
 public class SubscriptionType {
     @Id
-    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
-    private int id;
+    int id;
 
-    @Column(name = "subscription_type")
-    private int subscriptionType;
+    @OneToMany(mappedBy = "type", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<Subscription> subscription;
 
     @Column(name = "notification_counter")
     private int notificationCounter;
 
     public SubscriptionType(){}
 
-    public SubscriptionType(int subscriptionType, int notificationCounter){
-        this.subscriptionType = subscriptionType;
+    public SubscriptionType(int notificationCounter){
         this.notificationCounter = notificationCounter;
     }
 
@@ -30,19 +33,19 @@ public class SubscriptionType {
         this.id = id;
     }
 
-    public int getSubscriptionType() {
-        return subscriptionType;
-    }
-
-    public void setSubscriptionType(int type) {
-        this.subscriptionType = type;
-    }
-
     public int getNotificationCounter() {
         return notificationCounter;
     }
 
     public void setNotificationCounter(int notificationCounter) {
         this.notificationCounter = notificationCounter;
+    }
+
+    public List<Subscription> getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(List<Subscription> subscription) {
+        this.subscription = subscription;
     }
 }

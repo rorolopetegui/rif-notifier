@@ -7,6 +7,7 @@ import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.controllers.SubscribeController;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.Subscription;
+import org.rif.notifier.models.entities.SubscriptionType;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.User;
 import org.rif.notifier.services.SubscribeServices;
@@ -73,7 +74,8 @@ public class SubscribeControllerTest {
         DTOResponse dto = new DTOResponse();
         String apiKey = Utils.generateNewToken();
         User us = new User(address, apiKey);
-        Subscription sub = new Subscription(new Date(), 1, us.getAddress(), 0, "PAYED");
+        SubscriptionType subType = new SubscriptionType(1000);
+        Subscription sub = new Subscription(new Date(), 1, us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
         when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
@@ -147,7 +149,8 @@ public class SubscribeControllerTest {
         dto.setMessage(ResponseConstants.TOPIC_VALIDATION_FAILED);
         String apiKey = Utils.generateNewToken();
         User us = new User(address, apiKey);
-        Subscription sub = new Subscription(new Date(), 1, us.getAddress(), 0, "PAYED");
+        SubscriptionType subType = new SubscriptionType(1000);
+        Subscription sub = new Subscription(new Date(), 1, us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockInvalidTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
         when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);

@@ -13,7 +13,7 @@ public class SubscriptionTypeManager {
     @Autowired
     private SubscriptionTypeRepository subscriptionTypeRepository;
 
-    public List<SubscriptionType> getSubscriptionTypeByType(int subscriptionType){
-        return subscriptionTypeRepository.findBySubscriptionType(subscriptionType);
+    public SubscriptionType getSubscriptionTypeById(int id){
+        return subscriptionTypeRepository.findById(id);
     }
 }

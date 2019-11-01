@@ -33,6 +33,9 @@ public class DbManagerFacade {
     private NotifEntityManager notifEntityManager;
 
     @Autowired
+    private NotificationCounterManager notificationCounterManager;
+
+    @Autowired
     private UserManager userManager;
 
     @Autowired
@@ -88,7 +91,7 @@ public class DbManagerFacade {
         return subscriptionManager.getSubscriptionByAddress(user_address);
     }
 
-    public Subscription saveSubscription(Date activeUntil, int active, String userAddress, int type, String state) {
+    public Subscription saveSubscription(Date activeUntil, int active, String userAddress, SubscriptionType type, String state) {
         return subscriptionManager.insert(activeUntil, active, userAddress, type, state);
     }
 
@@ -96,7 +99,7 @@ public class DbManagerFacade {
         return subscriptionManager.update(sub);
     }
 
-    public List<SubscriptionType> getSubscriptionTypeByType(int subscriptionType){ return  subscriptionTypeManager.getSubscriptionTypeByType(subscriptionType); }
+    public SubscriptionType getSubscriptionTypeByType(int id){ return  subscriptionTypeManager.getSubscriptionTypeById(id); }
 
     public Topic getTopicById(int Id){
         return topicManager.getTopicById(Id);
@@ -125,6 +128,10 @@ public class DbManagerFacade {
 
     public List<Notification> getNotificationByUserAddress(String user_address){
         return notifEntityManager.getNotificationsByUserAddress(user_address);
+    }
+
+    public NotificationCounter saveNotificationCounter(Subscription sub, int counter){
+        return notificationCounterManager.insert(sub, counter);
     }
 
     public User saveUser(String address, String apiKey){
