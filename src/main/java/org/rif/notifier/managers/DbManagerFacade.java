@@ -21,6 +21,9 @@ public class DbManagerFacade {
     private SubscriptionManager subscriptionManager;
 
     @Autowired
+    private SubscriptionTypeManager subscriptionTypeManager;
+
+    @Autowired
     private TopicManager topicManager;
 
     @Autowired
@@ -92,6 +95,8 @@ public class DbManagerFacade {
     public Subscription updateSubscription(Subscription sub) {
         return subscriptionManager.update(sub);
     }
+
+    public List<SubscriptionType> getSubscriptionTypeByType(int subscriptionType){ return  subscriptionTypeManager.getSubscriptionTypeByType(subscriptionType); }
 
     public Topic getTopicById(int Id){
         return topicManager.getTopicById(Id);

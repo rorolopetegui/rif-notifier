@@ -12,5 +12,7 @@ public interface ResponseConstants {
 
     String SUBSCRIPTION_ALREADY_ADDED = "This address is already subscribed";
 
+    String SUBSCRIPTION_INCORRECT_TYPE = "The type you select is not a valid one";
+
     String TOPIC_VALIDATION_FAILED = "Topic structure failed, please review your json";
 }

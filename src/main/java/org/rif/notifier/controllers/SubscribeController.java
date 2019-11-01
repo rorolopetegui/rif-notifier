@@ -40,7 +40,13 @@ public class SubscribeController {
         User us = userServices.getUserByApiKey(apiKey);
         if(us != null){
             if(subscribeServices.getSubscriptionByAddress(us.getAddress()) == null) {
-                resp.setData(subscribeServices.createSubscription(us, Integer.parseInt(type)));
+                int iType = Integer.parseInt(type);
+                if(subscribeServices.isSubscriptionTypeValid(iType)) {
+                    resp.setData(subscribeServices.createSubscription(us, iType));
+                }else{
+                    resp.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
             }else{
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ADDED);
                 resp.setStatus(HttpStatus.CONFLICT);

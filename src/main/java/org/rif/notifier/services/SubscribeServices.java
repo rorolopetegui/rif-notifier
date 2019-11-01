@@ -2,10 +2,7 @@ package org.rif.notifier.services;
 
 import org.rif.notifier.constants.SubscriptionConstants;
 import org.rif.notifier.managers.DbManagerFacade;
-import org.rif.notifier.models.entities.Subscription;
-import org.rif.notifier.models.entities.Topic;
-import org.rif.notifier.models.entities.TopicParams;
-import org.rif.notifier.models.entities.User;
+import org.rif.notifier.models.entities.*;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
 import org.rif.notifier.util.Utils;
 import org.slf4j.Logger;
@@ -85,6 +82,16 @@ public class SubscribeServices  {
         }
         //This line was throwing error cause the Json is too large
         //resp.setData(ut);
+    }
+
+    /**
+     * Validates if the user is sending a valid subscription type
+     * @param type Type that need to exists in subscription types
+     * @return if type exists
+     */
+    public boolean isSubscriptionTypeValid(int type){
+        List<SubscriptionType> lst = dbManagerFacade.getSubscriptionTypeByType(type);
+        return lst.size() > 0;
     }
 
     /**
