@@ -37,12 +37,12 @@ public class SubscribeController {
             @RequestParam(name = "type", required=false) String type,
             @RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
-        User us = userServices.getUserByApiKey(apiKey);
-        if(us != null){
-            if(subscribeServices.getSubscriptionByAddress(us.getAddress()) == null) {
+        User user = userServices.getUserByApiKey(apiKey);
+        if(user != null){
+            if(subscribeServices.getSubscriptionByAddress(user.getAddress()) == null) {
                 int iType = Integer.parseInt(type);
                 if(subscribeServices.isSubscriptionTypeValid(iType)) {
-                    resp.setData(subscribeServices.createSubscription(us, iType));
+                    resp.setData(subscribeServices.createSubscription(user, iType));
                 }else{
                     resp.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
                     resp.setStatus(HttpStatus.CONFLICT);
