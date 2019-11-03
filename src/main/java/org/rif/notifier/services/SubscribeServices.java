@@ -40,7 +40,7 @@ public class SubscribeServices  {
         SubscriptionType iSubType = dbManagerFacade.getSubscriptionTypeByType(subType);
         Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), iSubType, SubscriptionConstants.PENDING_PAYMENT);
         NotificationCounter notifCount = dbManagerFacade.saveNotificationCounter(sub, sub.getType().getNotificationCounter());
-        //Pending to generate a lumino-invoice
+        //TODO Pending to generate a lumino-invoice
         String invoice = LuminoInvoice.generateInvoice(us.getAddress());
         return invoice;
     }
@@ -104,20 +104,16 @@ public class SubscribeServices  {
      * @return True in case that the Topic is correctly validated and has all the required fields, false if something's missed
      */
     public boolean validateTopic(Topic topic){
-        boolean ret = false;
         if(topic.getType() != null) {
             switch (topic.getType()) {
                 case CONTRACT_EVENT:
-                    ret = validateContractEventParams(topic.getTopicParams());
-                    break;
+                    return validateContractEventParams(topic.getTopicParams());
                 case PENDING_TRANSACTIONS:
                 case NEW_BLOCK:
                 case NEW_TRANSACTIONS:
-                    ret = true;
-                    break;
             }
         }
-        return ret;
+        return false;
     }
 
     /**
