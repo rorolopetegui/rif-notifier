@@ -128,42 +128,31 @@ public class SubscribeServices  {
      * @return True if all the required params are correctly setted
      */
     private boolean validateContractEventParams(List<TopicParams> params){
-        boolean ret = true;
-        int counterAddress = 0, counterName = 0, counterParam = 0;
-        for(TopicParams param : params){
-            if(param.getType() != null) {
-                switch (param.getType()) {
-                    case CONTRACT_EVENT_ADDRESS:
-                        counterAddress++;
-                        if(param.getValue() == null || param.getValue().isEmpty())
-                            ret = false;
-                        break;
-                    case CONTRACT_EVENT_NAME:
-                        counterName++;
-                        if(param.getValue() == null || param.getValue().isEmpty())
-                            ret = false;
-                        break;
-                    case CONTRACT_EVENT_PARAM:
-                        counterParam++;
-                        if(param.getValue() == null || param.getValue().isEmpty() || !isWeb3Type(param.getValueType()))
-                            ret = false;
-                        break;
-                    default:
-                        ret = false;
-                    break;
-                }
-            }else{
-                //Type required for each param
-                ret = false;
-            }
-            //No need to keep iterating
-            if(!ret)
-                break;
-        }
-        //Checking that the user sends at least 1 contract_address, 1 event name, and 1 parameter (can be more)
-        if(counterAddress != 1 && counterName != 1 && counterParam == 0)
-            ret = false;
-        return ret;
+    	int counterContractAddress = 0, counterEventName = 0;
+    	
+    	for (TopicParams param : params) {
+    		// if we receive a param without type or value we know is invalid
+    		if ((null == param.getType()) || (null == param.getValue()) || param.getValue().isEmpty()) {
+    			return false;
+    		}
+    		String type = param.getType();
+    		if(type.equals(CONTRACT_EVENT_ADDRESS) || type.equals(CONTRACT_EVENT_NAME) || type.equals(CONTRACT_EVENT_PARAM)) {
+    			switch (type) {
+	                case CONTRACT_EVENT_ADDRESS:
+	                	counterContractAddress++;
+	                    break;
+	                case CONTRACT_EVENT_NAME:
+	                	counterEventName++;
+	                    break;
+	            }
+    		} else {
+    			// if we reach this point it means the parameter has an invalid type
+    			return false;
+    		}
+    	}
+    	
+        //Checking that the user sends at least 1 contract_address and 1 event name
+        return (1 == counterContractAddress) && (1 == counterEventName);
     }
 
     /**
