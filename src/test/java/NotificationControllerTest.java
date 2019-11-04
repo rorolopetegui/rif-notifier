@@ -65,7 +65,7 @@ public class NotificationControllerTest {
     @Test
     public void errorWhenNotProvidingCorrectApiKey() throws Exception {
         DTOResponse dto = new DTOResponse();
-        dto.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
+        dto.setMessage(ResponseConstants.INCORRECT_APIKEY);
         String apiKey = Utils.generateNewToken();
         Topic tp = mockTestData.mockTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(null);

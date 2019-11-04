@@ -4,7 +4,7 @@ public interface ResponseConstants {
 
     String OK = "OK";
 
-    String APIKEY_NOT_FOUND = "Apikey not found, first register the user to the notifier service";
+    String INCORRECT_APIKEY = "Apikey not found, first register the user to the notifier service";
 
     String APIKEY_ALREADY_ADDED = "The user is already registered";
 

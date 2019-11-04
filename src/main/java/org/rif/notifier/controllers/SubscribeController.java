@@ -52,7 +52,7 @@ public class SubscribeController {
                 resp.setStatus(HttpStatus.CONFLICT);
             }
         }else{
-            resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
             resp.setStatus(HttpStatus.CONFLICT);
         }
 
@@ -89,7 +89,7 @@ public class SubscribeController {
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
             }else{
-                resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
+                resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
                 resp.setStatus(HttpStatus.CONFLICT);
             }
         } catch (IOException e) {

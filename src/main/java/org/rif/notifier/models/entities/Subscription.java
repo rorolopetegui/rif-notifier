@@ -43,7 +43,7 @@ public class Subscription {
         this.userAddress = userAddress;
         this.type = type;
         this.state = state;
-        this.notificationBalance = type.getNotificationCounter();
+        this.notificationBalance = type.getNotifications();
     }
 
     public int getId() {

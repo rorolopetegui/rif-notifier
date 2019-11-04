@@ -45,12 +45,12 @@ public class NotificationController {
                 resp.setData(notifications);
             }else{
                 //Return error, user does not exist
-                resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
+                resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
                 resp.setStatus(HttpStatus.CONFLICT);
             }
         }else{
             //Return error, user does not exist
-            resp.setMessage(ResponseConstants.APIKEY_NOT_FOUND);
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
             resp.setStatus(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(resp, resp.getStatus());

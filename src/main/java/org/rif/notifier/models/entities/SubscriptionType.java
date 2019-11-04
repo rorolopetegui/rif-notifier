@@ -32,11 +32,11 @@ public class SubscriptionType {
         this.id = id;
     }
 
-    public int getnotifications() {
+    public int getNotifications() {
         return notifications;
     }
 
-    public void setnotifications(int notifications) {
+    public void setNotifications(int notifications) {
         this.notifications = notifications;
     }
 
