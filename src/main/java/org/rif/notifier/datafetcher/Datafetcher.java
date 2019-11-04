@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 import static org.rif.notifier.constants.TopicParamTypes.*;
 
 
-public class MockDatafetcher {
+public class Datafetcher {
 
-    private static final Logger logger = LoggerFactory.getLogger(MockDatafetcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(Datafetcher.class);
 
     private static final String PATH_TO_TYPES = "org.web3j.abi.datatypes.";
 

@@ -1,7 +1,7 @@
 package org.rif.notifier.scheduled;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.rif.notifier.datafetcher.MockDatafetcher;
+import org.rif.notifier.datafetcher.Datafetcher;
 import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.datafetching.FetchedBlock;
 import org.rif.notifier.models.datafetching.FetchedEvent;
@@ -189,31 +189,26 @@ public class DataFetchingJob {
     private List<EthereumBasedListenable> getListeneables() throws ClassNotFoundException {
         List<EthereumBasedListenable> ethereumBasedListenables = new ArrayList<>();
         List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptionsWithBalance();
-        boolean alreadyAdded;
-
         for(Subscription sub : activeSubs){
             Set<Topic> subTopics = sub.getTopics();
             for(Topic tp : subTopics){
-                alreadyAdded = false;
-                EthereumBasedListenable newListeneable = MockDatafetcher.getEthereumBasedListenableFromTopic(tp);
+                EthereumBasedListenable newListeneable = Datafetcher.getEthereumBasedListenableFromTopic(tp);
                 //Performing some checks to not insert when its already in the list
                 if(newListeneable.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)){
-                    alreadyAdded = ethereumBasedListenables.stream().anyMatch(item ->
+                    if(ethereumBasedListenables.stream().noneMatch(item ->
                             item.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)
                                     && item.getAddress().equals(newListeneable.getAddress())
-                                    && item.getEventName().equals(newListeneable.getEventName())
-                    );
+                                    && item.getEventName().equals(newListeneable.getEventName())))
+                        ethereumBasedListenables.add(newListeneable);
                 }else if(newListeneable.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)){
-                    alreadyAdded = ethereumBasedListenables.stream().anyMatch(item ->
-                            item.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)
-                    );
-                }else{
-                    alreadyAdded = ethereumBasedListenables.stream().anyMatch(item ->
-                            item.getKind().equals(EthereumBasedListenableTypes.NEW_BLOCK)
-                    );
-                }
-                if(!alreadyAdded)
+                    if(ethereumBasedListenables.stream().noneMatch(item ->
+                            item.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)))
                     ethereumBasedListenables.add(newListeneable);
+                }else{
+                    if(ethereumBasedListenables.stream().noneMatch(item ->
+                            item.getKind().equals(EthereumBasedListenableTypes.NEW_BLOCK)))
+                        ethereumBasedListenables.add(newListeneable);
+                }
             }
         }
         return ethereumBasedListenables;
