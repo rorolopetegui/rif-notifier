@@ -50,7 +50,6 @@ public class DataFetchingJob {
         BigInteger to = rskBlockchainService.getLastBlock();
         BigInteger from = dbManagerFacade.getLastBlock();
         from = from.add(new BigInteger("1"));
-        dbManagerFacade.saveLastBlock(to);
 
         //Fetching
         logger.info(Thread.currentThread().getId() + String.format(" - Starting fetching from %s to %s", from, to));
@@ -77,6 +76,7 @@ public class DataFetchingJob {
                 logger.error("Error during DataFetching job: ", e);
             }
         }
+        dbManagerFacade.saveLastBlock(to);
 
 
         transactionTasks.forEach(listCompletableFuture -> {

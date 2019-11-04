@@ -33,13 +33,12 @@ public class SubscribeServices  {
      * When the user pays the invoice, the subscription will be activated
      * Actually we are not validating the subscription type, so it can be any number
      * @param us User that will be associated with the subscription
-     * @param subType Subscription type
+     * @param type Subscription type
      * @return LuminoInvoice string hash
      */
-    public String createSubscription(User us, int subType){
-        SubscriptionType iSubType = dbManagerFacade.getSubscriptionTypeByType(subType);
-        Subscription sub = dbManagerFacade.saveSubscription(new Date(), 0, us.getAddress(), iSubType, SubscriptionConstants.PENDING_PAYMENT);
-        NotificationCounter notifCount = dbManagerFacade.saveNotificationCounter(sub, sub.getType().getNotificationCounter());
+    public String createSubscription(User us, int type){
+        SubscriptionType subType = dbManagerFacade.getSubscriptionTypeByType(type);
+        Subscription sub = dbManagerFacade.saveSubscription(new Date(), 1, us.getAddress(), subType, SubscriptionConstants.PENDING_PAYMENT);
         //Pending to generate a lumino-invoice
         String invoice = LuminoInvoice.generateInvoice(us.getAddress());
         return invoice;

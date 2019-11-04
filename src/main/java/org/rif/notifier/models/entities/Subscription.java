@@ -33,9 +33,8 @@ public class Subscription {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<NotificationPreferences> notificationPreferences ;
 
-    @OneToOne(mappedBy = "subscription")
-    @PrimaryKeyJoinColumn
-    private NotificationCounter notificationCounter;
+    @Column(name = "notification_balance")
+    private int notificationBalance;
 
     public Subscription() {}
 
@@ -45,6 +44,7 @@ public class Subscription {
         this.userAddress = userAddress;
         this.type = type;
         this.state = state;
+        this.notificationBalance = type.getNotificationCounter();
     }
 
     public int getId() {
@@ -111,11 +111,15 @@ public class Subscription {
         this.topics = topics;
     }
 
-    public NotificationCounter getNotificationCounter() {
-        return notificationCounter;
+    public int getNotificationBalance() {
+        return notificationBalance;
     }
 
-    public void setNotificationCounter(NotificationCounter notificationCounter) {
-        this.notificationCounter = notificationCounter;
+    public void setNotificationBalance(int notificationCounter) {
+        this.notificationBalance = notificationCounter;
+    }
+
+    public void decrementNotificationBalance() {
+        this.notificationBalance--;
     }
 }

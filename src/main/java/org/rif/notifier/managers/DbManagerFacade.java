@@ -33,9 +33,6 @@ public class DbManagerFacade {
     private NotifEntityManager notifEntityManager;
 
     @Autowired
-    private NotificationCounterManager notificationCounterManager;
-
-    @Autowired
     private UserManager userManager;
 
     @Autowired
@@ -83,6 +80,10 @@ public class DbManagerFacade {
         return subscriptionManager.getActiveSubscriptionsByTopicId(idTopic);
     }
 
+    public List<Subscription> getActiveSubscriptionsByTopicIdWithBalance(int idTopic){
+        return subscriptionManager.getActiveSubscriptionsByTopicIdWithBalance(idTopic);
+    }
+
     public List<Subscription> findByContractAddressAndSubscriptionActive(String address){
         return subscriptionManager.findByContractAddressAndSubscriptionActive(address);
     }
@@ -123,15 +124,13 @@ public class DbManagerFacade {
 
     @Transactional
     public List<Notification> saveNotificationBatch(List<Notification> notifications){
-        return notifications.stream().map(notification1 -> notifEntityManager.insert(notification1.getTo_address(), notification1.getTimestamp(), notification1.isSended(), notification1.getData())).collect(Collectors.toList());
+        return notifications.stream().map(notificationItem ->
+                notifEntityManager.insert(notificationItem.getTo_address(), notificationItem.getTimestamp(), notificationItem.isSended(), notificationItem.getData())
+        ).collect(Collectors.toList());
     }
 
     public List<Notification> getNotificationByUserAddress(String user_address){
         return notifEntityManager.getNotificationsByUserAddress(user_address);
-    }
-
-    public NotificationCounter saveNotificationCounter(Subscription sub, int counter){
-        return notificationCounterManager.insert(sub, counter);
     }
 
     public User saveUser(String address, String apiKey){

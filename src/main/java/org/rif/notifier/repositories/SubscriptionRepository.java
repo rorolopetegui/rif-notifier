@@ -20,4 +20,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Stri
 
     @Query(value = "SELECT * FROM subscription A JOIN user_topic B ON A.id=B.id_subscription JOIN topic_params C ON B.id_topic=C.id_topic AND A.active = 1 AND C.param_type = \"CONTRACT_ADDRESS\" AND C.value = ?1", nativeQuery = true)
     List<Subscription> findByContractAddressAndSubscriptionActive(String address);
+
+    @Query(value = "SELECT * FROM subscription A JOIN user_topic B ON A.id=B.id_subscription AND A.active = 1 AND A.notification_balance > 0 AND B.id_topic = ?1", nativeQuery = true)
+    List<Subscription> findByIdTopicAndSubscriptionActiveAndPositiveBalance(int id);
 }

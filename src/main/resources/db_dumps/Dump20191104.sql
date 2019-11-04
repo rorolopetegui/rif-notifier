@@ -26,7 +26,7 @@ CREATE TABLE `datafetcher` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `last_block` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,21 +69,6 @@ CREATE TABLE `notification` (
   `sended` tinyint(4) DEFAULT '0',
   `data` varchar(500) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `notification_counter`
---
-
-DROP TABLE IF EXISTS `notification_counter`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `notification_counter` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `subscription_id` int(11) NOT NULL,
-  `counter` int(11) NOT NULL,
-  PRIMARY KEY (`id`,`subscription_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -149,8 +134,9 @@ CREATE TABLE `subscription` (
   `user_address` varchar(45) NOT NULL,
   `type` int(11) DEFAULT '0',
   `state` varchar(45) NOT NULL,
+  `notification_balance` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,11 +147,10 @@ DROP TABLE IF EXISTS `subscription_type`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `subscription_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `subscription_type` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
   `notification_counter` int(11) NOT NULL,
-  PRIMARY KEY (`id`,`subscription_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,7 +179,7 @@ CREATE TABLE `topic` (
   `type` varchar(45) NOT NULL,
   `hash` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,7 +199,7 @@ CREATE TABLE `topic_params` (
   `is_indexed` tinyint(4) DEFAULT '0',
   `filter` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -239,4 +224,4 @@ CREATE TABLE `user_topic` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-01 11:13:55
+-- Dump completed on 2019-11-04 10:47:34

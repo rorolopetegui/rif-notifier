@@ -32,6 +32,12 @@ public class SubscriptionManager {
         return lst;
     }
 
+    public List<Subscription> getActiveSubscriptionsByTopicIdWithBalance(int idTopic){
+        List<Subscription> lst = new ArrayList<>();
+        subscriptionRepositorty.findByIdTopicAndSubscriptionActiveAndPositiveBalance(idTopic).forEach(lst::add);
+        return lst;
+    }
+
     public List<Subscription> findByContractAddressAndSubscriptionActive(String address){
         List<Subscription> lst = new ArrayList<>();
         subscriptionRepositorty.findByContractAddressAndSubscriptionActive(address).forEach(lst::add);

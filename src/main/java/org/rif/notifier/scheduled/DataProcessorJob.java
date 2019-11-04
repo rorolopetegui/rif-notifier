@@ -34,16 +34,18 @@ public class DataProcessorJob {
         if (rawData.size() > 0) {
             logger.info(Thread.currentThread().getId() + String.format(" - Rawdata not processed = %d", rawData.size()));
             List<Notification> ntfsData = new ArrayList<>();
-            rawData.stream().forEach(rawData1 -> {
+            List<Subscription> subscriptionsWithNotif = new ArrayList<>();
+            rawData.forEach(rawDataItem -> {
                 String dataForNotification = "";
-                List<Subscription> activeSubs = dbManagerFacade.getActiveSubscriptionsByTopicId(rawData1.getIdTopic());
-                logger.info(Thread.currentThread().getId() + String.format(" - Active subscriptions for the topic_id (%d) = %d", rawData1.getIdTopic(), activeSubs.size()));
+                //Bring subs with notification balance also
+                List<Subscription> activeSubs = dbManagerFacade.getActiveSubscriptionsByTopicIdWithBalance(rawDataItem.getIdTopic());
+                logger.info(Thread.currentThread().getId() + String.format(" - Active subscriptions for the topic_id (%d) = %d", rawDataItem.getIdTopic(), activeSubs.size()));
                 for (Subscription sub : activeSubs) {
-                    if (!processedRows.stream().anyMatch(item -> item.getId().equals(rawData1.getId())))
-                        processedRows.add(rawData1);
+                    if (processedRows.stream().noneMatch(item -> item.getId().equals(rawDataItem.getId())))
+                        processedRows.add(rawDataItem);
 
                     //Here we can add some logic to each type of event
-                    switch (rawData1.getType()) {
+                    switch (rawDataItem.getType()) {
                         case CONTRACT_EVENT:
                             //break;
                         case NEW_TRANSACTIONS:
@@ -53,16 +55,33 @@ public class DataProcessorJob {
                         case NEW_BLOCK:
                             //break;
                         default:
-                            dataForNotification = rawData1.getData();
+                            dataForNotification = rawDataItem.getData();
                             break;
                     }
-                    ntfsData.add(new Notification(sub.getUserAddress(), new Date(), false, dataForNotification));
+
+                    //Add subscription to later discount the notification from balance
+                    if(subscriptionsWithNotif.stream().noneMatch(subItem -> subItem.getUserAddress().equals(sub.getUserAddress()))){
+                        //Just add the notification, if we're here it's because the user has at least 1 in notification balance
+                        ntfsData.add(new Notification(sub.getUserAddress(), new Date(), false, dataForNotification));
+                        sub.setNotificationBalance(sub.getNotificationBalance() - 1);
+                        subscriptionsWithNotif.add(sub);
+                    }else{
+                        Subscription addedSub = subscriptionsWithNotif.stream().filter(item -> item.getUserAddress().equals(sub.getUserAddress()))
+                                .findFirst().get();
+                        //Before adding, we need to check if the sub has balance yet
+                        if(addedSub.getNotificationBalance() > 0) {
+                            ntfsData.add(new Notification(sub.getUserAddress(), new Date(), false, dataForNotification));
+                            addedSub.decrementNotificationBalance();
+                        }
+                    }
                 }
             });
             logger.info(Thread.currentThread().getId() + String.format(" - Finished processing notifications, count = %s", ntfsData.size()));
             if (!ntfsData.isEmpty()) {
-                List<Notification> sNotfs = dbManagerFacade.saveNotificationBatch(ntfsData);
-                logger.info(Thread.currentThread().getId() + String.format(" - Saved all notifications, count = %d", sNotfs.size()));
+                List<Notification> savedNotfs = dbManagerFacade.saveNotificationBatch(ntfsData);
+                //Discount notifications from subscription
+                subscriptionsWithNotif.forEach(updatedSub -> dbManagerFacade.updateSubscription(updatedSub));
+                logger.info(Thread.currentThread().getId() + String.format(" - Saved all notifications, count = %d", savedNotfs.size()));
             }
         }
         logger.info(Thread.currentThread().getId() + String.format(" - Rawdata to mark as processed - %d", processedRows.size()));
