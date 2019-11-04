@@ -65,12 +65,12 @@ public class SubscribeController {
     @ResponseBody
     public ResponseEntity<DTOResponse> subscribeToTopic(
             @RequestHeader(value="apiKey") String apiKey,
-            @RequestBody String sTopic) {
+            @RequestBody String userTopic) {
         ObjectMapper mapper = new ObjectMapper();
         Topic topic = null;
         DTOResponse resp = new DTOResponse();
         try {
-            topic = mapper.readValue(sTopic, Topic.class);
+            topic = mapper.readValue(userTopic, Topic.class);
             User us = userServices.getUserByApiKey(apiKey);
             if(us != null){
                 //Check if the user did subscribe
@@ -85,7 +85,7 @@ public class SubscribeController {
                     }
                 }else{
                     //Return an error because the user still did not create the subscription
-                    resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                    resp.setMessage(ResponseConstants.NO_ACTIVE_SUBSCRIPTION);
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
             }else{
