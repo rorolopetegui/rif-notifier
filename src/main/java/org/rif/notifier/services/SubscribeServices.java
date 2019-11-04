@@ -32,16 +32,20 @@ public class SubscribeServices  {
      * It creates a luminoInvoice that will be returned for the user to pay it.
      * When the user pays the invoice, the subscription will be activated
      * Actually we are not validating the subscription type, so it can be any number
-     * @param us User that will be associated with the subscription
-     * @param type Subscription type
+     * @param user User that will be associated with the subscription
+     * @param type Subscription type to create the subscription
      * @return LuminoInvoice string hash
      */
-    public String createSubscription(User us, int type){
-        SubscriptionType subType = dbManagerFacade.getSubscriptionTypeByType(type);
-        Subscription sub = dbManagerFacade.saveSubscription(new Date(), 1, us.getAddress(), subType, SubscriptionConstants.PENDING_PAYMENT);
-        //Pending to generate a lumino-invoice
-        String invoice = LuminoInvoice.generateInvoice(us.getAddress());
-        return invoice;
+    public String createSubscription(User user, SubscriptionType type){
+        String retVal = "";
+        if(user != null && type != null) {
+            if(isSubscriptionTypeValid(type.getId())) {
+                Subscription sub = dbManagerFacade.createSubscription(new Date(), user.getAddress(), type, SubscriptionConstants.PENDING_PAYMENT);
+                //Pending to generate a lumino-invoice
+                retVal = LuminoInvoice.generateInvoice(user.getAddress());
+            }
+        }
+        return retVal;
     }
 
     public Subscription getSubscriptionByAddress(String user_address){
@@ -93,6 +97,15 @@ public class SubscribeServices  {
     public boolean isSubscriptionTypeValid(int type){
         SubscriptionType subType = dbManagerFacade.getSubscriptionTypeByType(type);
         return subType != null;
+    }
+
+    /**
+     * Returns a subscription type by giving it the int type
+     * @param type Int type, to be searched
+     * @return Subscription type in case finds it
+     */
+    public SubscriptionType getSubscriptionTypeByType(int type){
+        return dbManagerFacade.getSubscriptionTypeByType(type);
     }
 
     /**

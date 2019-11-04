@@ -39,15 +39,16 @@ public class SubscribeController {
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
         if(us != null){
-            if(subscribeServices.getSubscriptionByAddress(us.getAddress()) == null) {
-                if(subscribeServices.isSubscriptionTypeValid(type)) {
-                    resp.setData(subscribeServices.createSubscription(us, type));
+            SubscriptionType subType = subscribeServices.getSubscriptionTypeByType(type);
+            if(subType != null) {
+                if (subscribeServices.getSubscriptionByAddress(us.getAddress()) == null) {
+                    resp.setData(subscribeServices.createSubscription(us, subType));
                 }else{
-                    resp.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
+                    resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ADDED);
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
             }else{
-                resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ADDED);
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
                 resp.setStatus(HttpStatus.CONFLICT);
             }
         }else{

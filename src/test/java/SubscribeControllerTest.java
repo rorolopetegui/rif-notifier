@@ -1,6 +1,5 @@
-package org.rif.notifier.tests;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import mocked.MockTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.rif.notifier.constants.ResponseConstants;
@@ -12,7 +11,6 @@ import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.User;
 import org.rif.notifier.services.SubscribeServices;
 import org.rif.notifier.services.UserServices;
-import org.rif.notifier.tests.mocked.MockTestData;
 import org.rif.notifier.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -75,7 +73,7 @@ public class SubscribeControllerTest {
         String apiKey = Utils.generateNewToken();
         User us = new User(address, apiKey);
         SubscriptionType subType = new SubscriptionType(1000);
-        Subscription sub = new Subscription(new Date(), 1, us.getAddress(), subType, "PAYED");
+        Subscription sub = new Subscription(new Date(), us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
         when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
@@ -150,7 +148,7 @@ public class SubscribeControllerTest {
         String apiKey = Utils.generateNewToken();
         User us = new User(address, apiKey);
         SubscriptionType subType = new SubscriptionType(1000);
-        Subscription sub = new Subscription(new Date(), 1, us.getAddress(), subType, "PAYED");
+        Subscription sub = new Subscription(new Date(), us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockInvalidTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
         when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);

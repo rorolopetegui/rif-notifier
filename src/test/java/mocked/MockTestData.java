@@ -1,4 +1,4 @@
-package org.rif.notifier.tests.mocked;
+package mocked;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.rif.notifier.models.entities.Notification;

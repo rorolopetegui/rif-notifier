@@ -14,7 +14,7 @@ public class Subscription {
     @Column(name = "active_until")
     private Date activeUntil;
 
-    private int active;
+    private boolean active = true;
 
     @Column(name = "user_address")
     private String userAddress;
@@ -38,9 +38,8 @@ public class Subscription {
 
     public Subscription() {}
 
-    public Subscription(Date activeUntil, int active, String userAddress, SubscriptionType type, String state) {
+    public Subscription(Date activeUntil, String userAddress, SubscriptionType type, String state) {
         this.activeUntil = activeUntil;
-        this.active = active;
         this.userAddress = userAddress;
         this.type = type;
         this.state = state;
@@ -63,11 +62,11 @@ public class Subscription {
         this.activeUntil = activeUntil;
     }
 
-    public int getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

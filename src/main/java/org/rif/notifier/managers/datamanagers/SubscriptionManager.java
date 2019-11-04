@@ -54,8 +54,8 @@ public class SubscriptionManager {
         return subscriptionRepositorty.findByUserAddress(user_address);
     }
 
-    public Subscription insert(Date activeUntil, int active, String userAddress, SubscriptionType type, String state) {
-        Subscription sub = new Subscription(activeUntil, active, userAddress, type, state);
+    public Subscription insert(Date activeUntil, String userAddress, SubscriptionType type, String state) {
+        Subscription sub = new Subscription(activeUntil, userAddress, type, state);
         Subscription result = subscriptionRepositorty.save(sub);
         return result;
     }

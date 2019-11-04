@@ -16,13 +16,12 @@ public class SubscriptionType {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Subscription> subscription;
 
-    @Column(name = "notification_counter")
-    private int notificationCounter;
+    private int notifications;
 
     public SubscriptionType(){}
 
-    public SubscriptionType(int notificationCounter){
-        this.notificationCounter = notificationCounter;
+    public SubscriptionType(int notifications){
+        this.notifications = notifications;
     }
 
     public int getId() {
@@ -33,12 +32,12 @@ public class SubscriptionType {
         this.id = id;
     }
 
-    public int getNotificationCounter() {
-        return notificationCounter;
+    public int getnotifications() {
+        return notifications;
     }
 
-    public void setNotificationCounter(int notificationCounter) {
-        this.notificationCounter = notificationCounter;
+    public void setnotifications(int notifications) {
+        this.notifications = notifications;
     }
 
     public List<Subscription> getSubscription() {

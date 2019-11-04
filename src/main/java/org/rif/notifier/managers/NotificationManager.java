@@ -35,7 +35,7 @@ public class NotificationManager {
         Subscription sub = dbManagerFacade.getSubscriptionByAddress(address);
         if(sub != null) {
             //This will need to be migrated by topic
-            if (sub.getActive() == 1)
+            if (sub.getActive() )
                 lst = dbManagerFacade.getNotificationByUserAddress(address);
         }
         return lst;

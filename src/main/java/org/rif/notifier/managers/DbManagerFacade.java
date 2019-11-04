@@ -96,8 +96,8 @@ public class DbManagerFacade {
         return subscriptionManager.getSubscriptionByAddress(user_address);
     }
 
-    public Subscription saveSubscription(Date activeUntil, int active, String userAddress, SubscriptionType type, String state) {
-        return subscriptionManager.insert(activeUntil, active, userAddress, type, state);
+    public Subscription createSubscription(Date activeUntil, String userAddress, SubscriptionType type, String state) {
+        return subscriptionManager.insert(activeUntil, userAddress, type, state);
     }
 
     public Subscription updateSubscription(Subscription sub) {

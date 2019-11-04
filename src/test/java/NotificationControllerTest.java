@@ -1,6 +1,5 @@
-package org.rif.notifier.tests;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import mocked.MockTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.rif.notifier.constants.ResponseConstants;
@@ -11,7 +10,6 @@ import org.rif.notifier.models.entities.Notification;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.User;
 import org.rif.notifier.services.UserServices;
-import org.rif.notifier.tests.mocked.MockTestData;
 import org.rif.notifier.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
