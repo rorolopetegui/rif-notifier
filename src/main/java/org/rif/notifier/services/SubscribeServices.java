@@ -1,6 +1,7 @@
 package org.rif.notifier.services;
 
 import org.rif.notifier.constants.SubscriptionConstants;
+import org.rif.notifier.constants.TopicParamTypes;
 import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.entities.*;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
-import static org.rif.notifier.constants.EventTypeConstants.*;
+import static org.rif.notifier.constants.TopicParamTypes.*;
 
 @Service
 public class SubscribeServices  {
@@ -147,13 +148,13 @@ public class SubscribeServices  {
     		if ((null == param.getType()) || (null == param.getValue()) || param.getValue().isEmpty()) {
     			return false;
     		}
-    		String type = param.getType();
-    		if(type.equals(CONTRACT_EVENT_ADDRESS) || type.equals(CONTRACT_EVENT_NAME) || type.equals(CONTRACT_EVENT_PARAM)) {
+            TopicParamTypes type = param.getType();
+    		if(type.equals(CONTRACT_ADDRESS) || type.equals(EVENT_NAME) || type.equals(EVENT_PARAM)) {
     			switch (type) {
-	                case CONTRACT_EVENT_ADDRESS:
+                    case CONTRACT_ADDRESS:
 	                	counterContractAddress++;
 	                    break;
-	                case CONTRACT_EVENT_NAME:
+	                case EVENT_NAME:
 	                	counterEventName++;
 	                    break;
 	            }

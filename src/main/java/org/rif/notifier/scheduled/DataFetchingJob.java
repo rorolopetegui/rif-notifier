@@ -26,7 +26,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.rif.notifier.constants.EventTypeConstants.*;
+import static org.rif.notifier.constants.TopicParamTypes.*;
+import static org.rif.notifier.constants.TopicTypes.*;
 
 
 @Component
@@ -122,11 +123,11 @@ public class DataFetchingJob {
                     sub.getTopics().stream().filter(item ->
                             item.getType().equals(CONTRACT_EVENT)
                                     && item.getTopicParams().stream().anyMatch(param ->
-                                    param.getType().equals(CONTRACT_EVENT_NAME)
+                                    param.getType().equals(EVENT_NAME)
                                             && param.getValue().equals(rwDt.getEventName())
                             )
                                     && item.getTopicParams().stream().anyMatch(param ->
-                                    param.getType().equals(CONTRACT_EVENT_ADDRESS)
+                                    param.getType().equals(CONTRACT_ADDRESS)
                                             && param.getValue().equals(rwDt.getContractAddress())
                             )
                     ).forEach(tp -> {
@@ -135,7 +136,7 @@ public class DataFetchingJob {
                         List<TopicParams> filterParams = new ArrayList<>();
                         //Try getting the parameters to be filtered
                         tp.getTopicParams().stream().filter(param ->
-                                param.getType().equals(CONTRACT_EVENT_PARAM)
+                                param.getType().equals(EVENT_PARAM)
                                         && param.getFilter() != null
                                         && !param.getFilter().isEmpty()
                         ).forEach(filterParams::add);

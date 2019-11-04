@@ -1,5 +1,7 @@
 package org.rif.notifier.managers;
 
+import org.rif.notifier.constants.TopicParamTypes;
+import org.rif.notifier.constants.TopicTypes;
 import org.rif.notifier.managers.datamanagers.*;
 import org.rif.notifier.models.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +116,7 @@ public class DbManagerFacade {
         return topicManager.getTopicByHashCode(hash);
     }
 
-    public Topic saveTopic(String type, String hash, Subscription sub){
+    public Topic saveTopic(TopicTypes type, String hash, Subscription sub){
         return topicManager.insert(type, hash, sub);
     }
 
@@ -122,7 +124,7 @@ public class DbManagerFacade {
         return topicManager.update(tp);
     }
 
-    public TopicParams saveTopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed, String filter){
+    public TopicParams saveTopicParams(Topic topic, TopicParamTypes type, String value, int order, String valueType, boolean indexed, String filter){
         return topicParamsManager.insert(topic, type, value, order, valueType, indexed, filter);
     }
 

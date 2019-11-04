@@ -26,7 +26,7 @@ CREATE TABLE `datafetcher` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `last_block` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -176,7 +176,7 @@ DROP TABLE IF EXISTS `topic`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `topic` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(45) NOT NULL,
+  `type` enum('NEW_BLOCK','NEW_TRANSACTIONS','PENDING_TRANSACTIONS','CONTRACT_EVENT') NOT NULL,
   `hash` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
@@ -224,4 +224,4 @@ CREATE TABLE `user_topic` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-04 14:13:59
+-- Dump completed on 2019-11-04 15:41:40

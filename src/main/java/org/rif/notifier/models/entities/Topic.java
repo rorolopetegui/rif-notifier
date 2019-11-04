@@ -2,6 +2,7 @@ package org.rif.notifier.models.entities;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.rif.notifier.constants.TopicTypes;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,7 +17,8 @@ public class Topic {
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private int id;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TopicTypes type;
 
     private String hash;
 
@@ -32,7 +34,7 @@ public class Topic {
 
     public Topic(){}
 
-    public Topic(String type, String hash, Subscription sub){
+    public Topic(TopicTypes type, String hash, Subscription sub){
         this.type = type;
         this.hash = hash;
         this.subscriptions = Stream.of(sub).collect(Collectors.toSet());
@@ -47,11 +49,11 @@ public class Topic {
         this.id = id;
     }
 
-    public String getType() {
+    public TopicTypes getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TopicTypes type) {
         this.type = type;
     }
 

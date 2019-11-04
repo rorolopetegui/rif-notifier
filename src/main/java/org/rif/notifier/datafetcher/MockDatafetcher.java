@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.rif.notifier.constants.EventTypeConstants.*;
+import static org.rif.notifier.constants.TopicParamTypes.*;
+
 
 public class MockDatafetcher {
 
@@ -26,11 +27,11 @@ public class MockDatafetcher {
         List<TypeReference<?>> params = new ArrayList<>();
         //Streaming to get the address, eventName and parameters to create the listeneable
         String address = tp.getTopicParams().stream()
-                .filter(item -> item.getType().equals("CONTRACT_ADDRESS")).findFirst().get().getValue();
+                .filter(item -> item.getType().equals(CONTRACT_ADDRESS)).findFirst().get().getValue();
         String eventName = tp.getTopicParams().stream()
-                .filter(item -> item.getType().equals("EVENT_NAME")).findFirst().get().getValue();
+                .filter(item -> item.getType().equals(EVENT_NAME)).findFirst().get().getValue();
         List<TopicParams> topicParams = tp.getTopicParams().stream()
-                .filter(item -> item.getType().equals("EVENT_PARAM"))
+                .filter(item -> item.getType().equals(EVENT_PARAM))
                 .collect(Collectors.toList());
         for(TopicParams param : topicParams){
             String value = param.getValueType();

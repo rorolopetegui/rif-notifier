@@ -1,5 +1,6 @@
 package org.rif.notifier.scheduled;
 
+import org.rif.notifier.constants.TopicTypes;
 import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.entities.*;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static org.rif.notifier.constants.EventTypeConstants.*;
+import static org.rif.notifier.constants.TopicTypes.*;
 
 
 @Component
@@ -42,7 +43,7 @@ public class DataProcessorJob {
                 logger.info(Thread.currentThread().getId() + String.format(" - Active subscriptions for the topic_id (%d) = %d", rawDataItem.getIdTopic(), activeSubs.size()));
                 for (Subscription sub : activeSubs) {
                     //Here we can add some logic to each type of event
-                    switch (rawDataItem.getType()) {
+                    switch (TopicTypes.valueOf(rawDataItem.getType())) {
                         case CONTRACT_EVENT:
                             //break;
                         case NEW_TRANSACTIONS:

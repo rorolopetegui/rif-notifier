@@ -1,5 +1,7 @@
 package org.rif.notifier.models.entities;
 
+import org.rif.notifier.constants.TopicParamTypes;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -14,8 +16,9 @@ public class TopicParams {
     @JoinColumn(name="id_topic")
     private Topic topic;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "param_type")
-    private String type;
+    private TopicParamTypes type;
 
     private String value;
 
@@ -32,7 +35,7 @@ public class TopicParams {
 
     public TopicParams(){}
 
-    public TopicParams(Topic topic, String type, String value, int order, String valueType, boolean indexed, String filter){
+    public TopicParams(Topic topic, TopicParamTypes type, String value, int order, String valueType, boolean indexed, String filter){
         this.topic = topic;
         this.type = type;
         this.value = value;
@@ -58,11 +61,11 @@ public class TopicParams {
         this.topic = topic;
     }
 
-    public String getType() {
+    public TopicParamTypes getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TopicParamTypes type) {
         this.type = type;
     }
 
