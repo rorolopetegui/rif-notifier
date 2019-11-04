@@ -187,8 +187,9 @@ public class DataFetchingJob {
      */
     private List<EthereumBasedListenable> getListeneables() throws ClassNotFoundException {
         List<EthereumBasedListenable> ethereumBasedListenables = new ArrayList<>();
-        List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
+        List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptionsWithBalance();
         boolean alreadyAdded;
+
         for(Subscription sub : activeSubs){
             Set<Topic> subTopics = sub.getTopics();
             for(Topic tp : subTopics){

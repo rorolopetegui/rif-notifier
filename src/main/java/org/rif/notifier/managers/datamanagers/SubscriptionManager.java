@@ -20,6 +20,12 @@ public class SubscriptionManager {
     @Autowired
     private SubscriptionRepository subscriptionRepositorty;
 
+    public List<Subscription> getAllActiveSubscriptionsWithBalance(){
+        List<Subscription> lst = new ArrayList<>();
+        subscriptionRepositorty.findByActiveWithBalance().forEach(lst::add);
+        return lst;
+    }
+
     public List<Subscription> getActiveSubscriptions(){
         List<Subscription> lst = new ArrayList<>();
         subscriptionRepositorty.findByActive(1).forEach(lst::add);

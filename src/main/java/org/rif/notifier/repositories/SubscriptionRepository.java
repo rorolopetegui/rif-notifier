@@ -15,6 +15,9 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Stri
 
     List<Subscription> findByActive(int active);
 
+    @Query(value = "SELECT * FROM subscription A WHERE A.active = 1 AND A.notification_balance > 0", nativeQuery = true)
+    List<Subscription> findByActiveWithBalance();
+
     @Query(value = "SELECT * FROM subscription A JOIN user_topic B ON A.id=B.id_subscription AND A.active = 1 AND B.id_topic = ?1", nativeQuery = true)
     List<Subscription> findByIdTopicAndSubscriptionActive(int id);
 

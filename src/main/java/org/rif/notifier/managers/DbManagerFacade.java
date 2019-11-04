@@ -76,6 +76,10 @@ public class DbManagerFacade {
         return subscriptionManager.getActiveSubscriptions();
     }
 
+    public List<Subscription> getAllActiveSubscriptionsWithBalance(){
+        return subscriptionManager.getAllActiveSubscriptionsWithBalance();
+    }
+
     public List<Subscription> getActiveSubscriptionsByTopicId(int idTopic){
         return subscriptionManager.getActiveSubscriptionsByTopicId(idTopic);
     }
