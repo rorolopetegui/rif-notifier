@@ -119,7 +119,7 @@ public class DataFetchingJob {
                 EventRawData rwDt = mapper.readValue(rawEvent, EventRawData.class);
                 List<Subscription> subs = dbManagerFacade.findByContractAddressAndSubscriptionActive(rwDt.getContractAddress());
                 for (Subscription sub : subs) {
-                    //Here i have all topics with event name same as rawdata and same contract address
+                    //Here i'll filter all topics with event name same as rawdata and same contract address
                     sub.getTopics().stream().filter(item ->
                             item.getType().equals(CONTRACT_EVENT)
                                     && item.getTopicParams().stream().anyMatch(param ->
@@ -131,6 +131,7 @@ public class DataFetchingJob {
                                             && param.getValue().equals(rwDt.getContractAddress())
                             )
                     ).forEach(tp -> {
+                        //Iterate through the filtered data
                         rwDt.setTopicId(tp.getId());
                         //One user can have lots of filters for the same event, so we need to check if this subscription has some filters to apply
                         List<TopicParams> filterParams = new ArrayList<>();
