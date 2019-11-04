@@ -41,9 +41,6 @@ public class DataProcessorJob {
                 List<Subscription> activeSubs = dbManagerFacade.getActiveSubscriptionsByTopicIdWithBalance(rawDataItem.getIdTopic());
                 logger.info(Thread.currentThread().getId() + String.format(" - Active subscriptions for the topic_id (%d) = %d", rawDataItem.getIdTopic(), activeSubs.size()));
                 for (Subscription sub : activeSubs) {
-                    if (processedRows.stream().noneMatch(item -> item.getId().equals(rawDataItem.getId())))
-                        processedRows.add(rawDataItem);
-
                     //Here we can add some logic to each type of event
                     switch (rawDataItem.getType()) {
                         case CONTRACT_EVENT:
@@ -75,6 +72,8 @@ public class DataProcessorJob {
                         }
                     }
                 }
+                if (processedRows.stream().noneMatch(item -> item.getId().equals(rawDataItem.getId())))
+                    processedRows.add(rawDataItem);
             });
             logger.info(Thread.currentThread().getId() + String.format(" - Finished processing notifications, count = %s", ntfsData.size()));
             if (!ntfsData.isEmpty()) {
