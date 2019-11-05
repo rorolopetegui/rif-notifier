@@ -129,7 +129,7 @@ DROP TABLE IF EXISTS `subscription`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `subscription` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `active_until` date DEFAULT NULL,
+  `active_since` date DEFAULT NULL,
   `active` tinyint(4) DEFAULT '0',
   `user_address` varchar(45) NOT NULL,
   `type` int(11) DEFAULT '0',
@@ -224,4 +224,4 @@ CREATE TABLE `user_topic` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-04 16:55:26
+-- Dump completed on 2019-11-05 16:02:39

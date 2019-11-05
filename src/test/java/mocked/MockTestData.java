@@ -1,8 +1,8 @@
 package mocked;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.rif.notifier.models.entities.Notification;
-import org.rif.notifier.models.entities.Topic;
+import org.rif.notifier.constants.SubscriptionConstants;
+import org.rif.notifier.models.entities.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,5 +98,18 @@ public class MockTestData {
             retLst.add(notif);
         }
         return retLst;
+    }
+
+    public Subscription mockSubscription(){
+        SubscriptionType type = this.mockSubscriptionType();
+        User user = this.mockUser();
+        Subscription sub = new Subscription(new Date(), user.getAddress(), type, SubscriptionConstants.PAYED_PAYMENT);
+        return sub;
+    }
+    public User mockUser(){
+        return new User("0x0", "123456789");
+    }
+    public SubscriptionType mockSubscriptionType(){
+        return new SubscriptionType(1000);
     }
 }
