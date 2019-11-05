@@ -1,6 +1,7 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.rif.notifier.Application;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.controllers.UserController;
 import org.rif.notifier.models.DTO.DTOResponse;
@@ -8,6 +9,7 @@ import org.rif.notifier.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = UserController.class)
+@ContextConfiguration(classes={Application.class})
 public class UserControllerTest {
 
     @Autowired
