@@ -41,7 +41,7 @@ public class SubscribeController {
         if(us != null){
             SubscriptionType subType = subscribeServices.getSubscriptionTypeByType(type);
             if(subType != null) {
-                if (subscribeServices.getSubscriptionByAddress(us.getAddress()) == null) {
+                if (subscribeServices.getActiveSubscriptionByAddress(us.getAddress()) == null) {
                     resp.setData(subscribeServices.createSubscription(us, subType));
                 }else{
                     resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ADDED);
@@ -74,7 +74,7 @@ public class SubscribeController {
             User us = userServices.getUserByApiKey(apiKey);
             if(us != null){
                 //Check if the user did subscribe
-                Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
+                Subscription sub = subscribeServices.getActiveSubscriptionByAddress(us.getAddress());
                 if(sub != null) {
                     if(subscribeServices.validateTopic(topic)){
                         subscribeServices.subscribeToTopic(topic, sub);

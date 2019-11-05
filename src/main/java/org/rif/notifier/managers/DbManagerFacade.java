@@ -94,8 +94,8 @@ public class DbManagerFacade {
         return subscriptionManager.findByContractAddressAndSubscriptionActive(address);
     }
 
-    public Subscription getSubscriptionByAddress(String user_address){
-        return subscriptionManager.getSubscriptionByAddress(user_address);
+    public Subscription getActiveSubscriptionByAddress(String user_address){
+        return subscriptionManager.getActiveSubscriptionByAddress(user_address);
     }
 
     public Subscription createSubscription(Date activeUntil, String userAddress, SubscriptionType type, String state) {

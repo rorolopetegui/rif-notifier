@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static org.rif.notifier.constants.TopicTypes.*;
-
 
 @Component
 public class DataProcessorJob {

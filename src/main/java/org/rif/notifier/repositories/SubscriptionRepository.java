@@ -13,6 +13,8 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Stri
 
     Subscription findByUserAddress(String user_address);
 
+    Subscription findByUserAddressAndActive(String user_address, boolean active);
+
     List<Subscription> findByActive(int active);
 
     @Query(value = "SELECT * FROM subscription A WHERE A.active = 1 AND A.notification_balance > 0", nativeQuery = true)

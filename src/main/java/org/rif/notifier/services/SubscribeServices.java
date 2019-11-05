@@ -49,8 +49,8 @@ public class SubscribeServices  {
         return retVal;
     }
 
-    public Subscription getSubscriptionByAddress(String user_address){
-        return dbManagerFacade.getSubscriptionByAddress(user_address);
+    public Subscription getActiveSubscriptionByAddress(String user_address){
+        return dbManagerFacade.getActiveSubscriptionByAddress(user_address);
     }
 
     /**
@@ -61,33 +61,35 @@ public class SubscribeServices  {
      * @param sub Subscription type, to be associated with the Topic sended
      */
     public void subscribeToTopic(Topic topic, Subscription sub){
-        //Checks if the Topic already exists
-        Topic tp = dbManagerFacade.getTopicByHashCode("" + topic.hashCode());
-        if (tp == null) {
-            //Generate Topic with no params
-            tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode(), sub);
-            switch (topic.getType()) {
-                case CONTRACT_EVENT:
-                    //Generates params for the contract event
-                    for (TopicParams param : topic.getTopicParams()) {
-                        dbManagerFacade.saveTopicParams(
-                                tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed(), param.getFilter()
-                        );
-                    }
-                    break;
-                case PENDING_TRANSACTIONS:
-                case NEW_BLOCK:
-                case NEW_TRANSACTIONS:
-                    //Non of this topics types need params at this moment
-                    break;
+        if(topic != null && sub != null) {
+            //Checks if the Topic already exists
+            Topic tp = dbManagerFacade.getTopicByHashCode("" + topic.hashCode());
+            if (tp == null) {
+                //Generate Topic with no params
+                tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode(), sub);
+                switch (topic.getType()) {
+                    case CONTRACT_EVENT:
+                        //Generates params for the contract event
+                        for (TopicParams param : topic.getTopicParams()) {
+                            dbManagerFacade.saveTopicParams(
+                                    tp, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed(), param.getFilter()
+                            );
+                        }
+                        break;
+                    case PENDING_TRANSACTIONS:
+                    case NEW_BLOCK:
+                    case NEW_TRANSACTIONS:
+                        //Non of this topics types need params at this moment
+                        break;
+                }
+            } else {
+                //Add topic-subscription relationship
+                tp.addSubscription(sub);
+                dbManagerFacade.updateTopic(tp);
             }
-        }else{
-            //Add topic-subscription relationship
-            tp.addSubscription(sub);
-            dbManagerFacade.updateTopic(tp);
+            //This line was throwing error cause the Json is too large
+            //resp.setData(ut);
         }
-        //This line was throwing error cause the Json is too large
-        //resp.setData(ut);
     }
 
     /**

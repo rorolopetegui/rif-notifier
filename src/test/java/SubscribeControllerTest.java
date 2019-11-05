@@ -54,8 +54,10 @@ public class SubscribeControllerTest {
         dto.setData(luminoInvoice);
         String apiKey = Utils.generateNewToken();
         User us = new User(address, apiKey);
+        SubscriptionType subType = new SubscriptionType(1000);
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
-        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(null);
+        when(subscribeServices.getActiveSubscriptionByAddress(us.getAddress())).thenReturn(null);
+        when(subscribeServices.getSubscriptionTypeByType(0)).thenReturn(subType);
         MvcResult result = mockMvc.perform(
                 post("/subscribe")
                         .param("type", "0")
@@ -79,7 +81,7 @@ public class SubscribeControllerTest {
         Subscription sub = new Subscription(new Date(), us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
-        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
+        when(subscribeServices.getActiveSubscriptionByAddress(us.getAddress())).thenReturn(sub);
         //Need to mock with any, cause it was always returning false, maybe cause the Topic that we bring in here was not the same as in the controller
         when(subscribeServices.validateTopic(any(Topic.class))).thenReturn(true);
         //when(subscribeServices.validateTopic(tp)).thenCallRealMethod();
@@ -124,7 +126,7 @@ public class SubscribeControllerTest {
     public void errorWhenNotSubscribed() throws Exception {
         String address = "0x0";
         DTOResponse dto = new DTOResponse();
-        dto.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+        dto.setMessage(ResponseConstants.NO_ACTIVE_SUBSCRIPTION);
         String apiKey = Utils.generateNewToken();
         User us = new User(address, apiKey);
         Topic tp = mockTestData.mockTopic();
@@ -154,7 +156,7 @@ public class SubscribeControllerTest {
         Subscription sub = new Subscription(new Date(), us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockInvalidTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
-        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
+        when(subscribeServices.getActiveSubscriptionByAddress(us.getAddress())).thenReturn(sub);
 
         MvcResult result = mockMvc.perform(
                 post("/subscribeToTopic")

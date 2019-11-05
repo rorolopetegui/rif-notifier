@@ -11,8 +11,8 @@ public class Subscription {
     @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "active_until")
-    private Date activeUntil;
+    @Column(name = "active_since")
+    private Date activeSince;
 
     private boolean active = true;
 
@@ -38,8 +38,8 @@ public class Subscription {
 
     public Subscription() {}
 
-    public Subscription(Date activeUntil, String userAddress, SubscriptionType type, String state) {
-        this.activeUntil = activeUntil;
+    public Subscription(Date activeSince, String userAddress, SubscriptionType type, String state) {
+        this.activeSince = activeSince;
         this.userAddress = userAddress;
         this.type = type;
         this.state = state;
@@ -54,12 +54,12 @@ public class Subscription {
         this.id = id;
     }
 
-    public Date getActiveUntil() {
-        return activeUntil;
+    public Date getActiveSince() {
+        return activeSince;
     }
 
-    public void setActiveUntil(Date activeUntil) {
-        this.activeUntil = activeUntil;
+    public void setActiveSince(Date activeSince) {
+        this.activeSince = activeSince;
     }
 
     public boolean getActive() {

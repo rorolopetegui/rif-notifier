@@ -32,7 +32,7 @@ public class NotificationManager {
      */
     public List<Notification> getNotificationsForAddress(String address){
         List<Notification> lst = new ArrayList<>();
-        Subscription sub = dbManagerFacade.getSubscriptionByAddress(address);
+        Subscription sub = dbManagerFacade.getActiveSubscriptionByAddress(address);
         if(sub != null) {
             //This will need to be migrated by topic
             if (sub.getActive() )
