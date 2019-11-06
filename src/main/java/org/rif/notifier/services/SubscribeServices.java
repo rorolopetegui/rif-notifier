@@ -49,6 +49,25 @@ public class SubscribeServices  {
         return retVal;
     }
 
+    /**
+     * This is use to activate a given subscription
+     * @param subscription Subscription that will be activated
+     * @return true in success case, false otherwise
+     */
+    public boolean activateSubscription(Subscription subscription){
+        boolean retVal = false;
+        if(subscription != null) {
+            if(!subscription.getActive()) {
+                subscription.setActive(true);
+                subscription.setState(SubscriptionConstants.PAYED_PAYMENT);
+                subscription.setActiveSince(new Date());
+                Subscription sub = dbManagerFacade.updateSubscription(subscription);
+                retVal = sub != null;
+            }
+        }
+        return retVal;
+    }
+
     public Subscription getActiveSubscriptionByAddress(String user_address){
         return dbManagerFacade.getActiveSubscriptionByAddress(user_address);
     }

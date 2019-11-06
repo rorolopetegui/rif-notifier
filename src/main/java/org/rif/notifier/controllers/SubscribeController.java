@@ -99,4 +99,34 @@ public class SubscribeController {
 
         return new ResponseEntity<>(resp, resp.getStatus());
     }
+
+    @ApiOperation(value = "Activate a subscription",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/activatesubscription", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> subscribe(
+            @RequestHeader(value="apiKey") String apiKey) {
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if(us != null) {
+            Subscription sub = subscribeServices.getActiveSubscriptionByAddress(us.getAddress());
+            if (sub != null) {
+                if(!sub.getActive()) {
+                    resp.setData(subscribeServices.activateSubscription(sub));
+                }else{
+                    resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ACTIVE);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
+            } else {
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
+
+        }else{
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
 }

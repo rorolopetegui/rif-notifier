@@ -12,6 +12,8 @@ public interface ResponseConstants {
 
     String NO_ACTIVE_SUBSCRIPTION = "No active subscription found, check if you are subscribed first, or have a invoice pending of payment";
 
+    String SUBSCRIPTION_ALREADY_ACTIVE = "This subscription is already active";
+
     String SUBSCRIPTION_ALREADY_ADDED = "This address is already subscribed";
 
     String SUBSCRIPTION_INCORRECT_TYPE = "The type you select is not a valid one";
