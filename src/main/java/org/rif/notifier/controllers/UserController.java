@@ -35,6 +35,9 @@ public class UserController {
                 resp.setMessage(ResponseConstants.APIKEY_ALREADY_ADDED);
                 resp.setStatus(HttpStatus.CONFLICT);
             }
+        }else{
+            resp.setMessage(ResponseConstants.ADDRESS_NOT_PROVIDED);
+            resp.setStatus(HttpStatus.CONFLICT);
         }
         return new ResponseEntity<>(resp, resp.getStatus());
     }

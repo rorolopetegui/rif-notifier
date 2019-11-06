@@ -8,6 +8,8 @@ public interface ResponseConstants {
 
     String APIKEY_ALREADY_ADDED = "The user is already registered";
 
+    String ADDRESS_NOT_PROVIDED = "Address is a required param, please insert a correct address";
+
     String SUBSCRIPTION_NOT_FOUND = "Subscription not found, first try to subscribe";
 
     String NO_ACTIVE_SUBSCRIPTION = "No active subscription found, check if you are subscribed first, or have a invoice pending of payment";

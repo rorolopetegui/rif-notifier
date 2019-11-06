@@ -197,11 +197,21 @@ public class SubscribeServices  {
     		if(type.equals(CONTRACT_ADDRESS) || type.equals(EVENT_NAME) || type.equals(EVENT_PARAM)) {
     			switch (type) {
                     case CONTRACT_ADDRESS:
+                        if(param.getValue().isEmpty())
+                            return false;
 	                	counterContractAddress++;
 	                    break;
 	                case EVENT_NAME:
+                        if(param.getValue().isEmpty())
+                            return false;
 	                	counterEventName++;
 	                    break;
+                    case EVENT_PARAM:
+                        if(param.getValue().isEmpty())
+                            return false;
+                        else if(param.getValueType().isEmpty())
+                            return false;
+                        break;
 	            }
     		} else {
     			// if we reach this point it means the parameter has an invalid type
