@@ -68,8 +68,32 @@ public class SubscribeServices  {
         return retVal;
     }
 
+    /**
+     * Adds notification balance to a subscription, generates a lumino invoice of the type selected by the user.
+     * @param subscription Subscription that the user wants to be updated
+     * @param type Type selected, to get the new balance
+     * @return Lumino invoice
+     */
+    public String addBalanceToSubscription(Subscription subscription, SubscriptionType type){
+        String retVal = "";
+        if(subscription != null && type != null) {
+            subscription.setState(SubscriptionConstants.PENDING_PAYMENT);
+            subscription.setNotificationBalance(subscription.getNotificationBalance() + type.getNotifications());
+            subscription.setActive(false);
+            retVal = LuminoInvoice.generateInvoice(subscription.getUserAddress());
+            if(!retVal.isEmpty()) {
+                Subscription sub = dbManagerFacade.updateSubscription(subscription);
+            }
+        }
+        return retVal;
+    }
+
     public Subscription getActiveSubscriptionByAddress(String user_address){
         return dbManagerFacade.getActiveSubscriptionByAddress(user_address);
+    }
+
+    public Subscription getSubscriptionByAddress(String user_address){
+        return dbManagerFacade.getSubscriptionByAddress(user_address);
     }
 
     /**

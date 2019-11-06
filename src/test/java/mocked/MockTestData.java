@@ -106,6 +106,13 @@ public class MockTestData {
         Subscription sub = new Subscription(new Date(), user.getAddress(), type, SubscriptionConstants.PAYED_PAYMENT);
         return sub;
     }
+    public Subscription mockInactiveSubscription(){
+        SubscriptionType type = this.mockSubscriptionType();
+        User user = this.mockUser();
+        Subscription sub = new Subscription(new Date(), user.getAddress(), type, SubscriptionConstants.PENDING_PAYMENT);
+        sub.setActive(false);
+        return sub;
+    }
     public User mockUser(){
         return new User("0x0", "123456789");
     }

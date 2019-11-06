@@ -30,7 +30,7 @@ public class SubscribeServiceTest {
     private MockTestData mockTestData = new MockTestData();
 
     @Test
-    public void createSubscription(){
+    public void canCreateSubscription(){
         // given
         User user = mockTestData.mockUser();
         SubscriptionType type = mockTestData.mockSubscriptionType();
@@ -113,9 +113,8 @@ public class SubscribeServiceTest {
 
         assertEquals(retVal, type);
     }
-
     @Test
-    public void validateTopic() throws IOException {
+    public void canValidateTopic() throws IOException {
         Topic topic = mockTestData.mockTopic();
 
         boolean retVal = subscribeServices.validateTopic(topic);
@@ -139,5 +138,78 @@ public class SubscribeServiceTest {
         Subscription retVal = subscribeServices.getActiveSubscriptionByAddress("0x0");
 
         assertEquals(subscription, retVal);
+    }
+    @Test
+    public void canActivateSubscription(){
+        // given
+        Subscription activeSubscription = mockTestData.mockSubscription();
+        Subscription inactiveSubscription = mockTestData.mockInactiveSubscription();
+
+        doReturn(activeSubscription).when(dbManagerFacade).updateSubscription(inactiveSubscription);
+
+        // when
+        boolean retVal = subscribeServices.activateSubscription(inactiveSubscription);
+
+        // then
+        assertTrue(retVal);
+    }
+    @Test
+    public void errorActivateSubscriptionAlreadyActive(){
+        // given
+        Subscription activeSubscription = mockTestData.mockSubscription();
+        Subscription inactiveSubscription = mockTestData.mockInactiveSubscription();
+
+        doReturn(activeSubscription).when(dbManagerFacade).updateSubscription(inactiveSubscription);
+
+        // when
+        boolean retVal = subscribeServices.activateSubscription(activeSubscription);
+
+        // then
+        assertFalse(retVal);
+    }
+    @Test
+    public void canAddBalanceToSubscription(){
+        // given
+        String luminoInvoice = "123457A90123457B901234C579012345D79012E345790F12345G790123H45790I";
+        Subscription subscription = mockTestData.mockSubscription();
+        SubscriptionType type = mockTestData.mockSubscriptionType();
+
+        doReturn(subscription).when(dbManagerFacade).updateSubscription(subscription);
+
+        // when
+        String retVal = subscribeServices.addBalanceToSubscription(subscription, type);
+
+        // then
+        assertEquals(luminoInvoice, retVal);
+    }
+    @Test
+    public void errorAddBalanceToSubscriptionNotProvidingSubscription(){
+        // given
+        String expected = "";
+        //Subscription subscription = mockTestData.mockSubscription();
+        SubscriptionType type = mockTestData.mockSubscriptionType();
+
+        //doReturn(subscription).when(dbManagerFacade).updateSubscription(subscription);
+
+        // when
+        String retVal = subscribeServices.addBalanceToSubscription(null, type);
+
+        // then
+        assertEquals(expected, retVal);
+    }
+    @Test
+    public void errorAddBalanceToSubscriptionNotProvidingSubscriptionType(){
+        // given
+        String expected = "";
+        Subscription subscription = mockTestData.mockSubscription();
+        //SubscriptionType type = mockTestData.mockSubscriptionType();
+
+        //doReturn(subscription).when(dbManagerFacade).updateSubscription(subscription);
+
+        // when
+        String retVal = subscribeServices.addBalanceToSubscription(subscription, null);
+
+        // then
+        assertEquals(expected, retVal);
     }
 }

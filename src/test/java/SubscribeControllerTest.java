@@ -70,7 +70,6 @@ public class SubscribeControllerTest {
                 DTOResponse.class);
         assertEquals(dto.getStatus(), dtResponse.getStatus());
     }
-
     @Test
     public void canSendTopic() throws Exception {
         String address = "0x0";
@@ -81,7 +80,7 @@ public class SubscribeControllerTest {
         Subscription sub = new Subscription(new Date(), us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
-        when(subscribeServices.getActiveSubscriptionByAddress(us.getAddress())).thenReturn(sub);
+        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
         //Need to mock with any, cause it was always returning false, maybe cause the Topic that we bring in here was not the same as in the controller
         when(subscribeServices.validateTopic(any(Topic.class))).thenReturn(true);
         //when(subscribeServices.validateTopic(tp)).thenCallRealMethod();
@@ -99,7 +98,29 @@ public class SubscribeControllerTest {
 
         assertEquals(dto.getStatus(), dtResponse.getStatus());
     }
+    @Test
+    public void canActivateSubscription() throws Exception {
+        String luminoInvoice = "123457A90123457B901234C579012345D79012E345790F12345G790123H45790I";
+        DTOResponse dto = new DTOResponse();
+        dto.setData(luminoInvoice);
+        User us = mockTestData.mockUser();
+        Subscription inactiveSubscription = mockTestData.mockInactiveSubscription();
 
+        when(userServices.getUserByApiKey(us.getApiKey())).thenReturn(us);
+        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(inactiveSubscription);
+        when(subscribeServices.activateSubscription(inactiveSubscription)).thenReturn(true);
+
+        MvcResult result = mockMvc.perform(
+                post("/activatesubscription")
+                        .header("apiKey", us.getApiKey())
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
+        assertEquals(dto.getStatus(), dtResponse.getStatus());
+    }
     @Test
     public void errorWhenNotProvidingCorrectApiKey() throws Exception {
         String address = "0x0";
@@ -156,7 +177,7 @@ public class SubscribeControllerTest {
         Subscription sub = new Subscription(new Date(), us.getAddress(), subType, "PAYED");
         Topic tp = mockTestData.mockInvalidTopic();
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
-        when(subscribeServices.getActiveSubscriptionByAddress(us.getAddress())).thenReturn(sub);
+        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
 
         MvcResult result = mockMvc.perform(
                 post("/subscribeToTopic")
@@ -170,6 +191,116 @@ public class SubscribeControllerTest {
                 result.getResponse().getContentAsByteArray(),
                 DTOResponse.class);
 
+        assertEquals(dto.getMessage(), dtResponse.getMessage());
+    }
+    @Test
+    public void errorActiveSubscriptionAlreadyActive() throws Exception {
+        DTOResponse dto = new DTOResponse();
+        dto.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ACTIVE);
+        User us = mockTestData.mockUser();
+        Subscription activeSubscription = mockTestData.mockSubscription();
+
+        when(userServices.getUserByApiKey(us.getApiKey())).thenReturn(us);
+        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(activeSubscription);
+        when(subscribeServices.activateSubscription(activeSubscription)).thenReturn(false);
+
+        MvcResult result = mockMvc.perform(
+                post("/activatesubscription")
+                        .header("apiKey", us.getApiKey())
+        )
+                .andExpect(status().isConflict())
+                .andReturn();
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
+        assertEquals(dto.getMessage(), dtResponse.getMessage());
+    }
+    @Test
+    public void canAddBalance() throws Exception {
+        String luminoInvoice = "123457A90123457B901234C579012345D79012E345790F12345G790123H45790I";
+        DTOResponse dto = new DTOResponse();
+        dto.setData(luminoInvoice);
+        User user = mockTestData.mockUser();
+        Subscription subscription = mockTestData.mockSubscription();
+        SubscriptionType subscriptionType = mockTestData.mockSubscriptionType();
+
+        when(userServices.getUserByApiKey(user.getApiKey())).thenReturn(user);
+        when(subscribeServices.getSubscriptionTypeByType(0)).thenReturn(subscriptionType);
+        when(subscribeServices.getSubscriptionByAddress(user.getAddress())).thenReturn(subscription);
+
+        MvcResult result = mockMvc.perform(
+                post("/addBalance")
+                        .param("type", "0")
+                        .header("apiKey", user.getApiKey())
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
+        assertEquals(dto.getStatus(), dtResponse.getStatus());
+    }
+    @Test
+    public void errorAddBalanceWrongApiKey() throws Exception {
+        DTOResponse dto = new DTOResponse();
+        dto.setMessage(ResponseConstants.INCORRECT_APIKEY);
+        User user = mockTestData.mockUser();
+
+        when(userServices.getUserByApiKey(user.getApiKey())).thenReturn(null);
+
+        MvcResult result = mockMvc.perform(
+                post("/addBalance")
+                        .param("type", "0")
+                        .header("apiKey", user.getApiKey())
+        )
+                .andExpect(status().isConflict())
+                .andReturn();
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
+        assertEquals(dto.getMessage(), dtResponse.getMessage());
+    }
+    @Test
+    public void errorAddBalanceWrongSubscriptionType() throws Exception {
+        DTOResponse dto = new DTOResponse();
+        dto.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
+        User user = mockTestData.mockUser();
+
+        when(userServices.getUserByApiKey(user.getApiKey())).thenReturn(user);
+        when(subscribeServices.getSubscriptionTypeByType(0)).thenReturn(null);
+
+        MvcResult result = mockMvc.perform(
+                post("/addBalance")
+                        .param("type", "0")
+                        .header("apiKey", user.getApiKey())
+        )
+                .andExpect(status().isConflict())
+                .andReturn();
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
+        assertEquals(dto.getMessage(), dtResponse.getMessage());
+    }
+    @Test
+    public void errorAddBalanceSubscriptionNotFound() throws Exception {
+        DTOResponse dto = new DTOResponse();
+        dto.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+        User user = mockTestData.mockUser();
+        SubscriptionType subscriptionType = mockTestData.mockSubscriptionType();
+
+        when(userServices.getUserByApiKey(user.getApiKey())).thenReturn(user);
+        when(subscribeServices.getSubscriptionTypeByType(0)).thenReturn(subscriptionType);
+
+        MvcResult result = mockMvc.perform(
+                post("/addBalance")
+                        .param("type", "0")
+                        .header("apiKey", user.getApiKey())
+        )
+                .andExpect(status().isConflict())
+                .andReturn();
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
         assertEquals(dto.getMessage(), dtResponse.getMessage());
     }
 }

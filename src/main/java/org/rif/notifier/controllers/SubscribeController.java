@@ -74,7 +74,7 @@ public class SubscribeController {
             User us = userServices.getUserByApiKey(apiKey);
             if(us != null){
                 //Check if the user did subscribe
-                Subscription sub = subscribeServices.getActiveSubscriptionByAddress(us.getAddress());
+                Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
                 if(sub != null) {
                     if(subscribeServices.validateTopic(topic)){
                         subscribeServices.subscribeToTopic(topic, sub);
@@ -102,14 +102,14 @@ public class SubscribeController {
 
     @ApiOperation(value = "Activate a subscription",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
-    @RequestMapping(value = "/activatesubscription", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @RequestMapping(value = "/activateSubscription", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
-    public ResponseEntity<DTOResponse> subscribe(
+    public ResponseEntity<DTOResponse> activateSubscription(
             @RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
         if(us != null) {
-            Subscription sub = subscribeServices.getActiveSubscriptionByAddress(us.getAddress());
+            Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
                 if(!sub.getActive()) {
                     resp.setData(subscribeServices.activateSubscription(sub));
@@ -122,6 +122,36 @@ public class SubscribeController {
                 resp.setStatus(HttpStatus.CONFLICT);
             }
 
+        }else{
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
+    @ApiOperation(value = "Adds balance to a subscription",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/addBalance", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> addBalance(
+            @RequestParam(name = "type") int type,
+            @RequestHeader(value="apiKey") String apiKey) {
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if(us != null){
+            SubscriptionType subType = subscribeServices.getSubscriptionTypeByType(type);
+            if(subType != null) {
+                Subscription subscription = subscribeServices.getSubscriptionByAddress(us.getAddress());
+                if (subscription != null) {
+                    resp.setData(subscribeServices.addBalanceToSubscription(subscription, subType));
+                }else{
+                    resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
+            }else{
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
         }else{
             resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
             resp.setStatus(HttpStatus.CONFLICT);
