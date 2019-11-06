@@ -207,9 +207,7 @@ public class SubscribeServices  {
 	                	counterEventName++;
 	                    break;
                     case EVENT_PARAM:
-                        if(param.getValue().isEmpty())
-                            return false;
-                        else if(param.getValueType().isEmpty())
+                        if(param.getValue().isEmpty() || param.getValueType().isEmpty() || !isWeb3Type(param.getValueType()))
                             return false;
                         break;
 	            }
