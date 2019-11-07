@@ -139,4 +139,15 @@ public class TopicParams {
                 ", \"filter\":\"" + filter + "\"" +
                 '}';
     }
+
+    public String toStringInfo() {
+        return "{" +
+                "\"type\":\"" + type + "\"" +
+                ", \"value\":\"" + value + "\"" +
+                ", \"order\":" + order +
+                ", \"valueType\":\"" + valueType + "\"" +
+                ", \"indexed\":" + indexed +
+                ", \"filter\":\"" + filter + "\"" +
+                '}';
+    }
 }

@@ -85,7 +85,7 @@ public class SubscribeController {
                     }
                 }else{
                     //Return an error because the user still did not create the subscription
-                    resp.setMessage(ResponseConstants.NO_ACTIVE_SUBSCRIPTION);
+                    resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
             }else{
@@ -94,6 +94,31 @@ public class SubscribeController {
             }
         } catch (IOException e) {
             resp.setMessage(ResponseConstants.TOPIC_VALIDATION_FAILED);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
+    @ApiOperation(value = "Gets the subscription info",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/getSubscriptionInfo", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> getSubscriptionInfo(
+            @RequestHeader(value="apiKey") String apiKey) {
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if (us != null) {
+            //Check if the user did subscribe
+            Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
+            if (sub != null) {
+                resp.setData(sub.toStringInfo());
+            } else {
+                //Return an error because the user still did not create the subscription
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
+        } else {
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
             resp.setStatus(HttpStatus.CONFLICT);
         }
 

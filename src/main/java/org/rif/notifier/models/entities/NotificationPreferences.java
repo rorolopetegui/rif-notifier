@@ -51,4 +51,12 @@ public class NotificationPreferences {
     public void setSubscription(Subscription subscription) {
         this.subscription = subscription;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"userAddress\"=\"" + userAddress + '\"' +
+                ", \"notificationService\"=\"" + notificationService + '\"' +
+                '}';
+    }
 }

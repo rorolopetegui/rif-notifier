@@ -47,4 +47,12 @@ public class SubscriptionType {
     public void setSubscription(List<Subscription> subscription) {
         this.subscription = subscription;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\": " + id +
+                ", \"notifications\": " + notifications +
+                '}';
+    }
 }

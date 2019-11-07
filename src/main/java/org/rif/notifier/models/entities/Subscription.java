@@ -121,4 +121,42 @@ public class Subscription {
     public void decrementNotificationBalance() {
         this.notificationBalance--;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\"id\":" + id +
+                ", \"activeSince\":" + activeSince +
+                ", \"active\":" + active +
+                ", \"userAddress\":'" + userAddress + '\'' +
+                ", \"type\":" + type +
+                ", \"state\":'" + state + '\'' +
+                ", \"topics\":" + topics +
+                ", \"notificationPreferences\":" + notificationPreferences +
+                ", \"notificationBalance\":" + notificationBalance +
+                '}';
+    }
+
+    public String toStringInfo() {
+        StringBuilder tps = new StringBuilder("[");
+        int counter = 1;
+        for(Topic tp : topics){
+            tps.append(tp.toStringInfo());
+            if(counter < topics.size())
+                tps.append(",");
+            counter++;
+        }
+        tps.append("]");
+        return "{" +
+                "\"id\":" + id +
+                ", \"activeSince\":\"" + activeSince + "\"" +
+                ", \"active\":" + active +
+                ", \"userAddress\":\"" + userAddress + '\"' +
+                ", \"type\":" + type +
+                ", \"state\":\"" + state + '\"' +
+                ", \"topics\":" + tps +
+                ", \"notificationPreferences\":" + notificationPreferences +
+                ", \"notificationBalance\":" + notificationBalance +
+                '}';
+    }
 }

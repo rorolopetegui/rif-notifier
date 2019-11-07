@@ -101,4 +101,20 @@ public class Topic {
                 ", \"topicParams\":" + topicParams +
                 '}';
     }
+
+    public String toStringInfo() {
+        StringBuilder params = new StringBuilder("\"topicParams\":[");
+        int counter = 1;
+        for(TopicParams param : topicParams){
+            params.append(param.toStringInfo());
+            if(counter < topicParams.size())
+                params.append(",");
+            counter++;
+        }
+        params.append("]");
+        return "{" +
+                "\"type\":\"" + type + "\"" +
+                "," + params +
+                "}";
+    }
 }
