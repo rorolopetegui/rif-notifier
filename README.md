@@ -6,7 +6,9 @@
 
 -We use mysql for DB, please put your DB settings in the application.properties
 
--Follow next steps
+-You have the DB schema in src/main/resources/db_dumps/, look for the latest Dump2019000.sql, create a DB with this schema, and in application.properties set the connection to your DB
+
+-Get started with the following steps
 
 ###### You need to register a user
 
