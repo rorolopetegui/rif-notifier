@@ -37,7 +37,6 @@ public class SubscribeServiceTest {
         Subscription sub = mockTestData.mockSubscription();
         String luminoVal = LuminoInvoice.generateInvoice(user.getAddress());
 
-        doReturn(sub).when(dbManagerFacade).createSubscription(new Date(), user.getAddress(), type, SubscriptionConstants.PENDING_PAYMENT);
         doReturn(type).when(dbManagerFacade).getSubscriptionTypeByType(0);
 
         // when
@@ -158,8 +157,6 @@ public class SubscribeServiceTest {
         // given
         Subscription activeSubscription = mockTestData.mockSubscription();
         Subscription inactiveSubscription = mockTestData.mockInactiveSubscription();
-
-        doReturn(activeSubscription).when(dbManagerFacade).updateSubscription(inactiveSubscription);
 
         // when
         boolean retVal = subscribeServices.activateSubscription(activeSubscription);
