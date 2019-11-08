@@ -6,8 +6,10 @@ import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.Notification;
+import org.rif.notifier.models.entities.Subscription;
 import org.rif.notifier.models.entities.User;
 import org.rif.notifier.managers.NotificationManager;
+import org.rif.notifier.services.SubscribeServices;
 import org.rif.notifier.services.UserServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +33,30 @@ public class NotificationController {
     @Autowired
     private UserServices userServices;
 
+    @Autowired
+    private SubscribeServices subscribeServices;
+
     @ApiOperation(value = "Retrieve notifications for a address",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/getNotifications", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> GetNotifications(@RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
-        List<Notification> notifications = new ArrayList<>();
+        List<Notification> notifications;
         if(apiKey != null && !apiKey.isEmpty()){
             User us = userServices.getUserByApiKey(apiKey);
             if(us != null){
+                Subscription subscription = subscribeServices.getSubscriptionByAddress(us.getAddress());
                 notifications = notificationManager.getNotificationsForAddress(us.getAddress());
-                resp.setData(notifications);
+                if(notifications.size() > 0) {
+                    resp.setData(notifications);
+                }else{
+                    //It may be happend that the user has no notifications cause the balance of the subscription is 0
+                    if(subscription.getNotificationBalance() == 0) {
+                        resp.setMessage(ResponseConstants.SUBSCRIPTION_OUT_OF_BALANCE);
+                        resp.setStatus(HttpStatus.CONFLICT);
+                    }
+                }
             }else{
                 //Return error, user does not exist
                 resp.setMessage(ResponseConstants.INCORRECT_APIKEY);

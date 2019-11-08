@@ -77,7 +77,13 @@ public class SubscribeController {
                 Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
                 if(sub != null) {
                     if(subscribeServices.validateTopic(topic)){
-                        subscribeServices.subscribeToTopic(topic, sub);
+                        if(subscribeServices.getTopicByHash(topic) == null) {
+                            subscribeServices.subscribeToTopic(topic, sub);
+                        }else{
+                            //Return an error because the user is sending a topic that he's already subscribed
+                            resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
+                            resp.setStatus(HttpStatus.CONFLICT);
+                        }
                     }else{
                         //Return an error because the user sends a wrong structure of topic
                         resp.setMessage(ResponseConstants.TOPIC_VALIDATION_FAILED);

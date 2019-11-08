@@ -16,8 +16,8 @@ public class TopicManager {
         return topicRepository.findById(Id);
     }
 
-    public Topic getTopicByHashCode(String hash){
-        return topicRepository.findByHash(hash);
+    public Topic getTopicByHashCode(int hash){
+        return topicRepository.findByHash(String.valueOf(hash));
     }
 
     public Topic insert(TopicTypes type, String hash, Subscription sub){

@@ -106,7 +106,7 @@ public class SubscribeServices  {
     public void subscribeToTopic(Topic topic, Subscription sub){
         if(topic != null && sub != null) {
             //Checks if the Topic already exists
-            Topic tp = dbManagerFacade.getTopicByHashCode("" + topic.hashCode());
+            Topic tp = this.getTopicByHash(topic);
             if (tp == null) {
                 //Generate Topic with no params
                 tp = dbManagerFacade.saveTopic(topic.getType(), "" + topic.hashCode(), sub);
@@ -152,6 +152,15 @@ public class SubscribeServices  {
      */
     public SubscriptionType getSubscriptionTypeByType(int type){
         return dbManagerFacade.getSubscriptionTypeByType(type);
+    }
+
+    /**
+     * Brings a Topic by its hashCode
+     * @param topic
+     * @return Returns a topic if finds it
+     */
+    public Topic getTopicByHash(Topic topic){
+        return dbManagerFacade.getTopicByHashCode(topic.hashCode());
     }
 
     /**

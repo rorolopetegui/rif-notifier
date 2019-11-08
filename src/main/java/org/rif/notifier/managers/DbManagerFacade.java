@@ -116,7 +116,7 @@ public class DbManagerFacade {
         return topicManager.getTopicById(Id);
     }
 
-    public Topic getTopicByHashCode(String hash){
+    public Topic getTopicByHashCode(int hash){
         return topicManager.getTopicByHashCode(hash);
     }
 

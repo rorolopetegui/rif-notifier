@@ -21,4 +21,8 @@ public interface ResponseConstants {
     String SUBSCRIPTION_INCORRECT_TYPE = "The type you select is not a valid one";
 
     String TOPIC_VALIDATION_FAILED = "Topic structure failed, please review your json";
+
+    String AlREADY_SUBSCRIBED_TO_TOPIC = "This user is already subscribed to this topic";
+
+    String SUBSCRIPTION_OUT_OF_BALANCE = "Your subscription ran out of notification balance, please refill your subscription";
 }
