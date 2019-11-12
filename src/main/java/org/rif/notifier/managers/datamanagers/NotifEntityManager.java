@@ -14,7 +14,7 @@ public class NotifEntityManager {
     @Autowired
     private NotificationRepository notificationRepository;
 
-    public Notification insert(String to_address, Date timestamp, boolean sended, String data){
+    public Notification insert(String to_address, String timestamp, boolean sended, String data){
         Notification ntf = new Notification(to_address, timestamp, sended, data);
         Notification result = notificationRepository.save(ntf);
         return result;

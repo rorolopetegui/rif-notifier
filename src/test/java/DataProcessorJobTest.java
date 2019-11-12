@@ -11,6 +11,7 @@ import org.rif.notifier.models.entities.Subscription;
 import org.rif.notifier.scheduled.DataProcessorJob;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,8 +36,10 @@ public class DataProcessorJobTest {
         List<RawData> lstRawData = mockTestData.mockRawData();
         Subscription subscription = mockTestData.mockSubscription();
         lstSubs.add(subscription);
+        Date date = new Date();
         lstRawData.forEach(rawDataItem -> {
-            ntfsData.add(new Notification(subscription.getUserAddress(), new Date(), false, rawDataItem.getData()));
+
+            ntfsData.add(new Notification(subscription.getUserAddress(), new Timestamp(date.getTime()).toString(), false, rawDataItem.getData()));
         });
 
 
@@ -68,8 +71,9 @@ public class DataProcessorJobTest {
         List<Notification> ntfsData = new ArrayList<>();
         List<RawData> lstRawData = mockTestData.mockRawData();
         Subscription subscription = mockTestData.mockSubscription();
+        Date date = new Date();
         lstRawData.forEach(rawDataItem -> {
-            ntfsData.add(new Notification(subscription.getUserAddress(), new Date(), false, rawDataItem.getData()));
+            ntfsData.add(new Notification(subscription.getUserAddress(), new Timestamp(date.getTime()).toString(), false, rawDataItem.getData()));
         });
 
         doReturn(lstRawData).when(dbManagerFacade).getRawDataByProcessed(false);

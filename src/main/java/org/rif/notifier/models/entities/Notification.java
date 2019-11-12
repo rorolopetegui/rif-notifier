@@ -18,7 +18,7 @@ public class Notification {
     @Column(name = "to_address")
     private String toAddress;
 
-    private Date timestamp;
+    private String timestamp;
 
     private boolean sended;
 
@@ -26,7 +26,7 @@ public class Notification {
 
     public Notification(){}
 
-    public Notification(String to_address, Date timestamp, boolean sended, String data) {
+    public Notification(String to_address, String timestamp, boolean sended, String data) {
         this.toAddress = to_address;
         this.timestamp = timestamp;
         this.sended = sended;
@@ -49,11 +49,11 @@ public class Notification {
         this.toAddress = to_address;
     }
 
-    public Date getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
 

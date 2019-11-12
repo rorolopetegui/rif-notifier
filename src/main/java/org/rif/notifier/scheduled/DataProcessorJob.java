@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 
@@ -54,11 +55,12 @@ public class DataProcessorJob {
                             dataForNotification = rawDataItem.getData();
                             break;
                     }
-
+                    Date date = new Date();
                     //Add subscription to later discount the notification from balance
                     if(subscriptionsWithNotif.stream().noneMatch(subItem -> subItem.getUserAddress().equals(sub.getUserAddress()))){
                         //Just add the notification, if we're here it's because the user has at least 1 in notification balance
-                        ntfsData.add(new Notification(sub.getUserAddress(), new Date(), false, dataForNotification));
+
+                        ntfsData.add(new Notification(sub.getUserAddress(), new Timestamp(date.getTime()).toString(), false, dataForNotification));
                         sub.setNotificationBalance(sub.getNotificationBalance() - 1);
                         subscriptionsWithNotif.add(sub);
                     }else{
@@ -66,7 +68,7 @@ public class DataProcessorJob {
                                 .findFirst().get();
                         //Before adding, we need to check if the sub has balance yet
                         if(addedSub.getNotificationBalance() > 0) {
-                            ntfsData.add(new Notification(sub.getUserAddress(), new Date(), false, dataForNotification));
+                            ntfsData.add(new Notification(sub.getUserAddress(), new Timestamp(date.getTime()).toString(), false, dataForNotification));
                             addedSub.decrementNotificationBalance();
                         }
                     }

@@ -16,6 +16,7 @@ import org.web3j.abi.datatypes.generated.Uint256;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -150,8 +151,9 @@ public class MockTestData {
 
     public List<Notification> mockNotifications(){
         List<Notification> retLst = new ArrayList<>();
+        Date date = new Date();
         for(int i=0;i<10;i++) {
-            Notification notif = new Notification("0x0", new Date(), false, "{id: " + i + ", counter: " + i + "}");
+            Notification notif = new Notification("0x0", new Timestamp(date.getTime()).toString(), false, "{id: " + i + ", counter: " + i + "}");
             retLst.add(notif);
         }
         return retLst;
