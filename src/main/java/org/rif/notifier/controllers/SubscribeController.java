@@ -91,7 +91,7 @@ public class SubscribeController {
                     }
                 }else{
                     //Return an error because the user still did not create the subscription
-                    resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                    resp.setMessage(ResponseConstants.NO_ACTIVE_SUBSCRIPTION);
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
             }else{

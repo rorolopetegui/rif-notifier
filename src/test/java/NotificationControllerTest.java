@@ -8,8 +8,10 @@ import org.rif.notifier.controllers.NotificationController;
 import org.rif.notifier.managers.NotificationManager;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.Notification;
+import org.rif.notifier.models.entities.Subscription;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.User;
+import org.rif.notifier.services.SubscribeServices;
 import org.rif.notifier.services.UserServices;
 import org.rif.notifier.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,9 @@ public class NotificationControllerTest {
     private UserServices userServices;
 
     @MockBean
+    private SubscribeServices subscribeServices;
+
+    @MockBean
     private NotificationManager notificationManager;
 
     private MockTestData mockTestData = new MockTestData();
@@ -52,9 +57,11 @@ public class NotificationControllerTest {
         DTOResponse dto = new DTOResponse();
         String apiKey = Utils.generateNewToken();
         User us = new User(address, apiKey);
+        Subscription subscription = mockTestData.mockSubscription();
         List<Notification> notifs = mockTestData.mockNotifications();
         dto.setData(notifs);
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
+        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(subscription);
         //Return notifications
         when(notificationManager.getNotificationsForAddress(us.getAddress())).thenReturn(notifs);
         mockMvc.perform(

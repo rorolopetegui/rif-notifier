@@ -1,5 +1,6 @@
 package org.rif.notifier.models.listenable;
 
+import org.rif.notifier.models.entities.Topic;
 import org.web3j.abi.TypeReference;
 
 import java.util.List;
@@ -63,12 +64,22 @@ public class EthereumBasedListenable extends Listenable {
 
     @Override
     public String toString() {
-        return "EthereumBasedListenable{" +
-                "eventFields=" + eventFields +
-                ", eventName='" + eventName + '\'' +
-                ", kind=" + kind +
-                ", address='" + address + '\'' +
-                ", topicId='" + topicId + '\'' +
+        StringBuilder fields = new StringBuilder("[");
+        int counter = 1;
+        for(TypeReference tr : eventFields){
+            fields.append(tr.getType().getTypeName());
+            if(counter < eventFields.size())
+                fields.append(",");
+            counter++;
+        }
+        fields.append("]");
+
+        return "{" +
+                "eventFields:" + fields +
+                ", eventName:\"" + eventName + '\"' +
+                ", kind:\"" + kind +
+                ", address:\"" + address + '\"' +
+                ", topicId:\"" + topicId + '\"' +
                 '}';
     }
 }

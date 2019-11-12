@@ -4,7 +4,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.rif.notifier.constants.SubscriptionConstants;
 import org.rif.notifier.managers.DbManagerFacade;
 import org.rif.notifier.models.entities.Subscription;
 import org.rif.notifier.models.entities.SubscriptionType;
@@ -14,7 +13,6 @@ import org.rif.notifier.services.SubscribeServices;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
 
 import java.io.IOException;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -30,7 +28,7 @@ public class SubscribeServiceTest {
     private MockTestData mockTestData = new MockTestData();
 
     @Test
-    public void canCreateSubscription(){
+    public void canCreateSubscription() throws IOException {
         // given
         User user = mockTestData.mockUser();
         SubscriptionType type = mockTestData.mockSubscriptionType();
@@ -129,7 +127,7 @@ public class SubscribeServiceTest {
         assertFalse(retVal);
     }
     @Test
-    public void getActiveSubscriptionByAddress() {
+    public void getActiveSubscriptionByAddress() throws IOException {
         Subscription subscription = mockTestData.mockSubscription();
 
         doReturn(subscription).when(dbManagerFacade).getActiveSubscriptionByAddress("0x0");
@@ -139,7 +137,7 @@ public class SubscribeServiceTest {
         assertEquals(subscription, retVal);
     }
     @Test
-    public void canActivateSubscription(){
+    public void canActivateSubscription() throws IOException {
         // given
         Subscription activeSubscription = mockTestData.mockSubscription();
         Subscription inactiveSubscription = mockTestData.mockInactiveSubscription();
@@ -153,7 +151,7 @@ public class SubscribeServiceTest {
         assertTrue(retVal);
     }
     @Test
-    public void errorActivateSubscriptionAlreadyActive(){
+    public void errorActivateSubscriptionAlreadyActive() throws IOException {
         // given
         Subscription activeSubscription = mockTestData.mockSubscription();
         Subscription inactiveSubscription = mockTestData.mockInactiveSubscription();
@@ -165,7 +163,7 @@ public class SubscribeServiceTest {
         assertFalse(retVal);
     }
     @Test
-    public void canAddBalanceToSubscription(){
+    public void canAddBalanceToSubscription() throws IOException {
         // given
         String luminoInvoice = "123457A90123457B901234C579012345D79012E345790F12345G790123H45790I";
         Subscription subscription = mockTestData.mockSubscription();
@@ -195,7 +193,7 @@ public class SubscribeServiceTest {
         assertEquals(expected, retVal);
     }
     @Test
-    public void errorAddBalanceToSubscriptionNotProvidingSubscriptionType(){
+    public void errorAddBalanceToSubscriptionNotProvidingSubscriptionType() throws IOException {
         // given
         String expected = "";
         Subscription subscription = mockTestData.mockSubscription();

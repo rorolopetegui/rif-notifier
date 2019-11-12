@@ -110,7 +110,7 @@ public class DataFetchingJob {
      * When no filters apply, it directly saves the rawdata
      * @param fetchedEvents Fetched events from the library
      */
-    private void processFetchedEvents(List<FetchedEvent> fetchedEvents){
+    public void processFetchedEvents(List<FetchedEvent> fetchedEvents){
         ObjectMapper mapper = new ObjectMapper();
         List<RawData> rawEvts = new ArrayList<>();
         fetchedEvents.forEach(fetchedEvent -> {
@@ -187,7 +187,7 @@ public class DataFetchingJob {
      * @return Returns a List<EthereumBasedListeneable> to listen to the blockchain events
      * @throws ClassNotFoundException When trying to parse the web3-type creating the listeneable for contract events
      */
-    private List<EthereumBasedListenable> getListeneables() throws ClassNotFoundException {
+    public List<EthereumBasedListenable> getListeneables() throws ClassNotFoundException {
         List<EthereumBasedListenable> ethereumBasedListenables = new ArrayList<>();
         List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptionsWithBalance();
         for(Subscription sub : activeSubs){
