@@ -1,6 +1,5 @@
 package org.rif.notifier.models.entities;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -8,7 +7,6 @@ import org.rif.notifier.constants.TopicTypes;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -88,11 +86,6 @@ public class Topic {
         sub.getTopics().add(this);
     }
 
-    /*@Override
-    public int hashCode() {
-        //return Objects.hash(type, topicParams);
-        return Objects.hash(type);
-    }*/
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)

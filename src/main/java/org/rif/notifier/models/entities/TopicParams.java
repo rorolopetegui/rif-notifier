@@ -1,11 +1,9 @@
 package org.rif.notifier.models.entities;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.rif.notifier.constants.TopicParamTypes;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 @Entity
 @Table(name = "topic_params")
@@ -122,13 +120,6 @@ public class TopicParams {
     public void setFilter(String filter) {
         this.filter = filter;
     }
-
-    /*
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, value, order, valueType, indexed, filter);
-    }
-    */
 
     @Override
     public int hashCode() {
