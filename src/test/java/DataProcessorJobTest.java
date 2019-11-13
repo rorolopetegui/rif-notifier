@@ -86,4 +86,19 @@ public class DataProcessorJobTest {
         verify(dbManagerFacade, times(0)).updateSubscription(any());
         verify(dbManagerFacade, times(1)).updateRawDataBatch(any());
     }
+    @Test
+    public void errorProcessRawDataWithNoSubscription() {
+        List<Subscription> lstSubs = new ArrayList<>();
+        List<RawData> lstRawData = mockTestData.mockRawData();
+
+        doReturn(lstRawData).when(dbManagerFacade).getRawDataByProcessed(false);
+        doReturn(lstSubs).when(dbManagerFacade).getActiveSubscriptionsByTopicIdWithBalance(0);
+        doReturn(lstSubs).when(dbManagerFacade).getActiveSubscriptionsByTopicIdWithBalance(1);
+
+        dataProcessorJob.run();
+
+        verify(dbManagerFacade, times(0)).saveNotificationBatch(any());
+        verify(dbManagerFacade, times(0)).updateSubscription(any());
+        verify(dbManagerFacade, times(1)).updateRawDataBatch(any());
+    }
 }
