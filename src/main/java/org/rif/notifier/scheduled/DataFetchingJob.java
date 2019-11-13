@@ -194,21 +194,23 @@ public class DataFetchingJob {
             Set<Topic> subTopics = sub.getTopics();
             for(Topic tp : subTopics){
                 EthereumBasedListenable newListeneable = Datafetcher.getEthereumBasedListenableFromTopic(tp);
-                //Performing some checks to not insert when its already in the list
-                if(newListeneable.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)){
-                    if(ethereumBasedListenables.stream().noneMatch(item ->
-                            item.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)
-                                    && item.getAddress().equals(newListeneable.getAddress())
-                                    && item.getEventName().equals(newListeneable.getEventName())))
-                        ethereumBasedListenables.add(newListeneable);
-                }else if(newListeneable.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)){
-                    if(ethereumBasedListenables.stream().noneMatch(item ->
-                            item.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)))
-                    ethereumBasedListenables.add(newListeneable);
-                }else{
-                    if(ethereumBasedListenables.stream().noneMatch(item ->
-                            item.getKind().equals(EthereumBasedListenableTypes.NEW_BLOCK)))
-                        ethereumBasedListenables.add(newListeneable);
+                if(newListeneable != null) {
+                    //Performing some checks to not insert when its already in the list
+                    if (newListeneable.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)) {
+                        if (ethereumBasedListenables.stream().noneMatch(item ->
+                                item.getKind().equals(EthereumBasedListenableTypes.CONTRACT_EVENT)
+                                        && item.getAddress().equals(newListeneable.getAddress())
+                                        && item.getEventName().equals(newListeneable.getEventName())))
+                            ethereumBasedListenables.add(newListeneable);
+                    } else if (newListeneable.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)) {
+                        if (ethereumBasedListenables.stream().noneMatch(item ->
+                                item.getKind().equals(EthereumBasedListenableTypes.NEW_TRANSACTIONS)))
+                            ethereumBasedListenables.add(newListeneable);
+                    } else {
+                        if (ethereumBasedListenables.stream().noneMatch(item ->
+                                item.getKind().equals(EthereumBasedListenableTypes.NEW_BLOCK)))
+                            ethereumBasedListenables.add(newListeneable);
+                    }
                 }
             }
         }

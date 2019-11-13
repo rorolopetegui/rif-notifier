@@ -74,6 +74,25 @@ public class DataFetchingJobTest {
         verify(dbManagerFacade, times(1)).saveRawDataBatch(any());
     }
     @Test
+    public void canProcessFetchedEventsWithoutParams() throws Exception {
+        List<Subscription> lstSubs = new ArrayList<>();
+        Subscription subscription = mockTestData.mockSubscriptionWithTopicWithoutParameters();
+        lstSubs.add(subscription);
+        FetchedEvent fetchedEvent = mockTestData.mockFetchedEvent();
+        ObjectMapper mapper = new ObjectMapper();
+        String rawEvent = mapper.writeValueAsString(fetchedEvent);
+        EventRawData rwDt = mapper.readValue(rawEvent, EventRawData.class);
+        List<FetchedEvent> fetchedEvents = new ArrayList<>();
+        fetchedEvents.add(fetchedEvent);
+
+        doReturn(lstSubs).when(dbManagerFacade).findByContractAddressAndSubscriptionActive(rwDt.getContractAddress());
+
+        dataFetchingJob.processFetchedEvents(fetchedEvents);
+
+        verify(dbManagerFacade, times(1)).findByContractAddressAndSubscriptionActive(any());
+        verify(dbManagerFacade, times(1)).saveRawDataBatch(any());
+    }
+    @Test
     public void canGetListeneables() throws Exception {
         List<Subscription> lstSubs = new ArrayList<>();
         Subscription subscription = mockTestData.mockSubscription();
@@ -156,5 +175,18 @@ public class DataFetchingJobTest {
 
         verify(dbManagerFacade, times(1)).findByContractAddressAndSubscriptionActive(any());
         verify(dbManagerFacade, times(0)).saveRawDataBatch(any());
+    }
+    @Test
+    public void errorGetListeneablesIncompleteDataForListeneable() throws Exception {
+        List<Subscription> lstSubs = new ArrayList<>();
+        Subscription subscription = mockTestData.mockSubscriptionWithInvalidTopic();
+        EthereumBasedListenable toCompare = mockTestData.mockInvalidEthereumBasedListeneable();
+        lstSubs.add(subscription);
+
+        doReturn(lstSubs).when(dbManagerFacade).getAllActiveSubscriptionsWithBalance();
+
+        List<EthereumBasedListenable> lstExpected = dataFetchingJob.getListeneables();
+
+        assertEquals(new ArrayList<>(), lstExpected);
     }
 }

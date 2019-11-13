@@ -112,7 +112,26 @@ public class MockTestData {
                 "}";
         return mapper.readValue(sTp, Topic.class);
     }
-
+    public Topic mockTopicWithoutParams() throws IOException {
+        String sTp = "{" +
+                "\"type\": \"CONTRACT_EVENT\"," +
+                "\"topicParams\":[" +
+                "{" +
+                "\"type\": \"CONTRACT_ADDRESS\"," +
+                "\"value\": \"0x0\"," +
+                "\"valueType\": \"string\"," +
+                "\"indexed\": 0" +
+                "}," +
+                "{" +
+                "\"type\": \"EVENT_NAME\"," +
+                "\"value\": \"LogSellArticle\"," +
+                "\"valueType\": \"string\"," +
+                "\"indexed\": 0" +
+                "}" +
+                "]" +
+                "}";
+        return mapper.readValue(sTp, Topic.class);
+    }
     public Topic mockInvalidTopic() throws IOException {
         String sTp = "{" +
                 "\"type\": \"CONTRACT_EVENT\"," +
@@ -148,7 +167,6 @@ public class MockTestData {
                 "}";
         return mapper.readValue(sTp, Topic.class);
     }
-
     public List<Notification> mockNotifications(){
         List<Notification> retLst = new ArrayList<>();
         Date date = new Date();
@@ -158,7 +176,6 @@ public class MockTestData {
         }
         return retLst;
     }
-
     public Subscription mockSubscription() throws IOException {
         SubscriptionType type = this.mockSubscriptionType();
         User user = this.mockUser();
@@ -169,11 +186,31 @@ public class MockTestData {
         sub.setTopics(topics);
         return sub;
     }
+    public Subscription mockSubscriptionWithInvalidTopic() throws IOException {
+        SubscriptionType type = this.mockSubscriptionType();
+        User user = this.mockUser();
+        Subscription sub = new Subscription(new Date(), user.getAddress(), type, SubscriptionConstants.PAYED_PAYMENT);
+        Topic topic = this.mockInvalidTopic();
+        Set<Topic> topics = new HashSet<>();
+        topics.add(topic);
+        sub.setTopics(topics);
+        return sub;
+    }
     public Subscription mockSubscriptionWithFilters() throws IOException {
         SubscriptionType type = this.mockSubscriptionType();
         User user = this.mockUser();
         Subscription sub = new Subscription(new Date(), user.getAddress(), type, SubscriptionConstants.PAYED_PAYMENT);
         Topic topic = this.mockTopicWithFilters();
+        Set<Topic> topics = new HashSet<>();
+        topics.add(topic);
+        sub.setTopics(topics);
+        return sub;
+    }
+    public Subscription mockSubscriptionWithTopicWithoutParameters() throws IOException {
+        SubscriptionType type = this.mockSubscriptionType();
+        User user = this.mockUser();
+        Subscription sub = new Subscription(new Date(), user.getAddress(), type, SubscriptionConstants.PAYED_PAYMENT);
+        Topic topic = this.mockTopicWithoutParams();
         Set<Topic> topics = new HashSet<>();
         topics.add(topic);
         sub.setTopics(topics);
@@ -227,7 +264,10 @@ public class MockTestData {
 
             params.add(paramReference);
         }
-        return new EthereumBasedListenable("0x0", EthereumBasedListenableTypes.CONTRACT_EVENT, params, eventName, tp.getId());
+        return new EthereumBasedListenable(address, EthereumBasedListenableTypes.CONTRACT_EVENT, params, eventName, tp.getId());
+    }
+    public EthereumBasedListenable mockInvalidEthereumBasedListeneable(){
+        return new EthereumBasedListenable("0x0", EthereumBasedListenableTypes.CONTRACT_EVENT, new ArrayList<>(), "InvalidName", 0);
     }
     public FetchedEvent mockFetchedEvent(){
         List<Type > values = new ArrayList<>();
