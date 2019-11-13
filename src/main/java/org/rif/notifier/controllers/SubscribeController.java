@@ -23,11 +23,16 @@ import java.io.IOException;
 public class SubscribeController {
     private static final Logger logger = LoggerFactory.getLogger(SubscribeController.class);
 
-    @Autowired
     private SubscribeServices subscribeServices;
+    private UserServices userServices;
+    private ObjectMapper mapper;
 
     @Autowired
-    private UserServices userServices;
+    public SubscribeController(SubscribeServices subscribeServices, UserServices userServices, ObjectMapper mapper) {
+        this.subscribeServices = subscribeServices;
+        this.userServices = userServices;
+        this.mapper = mapper;
+    }
 
     @ApiOperation(value = "Generate a subscription with an Apikey",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
@@ -118,6 +123,77 @@ public class SubscribeController {
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
                 resp.setData(sub.toStringInfo());
+            } else {
+                //Return an error because the user still did not create the subscription
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
+        } else {
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
+    @ApiOperation(value = "Gets all preloaded events",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/getLuminoEvents", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> getLuminoEvents(
+            @RequestHeader(value="apiKey") String apiKey) {
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if (us != null) {
+            //Check if the user did subscribe
+            Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
+            if (sub != null) {
+                resp.setData(subscribeServices.getAllPreloadedEvents());
+            } else {
+                //Return an error because the user still did not create the subscription
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
+        } else {
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
+
+    @ApiOperation(value = "Subscribes to a preloaded event",
+               response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/subscribeToPreloadedEvent", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> subscribeToPreloadedEvent(
+            @RequestParam(name = "id") int id,
+            @RequestHeader(value="apiKey") String apiKey) {
+        Topic topic = null;
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if (us != null) {
+            //Check if the user did subscribe
+            Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
+            if (sub != null) {
+                PreloadedEvents preloadedEvent = subscribeServices.getPreloadedEvent(id);
+                if(preloadedEvent != null){
+                    try {
+                        topic = mapper.readValue(preloadedEvent.getEvent(), Topic.class);
+                        if(subscribeServices.getTopicByHash(topic) == null) {
+                            subscribeServices.subscribeToTopic(topic, sub);
+                        }else{
+                            //Return an error because the user is sending a topic that he's already subscribed
+                            resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
+                            resp.setStatus(HttpStatus.CONFLICT);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    //Return an error because the user send a incorrect id
+                    resp.setMessage(ResponseConstants.PRELOADED_EVENT_ID_INCORRECT);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
             } else {
                 //Return an error because the user still did not create the subscription
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);

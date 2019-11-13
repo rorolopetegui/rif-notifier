@@ -40,6 +40,9 @@ public class DbManagerFacade {
     @Autowired
     private DataFetcherManager dataFetcherManager;
 
+    @Autowired
+    private PreloadedEventsManager preloadedEventsManager;
+
     public RawData saveRawData(String type, String data, boolean processed, BigInteger block, int idTopic){
        return rawDataManager.insert(type,data,processed, block, idTopic);
     }
@@ -161,5 +164,13 @@ public class DbManagerFacade {
 
     public BigInteger getLastBlock(){
         return dataFetcherManager.get();
+    }
+
+    public List<PreloadedEvents> getAllPreloadedEvents(){
+        return  preloadedEventsManager.getAllPreloadedEvents();
+    }
+
+    public PreloadedEvents getPreloadedEvent(int id){
+        return  preloadedEventsManager.getPreloadedEventById(id);
     }
 }

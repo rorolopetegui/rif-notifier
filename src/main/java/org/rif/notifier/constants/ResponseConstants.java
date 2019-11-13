@@ -25,4 +25,6 @@ public interface ResponseConstants {
     String AlREADY_SUBSCRIBED_TO_TOPIC = "This user is already subscribed to this topic";
 
     String SUBSCRIPTION_OUT_OF_BALANCE = "Your subscription ran out of notification balance, please refill your subscription";
+
+    String PRELOADED_EVENT_ID_INCORRECT = "Your subscription ran out of notification balance, please refill your subscription";
 }
