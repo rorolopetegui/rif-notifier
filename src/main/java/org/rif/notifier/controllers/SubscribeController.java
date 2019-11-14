@@ -147,7 +147,7 @@ public class SubscribeController {
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
-                resp.setData(subscribeServices.getAllPreloadedEvents());
+                //resp.setData(subscribeServices.getAllPreloadedEvents());
             } else {
                 //Return an error because the user still did not create the subscription
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
@@ -175,6 +175,7 @@ public class SubscribeController {
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
+                /*
                 PreloadedEvents preloadedEvent = subscribeServices.getPreloadedEvent(id);
                 if(preloadedEvent != null){
                     try {
@@ -194,6 +195,7 @@ public class SubscribeController {
                     resp.setMessage(ResponseConstants.PRELOADED_EVENT_ID_INCORRECT);
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
+                 */
             } else {
                 //Return an error because the user still did not create the subscription
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);

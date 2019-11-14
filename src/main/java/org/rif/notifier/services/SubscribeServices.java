@@ -92,14 +92,6 @@ public class SubscribeServices  {
         return dbManagerFacade.getActiveSubscriptionByAddress(user_address);
     }
 
-    public List<PreloadedEvents> getAllPreloadedEvents(){
-        return dbManagerFacade.getAllPreloadedEvents();
-    }
-
-    public PreloadedEvents getPreloadedEvent(int id){
-        return dbManagerFacade.getPreloadedEvent(id);
-    }
-
     public Subscription getSubscriptionByAddress(String user_address){
         return dbManagerFacade.getSubscriptionByAddress(user_address);
     }

@@ -30,16 +30,6 @@ CREATE TABLE `datafetcher` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `datafetcher`
---
-
-LOCK TABLES `datafetcher` WRITE;
-/*!40000 ALTER TABLE `datafetcher` DISABLE KEYS */;
-INSERT INTO `datafetcher` VALUES (33,127);
-/*!40000 ALTER TABLE `datafetcher` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `hibernate_sequence`
 --
 
@@ -50,15 +40,6 @@ CREATE TABLE `hibernate_sequence` (
   `next_val` bigint(20) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `hibernate_sequence`
---
-
-LOCK TABLES `hibernate_sequence` WRITE;
-/*!40000 ALTER TABLE `hibernate_sequence` DISABLE KEYS */;
-/*!40000 ALTER TABLE `hibernate_sequence` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `notif_users`
@@ -73,16 +54,6 @@ CREATE TABLE `notif_users` (
   PRIMARY KEY (`address`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `notif_users`
---
-
-LOCK TABLES `notif_users` WRITE;
-/*!40000 ALTER TABLE `notif_users` DISABLE KEYS */;
-INSERT INTO `notif_users` VALUES ('0x0','-UhIGiv8Fyvj6QNCrseNTpeM01YRpi_2'),('0x1','AzE72uIrz-SBJe62lzlBhu8mZR2D99fW');
-/*!40000 ALTER TABLE `notif_users` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `notification`
@@ -102,15 +73,6 @@ CREATE TABLE `notification` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `notification`
---
-
-LOCK TABLES `notification` WRITE;
-/*!40000 ALTER TABLE `notification` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notification` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `notification_preference`
 --
 
@@ -127,15 +89,6 @@ CREATE TABLE `notification_preference` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `notification_preference`
---
-
-LOCK TABLES `notification_preference` WRITE;
-/*!40000 ALTER TABLE `notification_preference` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notification_preference` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `notification_service`
 --
 
@@ -148,40 +101,6 @@ CREATE TABLE `notification_service` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `notification_service`
---
-
-LOCK TABLES `notification_service` WRITE;
-/*!40000 ALTER TABLE `notification_service` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notification_service` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `preloaded_events`
---
-
-DROP TABLE IF EXISTS `preloaded_events`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `preloaded_events` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `description` varchar(200) DEFAULT NULL,
-  `event` varchar(500) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `preloaded_events`
---
-
-LOCK TABLES `preloaded_events` WRITE;
-/*!40000 ALTER TABLE `preloaded_events` DISABLE KEYS */;
-INSERT INTO `preloaded_events` VALUES (1,'open channel blab lab la','{\"type\": \"CONTRACT_EVENT\", \"topicParams\":[{\"type\": \"CONTRACT_ADDRESS\", \"value\": \"0x96463f6463771ed9f9d730986501b17127823fd2\" }, {\"type\": \"EVENT_NAME\", \"value\": \"LogSellArticle\" }, { \"type\": \"EVENT_PARAM\", \"value\": \"seller\", \"order\": 0, \"valueType\": \"Address\", \"indexed\": 1 }, { \"type\": \"EVENT_PARAM\",\"value\": \"article\", \"order\": 1, \"valueType\": \"Utf8String\", \"indexed\": 0 }, { \"type\": \"EVENT_PARAM\", \"value\": \"price\", \"order\": 2, \"valueType\": \"Uint256\",\"indexed\": 0 }]}');
-/*!40000 ALTER TABLE `preloaded_events` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `raw_data`
@@ -200,15 +119,6 @@ CREATE TABLE `raw_data` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `raw_data`
---
-
-LOCK TABLES `raw_data` WRITE;
-/*!40000 ALTER TABLE `raw_data` DISABLE KEYS */;
-/*!40000 ALTER TABLE `raw_data` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `subscription`
@@ -230,16 +140,6 @@ CREATE TABLE `subscription` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `subscription`
---
-
-LOCK TABLES `subscription` WRITE;
-/*!40000 ALTER TABLE `subscription` DISABLE KEYS */;
-INSERT INTO `subscription` VALUES (34,'2019-11-12',1,'0x0',1,'PENDING_PAYMENT',998);
-/*!40000 ALTER TABLE `subscription` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `subscription_type`
 --
 
@@ -252,16 +152,6 @@ CREATE TABLE `subscription_type` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `subscription_type`
---
-
-LOCK TABLES `subscription_type` WRITE;
-/*!40000 ALTER TABLE `subscription_type` DISABLE KEYS */;
-INSERT INTO `subscription_type` VALUES (0,100),(1,1000);
-/*!40000 ALTER TABLE `subscription_type` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `test`
@@ -278,15 +168,6 @@ CREATE TABLE `test` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `test`
---
-
-LOCK TABLES `test` WRITE;
-/*!40000 ALTER TABLE `test` DISABLE KEYS */;
-/*!40000 ALTER TABLE `test` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `topic`
 --
 
@@ -300,16 +181,6 @@ CREATE TABLE `topic` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `topic`
---
-
-LOCK TABLES `topic` WRITE;
-/*!40000 ALTER TABLE `topic` DISABLE KEYS */;
-INSERT INTO `topic` VALUES (49,'CONTRACT_EVENT','-1832301816');
-/*!40000 ALTER TABLE `topic` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `topic_params`
@@ -332,16 +203,6 @@ CREATE TABLE `topic_params` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `topic_params`
---
-
-LOCK TABLES `topic_params` WRITE;
-/*!40000 ALTER TABLE `topic_params` DISABLE KEYS */;
-INSERT INTO `topic_params` VALUES (153,49,'CONTRACT_ADDRESS','0x96463f6463771ed9f9d730986501b17127823fd2',0,NULL,0,NULL),(154,49,'EVENT_NAME','LogSellArticle',0,NULL,0,NULL),(155,49,'EVENT_PARAM','seller',0,'Address',1,NULL),(156,49,'EVENT_PARAM','article',1,'Utf8String',0,NULL),(157,49,'EVENT_PARAM','price',2,'Uint256',0,NULL);
-/*!40000 ALTER TABLE `topic_params` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user_topic`
 --
 
@@ -353,16 +214,6 @@ CREATE TABLE `user_topic` (
   `id_subscription` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user_topic`
---
-
-LOCK TABLES `user_topic` WRITE;
-/*!40000 ALTER TABLE `user_topic` DISABLE KEYS */;
-INSERT INTO `user_topic` VALUES (49,'34');
-/*!40000 ALTER TABLE `user_topic` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -373,4 +224,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-11-14 11:23:15
+-- Dump completed on 2019-11-14 11:31:10
