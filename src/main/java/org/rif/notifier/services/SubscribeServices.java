@@ -163,6 +163,10 @@ public class SubscribeServices  {
         return dbManagerFacade.getTopicByHashCode(topic.hashCode());
     }
 
+    public Topic getTopicByHashCodeAndIdSubscription(Topic topic, int idSubscription){
+        return dbManagerFacade.getTopicByHashCodeAndIdSubscription(topic.hashCode(), idSubscription);
+    }
+
     /**
      * Validates a given Topic, it checks if all required fields are correctly setted.
      * For CONTRACT_EVENT it checks that it has all Params like CONTRACT_EVENT_ADDRESS, CONTRACT_EVENT_NAME and at least one CONTRACT_EVENT_PARAM

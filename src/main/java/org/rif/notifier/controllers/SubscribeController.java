@@ -7,6 +7,7 @@ import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.models.DTO.DTOResponse;
 import org.rif.notifier.models.entities.*;
+import org.rif.notifier.services.LuminoEventServices;
 import org.rif.notifier.services.SubscribeServices;
 import org.rif.notifier.services.UserServices;
 import org.slf4j.Logger;
@@ -25,13 +26,13 @@ public class SubscribeController {
 
     private SubscribeServices subscribeServices;
     private UserServices userServices;
-    private ObjectMapper mapper;
+    private LuminoEventServices luminoEventServices;
 
     @Autowired
-    public SubscribeController(SubscribeServices subscribeServices, UserServices userServices, ObjectMapper mapper) {
+    public SubscribeController(SubscribeServices subscribeServices, UserServices userServices, LuminoEventServices luminoEventServices) {
         this.subscribeServices = subscribeServices;
         this.userServices = userServices;
-        this.mapper = mapper;
+        this.luminoEventServices = luminoEventServices;
     }
 
     @ApiOperation(value = "Generate a subscription with an Apikey",
@@ -82,7 +83,7 @@ public class SubscribeController {
                 Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
                 if(sub != null) {
                     if(subscribeServices.validateTopic(topic)){
-                        if(subscribeServices.getTopicByHash(topic) == null) {
+                        if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
                             subscribeServices.subscribeToTopic(topic, sub);
                         }else{
                             //Return an error because the user is sending a topic that he's already subscribed
@@ -137,9 +138,9 @@ public class SubscribeController {
     }
     @ApiOperation(value = "Gets all preloaded events",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
-    @RequestMapping(value = "/getLuminoEvents", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @RequestMapping(value = "/getLuminoTokens", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
-    public ResponseEntity<DTOResponse> getLuminoEvents(
+    public ResponseEntity<DTOResponse> getLuminoTokens(
             @RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
@@ -147,7 +148,7 @@ public class SubscribeController {
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
-                //resp.setData(subscribeServices.getAllPreloadedEvents());
+                resp.setData(luminoEventServices.getTokens());
             } else {
                 //Return an error because the user still did not create the subscription
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
@@ -161,12 +162,12 @@ public class SubscribeController {
         return new ResponseEntity<>(resp, resp.getStatus());
     }
 
-    @ApiOperation(value = "Subscribes to a preloaded event",
+    @ApiOperation(value = "Subscribes to a lumino event",
                response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
-    @RequestMapping(value = "/subscribeToPreloadedEvent", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @RequestMapping(value = "/subscribeToOpenChannel", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
-    public ResponseEntity<DTOResponse> subscribeToPreloadedEvent(
-            @RequestParam(name = "id") int id,
+    public ResponseEntity<DTOResponse> subscribeToOpenChannel(
+            @RequestParam(name = "token") String token,
             @RequestHeader(value="apiKey") String apiKey) {
         Topic topic = null;
         DTOResponse resp = new DTOResponse();
@@ -175,6 +176,21 @@ public class SubscribeController {
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
+                if(luminoEventServices.isToken(token)){
+                    topic = luminoEventServices.getTopicForToken(token);
+                    Topic test = subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId());
+                    if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
+                        subscribeServices.subscribeToTopic(topic, sub);
+                    }else{
+                        //Return an error because the user is sending a topic that he's already subscribed
+                        resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
+                        resp.setStatus(HttpStatus.CONFLICT);
+                    }
+                }else{
+                    //Return an error because the user send a incorrect token
+                    resp.setMessage(ResponseConstants.INCORRECT_TOKEN);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
                 /*
                 PreloadedEvents preloadedEvent = subscribeServices.getPreloadedEvent(id);
                 if(preloadedEvent != null){

@@ -129,9 +129,8 @@ public class Subscription {
                 ", \"activeSince\":" + activeSince +
                 ", \"active\":" + active +
                 ", \"userAddress\":'" + userAddress + '\'' +
-                ", \"type\":" + type +
+                ", \"type\":" + type.toString() +
                 ", \"state\":'" + state + '\'' +
-                ", \"topics\":" + topics +
                 ", \"notificationPreferences\":" + notificationPreferences +
                 ", \"notificationBalance\":" + notificationBalance +
                 '}';

@@ -1,6 +1,5 @@
 package org.rif.notifier.datafetcher;
 
-import jdk.nashorn.internal.runtime.options.Option;
 import org.rif.notifier.models.web3Extensions.RSKTypeReference;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.TopicParams;

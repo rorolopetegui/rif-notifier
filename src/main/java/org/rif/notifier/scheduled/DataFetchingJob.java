@@ -9,17 +9,22 @@ import org.rif.notifier.models.datafetching.FetchedTransaction;
 import org.rif.notifier.models.entities.*;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
 import org.rif.notifier.models.listenable.EthereumBasedListenableTypes;
+import org.rif.notifier.services.LuminoEventServices;
 import org.rif.notifier.services.blockchain.generic.rootstock.RskBlockchainService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Utf8String;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -41,6 +46,14 @@ public class DataFetchingJob {
     @Autowired
     private DbManagerFacade dbManagerFacade;
 
+    @Autowired
+    private LuminoEventServices luminoEventServices;
+
+    @Value("${rsk.blockchain.tokennetworkregistry}")
+    private String tokenNetworkRegistry;
+
+    private boolean fetchedTokens = false;
+
     /**
      * Creates listeneables, then try to get the blockchain events related.
      * When all the events are fetched try to process the rawdata getted calling methods
@@ -51,7 +64,7 @@ public class DataFetchingJob {
         BigInteger to = rskBlockchainService.getLastBlock();
         BigInteger from = dbManagerFacade.getLastBlock();
         from = from.add(new BigInteger("1"));
-
+        //BigInteger from = new BigInteger("1");
         //Fetching
         logger.info(Thread.currentThread().getId() + String.format(" - Starting fetching from %s to %s", from, to));
 
@@ -60,6 +73,9 @@ public class DataFetchingJob {
         List<CompletableFuture<List<FetchedTransaction>>> transactionTasks = new ArrayList<>();
         List<CompletableFuture<List<FetchedEvent>>> eventTasks = new ArrayList<>();
         List<EthereumBasedListenable> ethereumBasedListenables = getListeneables();
+        if(fetchedTokens){
+            ethereumBasedListenables.add(getTokensNetwork());
+        }
         for (EthereumBasedListenable subscriptionChannel : ethereumBasedListenables) {
             try {
                 switch (subscriptionChannel.getKind()) {
@@ -98,9 +114,31 @@ public class DataFetchingJob {
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching events task = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching events: " + fetchedEvents);
+                //Check if tokens were registered we can filter by idTopic -1
+                if(fetchedTokens){
+                    fetchedEvents.stream().filter(item -> item.getTopicId() == -1).forEach(item -> {
+                        luminoEventServices.addToken(item.getValues().get(1).getValue().toString());
+                    });
+                }
                 processFetchedEvents(fetchedEvents);
             });
         });
+        ///////////////////////////////////Token Registry extract///////////////////////////////////////////
+        if(!fetchedTokens){
+            List<CompletableFuture<List<FetchedEvent>>> tokenTasks = new ArrayList<>();
+            tokenTasks.add(rskBlockchainService.getContractEvents(getTokensNetwork(), new BigInteger("0"), to));
+
+            tokenTasks.forEach(listCompletableFuture -> {
+                listCompletableFuture.whenComplete((fetchedEvents, throwable) -> {
+                    long end = System.currentTimeMillis();
+                    logger.info(Thread.currentThread().getId() + " - End fetching tokens = " + (end - start));
+                    logger.info(Thread.currentThread().getId() + " - Completed fetching tokens: " + fetchedEvents);
+                    for(FetchedEvent fetchedEvent : fetchedEvents){
+                        luminoEventServices.addToken(fetchedEvent.getValues().get(1).getValue().toString());
+                    }
+                });
+            });
+        }
     }
 
     /**
@@ -215,5 +253,16 @@ public class DataFetchingJob {
             }
         }
         return ethereumBasedListenables;
+    }
+
+    /**
+     * Creates a EthereumBasedListeneable to get all tokens registered in the blockchain and returns that object
+     * @return EthereumBasedListenable to get tokens
+     */
+    private EthereumBasedListenable getTokensNetwork(){
+        return new EthereumBasedListenable(tokenNetworkRegistry, EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
+                new TypeReference<Address>(true) {},
+                new TypeReference<Address>(true) {}
+        ), "TokenNetworkCreated", -1);
     }
 }

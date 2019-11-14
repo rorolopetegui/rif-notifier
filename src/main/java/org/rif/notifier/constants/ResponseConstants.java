@@ -26,5 +26,5 @@ public interface ResponseConstants {
 
     String SUBSCRIPTION_OUT_OF_BALANCE = "Your subscription ran out of notification balance, please refill your subscription";
 
-    String PRELOADED_EVENT_ID_INCORRECT = "Your subscription ran out of notification balance, please refill your subscription";
+    String INCORRECT_TOKEN = "The token provided doesn't exist";
 }

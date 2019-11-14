@@ -20,6 +20,10 @@ public class TopicManager {
         return topicRepository.findByHash(String.valueOf(hash));
     }
 
+    public Topic getTopicByHashCodeAndIdSubscription(int hash, int idSubscription){
+        return topicRepository.findByHashAndIdSubscription(String.valueOf(hash), idSubscription);
+    }
+
     public Topic insert(TopicTypes type, String hash, Subscription sub){
         Topic tp = new Topic(type, hash, sub);
         return topicRepository.save(tp);

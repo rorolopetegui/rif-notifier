@@ -120,6 +120,10 @@ public class DbManagerFacade {
         return topicManager.getTopicByHashCode(hash);
     }
 
+    public Topic getTopicByHashCodeAndIdSubscription(int hash, int idSubscription){
+        return topicManager.getTopicByHashCodeAndIdSubscription(hash, idSubscription);
+    }
+
     public Topic saveTopic(TopicTypes type, String hash, Subscription sub){
         return topicManager.insert(type, hash, sub);
     }
