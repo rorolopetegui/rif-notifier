@@ -64,7 +64,7 @@ public class DataFetchingJob {
         BigInteger to = rskBlockchainService.getLastBlock();
         BigInteger from = dbManagerFacade.getLastBlock();
         from = from.add(new BigInteger("1"));
-        //BigInteger from = new BigInteger("1");
+
         //Fetching
         logger.info(Thread.currentThread().getId() + String.format(" - Starting fetching from %s to %s", from, to));
 

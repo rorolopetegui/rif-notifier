@@ -29,7 +29,14 @@ public class LuminoEventServices {
         return tokenList.stream().anyMatch(item -> item.equals(token));
     }
 
-    public Topic getTopicForToken(String token){
+    /**
+     * Creates a topic for openchannel given a token and participant1 and participant2, if none of the participants where given, it creates a listeneable without filters
+     * @param token
+     * @param participantOne
+     * @param participantTwo
+     * @return
+     */
+    public Topic getTopicForToken(String token, String participantOne, String participantTwo){
         Topic topic = null;
         if(tokenList.stream().anyMatch(item -> item.equals(token))){
             topic = new Topic();
@@ -41,9 +48,9 @@ public class LuminoEventServices {
             params.add(param);
             param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "channel_identifier", 0, "Uint256", true, null);
             params.add(param);
-            param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "participant1", 1, "Address", true, null);
+            param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "participant1", 1, "Address", true, (participantOne == null || participantOne.isEmpty()) ? null : participantOne.toLowerCase());
             params.add(param);
-            param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "participant2", 2, "Address", true, null);
+            param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "participant2", 2, "Address", true, (participantTwo == null || participantTwo.isEmpty()) ? null : participantTwo.toLowerCase());
             params.add(param);
             param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "settle_timeout", 3, "Uint256", false, null);
             params.add(param);

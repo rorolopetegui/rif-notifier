@@ -2,6 +2,8 @@ package mocked;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.rif.notifier.constants.SubscriptionConstants;
+import org.rif.notifier.constants.TopicParamTypes;
+import org.rif.notifier.constants.TopicTypes;
 import org.rif.notifier.models.datafetching.FetchedEvent;
 import org.rif.notifier.models.entities.*;
 import org.rif.notifier.models.listenable.EthereumBasedListenable;
@@ -131,6 +133,25 @@ public class MockTestData {
                 "]" +
                 "}";
         return mapper.readValue(sTp, Topic.class);
+    }
+    public Topic mockTopicOpenChannelWithoutFilters() {
+        Topic topic = new Topic();
+        topic.setType(TopicTypes.CONTRACT_EVENT);
+        List<TopicParams> params = new ArrayList<>();
+        TopicParams param = new TopicParams(null, TopicParamTypes.CONTRACT_ADDRESS, "123456789", 0, null, false, null);
+        params.add(param);
+        param = new TopicParams(null, TopicParamTypes.EVENT_NAME, "ChannelOpened", 0, null, false, null);
+        params.add(param);
+        param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "channel_identifier", 0, "Uint256", true, null);
+        params.add(param);
+        param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "participant1", 1, "Address", true, null);
+        params.add(param);
+        param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "participant2", 2, "Address", true,  null);
+        params.add(param);
+        param = new TopicParams(null, TopicParamTypes.EVENT_PARAM, "settle_timeout", 3, "Uint256", false, null);
+        params.add(param);
+        topic.setTopicParams(params);
+        return topic;
     }
     public Topic mockInvalidTopic() throws IOException {
         String sTp = "{" +

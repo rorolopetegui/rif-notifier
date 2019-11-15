@@ -168,6 +168,8 @@ public class SubscribeController {
     @ResponseBody
     public ResponseEntity<DTOResponse> subscribeToOpenChannel(
             @RequestParam(name = "token") String token,
+            @RequestParam(name = "participantone", required = false) String participantOne,
+            @RequestParam(name = "participanttwo", required = false) String participantTwo,
             @RequestHeader(value="apiKey") String apiKey) {
         Topic topic = null;
         DTOResponse resp = new DTOResponse();
@@ -177,7 +179,7 @@ public class SubscribeController {
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
                 if(luminoEventServices.isToken(token)){
-                    topic = luminoEventServices.getTopicForToken(token);
+                    topic = luminoEventServices.getTopicForToken(token, participantOne, participantTwo);
                     if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
                         subscribeServices.subscribeToTopic(topic, sub);
                     }else{
@@ -190,27 +192,6 @@ public class SubscribeController {
                     resp.setMessage(ResponseConstants.INCORRECT_TOKEN);
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
-                /*
-                PreloadedEvents preloadedEvent = subscribeServices.getPreloadedEvent(id);
-                if(preloadedEvent != null){
-                    try {
-                        topic = mapper.readValue(preloadedEvent.getEvent(), Topic.class);
-                        if(subscribeServices.getTopicByHash(topic) == null) {
-                            subscribeServices.subscribeToTopic(topic, sub);
-                        }else{
-                            //Return an error because the user is sending a topic that he's already subscribed
-                            resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
-                            resp.setStatus(HttpStatus.CONFLICT);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    //Return an error because the user send a incorrect id
-                    resp.setMessage(ResponseConstants.PRELOADED_EVENT_ID_INCORRECT);
-                    resp.setStatus(HttpStatus.CONFLICT);
-                }
-                 */
             } else {
                 //Return an error because the user still did not create the subscription
                 resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
