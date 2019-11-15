@@ -178,7 +178,6 @@ public class SubscribeController {
             if (sub != null) {
                 if(luminoEventServices.isToken(token)){
                     topic = luminoEventServices.getTopicForToken(token);
-                    Topic test = subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId());
                     if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
                         subscribeServices.subscribeToTopic(topic, sub);
                     }else{
