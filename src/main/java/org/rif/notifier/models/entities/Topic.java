@@ -22,13 +22,13 @@ public class Topic {
 
     private String hash;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany()
     @JoinTable(name = "user_topic",
             joinColumns = @JoinColumn(name = "id_topic", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "id_subscription", referencedColumnName = "id"))
     private Set<Subscription> subscriptions;
 
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "topic")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<TopicParams> topicParams;
 

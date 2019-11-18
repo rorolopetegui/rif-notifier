@@ -4,29 +4,28 @@ import org.rif.notifier.constants.TopicParamTypes;
 import org.rif.notifier.constants.TopicTypes;
 import org.rif.notifier.models.entities.Topic;
 import org.rif.notifier.models.entities.TopicParams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class LuminoEventServices {
-    private static final Logger logger = LoggerFactory.getLogger(SubscribeServices.class);
 
-    private List<String> tokenList = new ArrayList<>();
+    private Set<String> tokenList = new HashSet<>();
 
     public void addToken(String token){
         tokenList.add(token);
     }
 
-    public List<String> getTokens(){
+    public Set<String> getTokens(){
         return tokenList;
     }
 
     public boolean isToken(String token){
-        return tokenList.stream().anyMatch(item -> item.equals(token));
+        return tokenList.contains(token);
     }
 
     /**

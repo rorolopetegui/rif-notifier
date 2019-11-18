@@ -19,7 +19,7 @@ public class Subscription {
     @Column(name = "user_address")
     private String userAddress;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "type", nullable = false)
     private SubscriptionType type;
 
@@ -29,7 +29,7 @@ public class Subscription {
     @ManyToMany(mappedBy = "subscriptions", fetch=FetchType.EAGER)
     private Set<Topic> topics = new HashSet<>();
 
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "subscription")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<NotificationPreferences> notificationPreferences ;
 

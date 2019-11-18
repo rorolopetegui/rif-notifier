@@ -64,7 +64,6 @@ public class SubscribeController {
 
         return new ResponseEntity<>(resp, resp.getStatus());
     }
-
     @ApiOperation(value = "Subscribes to a topic",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/subscribeToTopic", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
@@ -161,7 +160,6 @@ public class SubscribeController {
 
         return new ResponseEntity<>(resp, resp.getStatus());
     }
-
     @ApiOperation(value = "Subscribes to a lumino event",
                response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/subscribeToOpenChannel", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})

@@ -12,7 +12,7 @@ public class SubscriptionType {
     @Id
     int id;
 
-    @OneToMany(mappedBy = "type", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "type")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Subscription> subscription;
 

@@ -61,7 +61,7 @@ public class DataProcessorJob {
                         //Just add the notification, if we're here it's because the user has at least 1 in notification balance
 
                         ntfsData.add(new Notification(sub.getUserAddress(), new Timestamp(date.getTime()).toString(), false, dataForNotification));
-                        sub.setNotificationBalance(sub.getNotificationBalance() - 1);
+                        sub.decrementNotificationBalance();
                         subscriptionsWithNotif.add(sub);
                     }else{
                         Subscription addedSub = subscriptionsWithNotif.stream().filter(item -> item.getUserAddress().equals(sub.getUserAddress()))
@@ -80,7 +80,10 @@ public class DataProcessorJob {
             if (!ntfsData.isEmpty()) {
                 List<Notification> savedNotfs = dbManagerFacade.saveNotificationBatch(ntfsData);
                 //Discount notifications from subscription
-                subscriptionsWithNotif.forEach(updatedSub -> dbManagerFacade.updateSubscription(updatedSub));
+                subscriptionsWithNotif.forEach(updatedSub -> {
+                            dbManagerFacade.updateSubscription(updatedSub);
+                        }
+                );
                 logger.info(Thread.currentThread().getId() + String.format(" - Saved all notifications, count = %d", savedNotfs.size()));
             }
         }

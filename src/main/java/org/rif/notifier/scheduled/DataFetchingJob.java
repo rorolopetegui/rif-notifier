@@ -117,6 +117,7 @@ public class DataFetchingJob {
                 //Check if tokens were registered we can filter by idTopic -1
                 if(fetchedTokens){
                     fetchedEvents.stream().filter(item -> item.getTopicId() == -1).forEach(item -> {
+                        //if(luminoEventServices.isToken())
                         luminoEventServices.addToken(item.getValues().get(1).getValue().toString());
                     });
                 }
