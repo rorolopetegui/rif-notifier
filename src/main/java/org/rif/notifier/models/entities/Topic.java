@@ -6,6 +6,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.rif.notifier.constants.TopicTypes;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -82,6 +83,8 @@ public class Topic {
     }
 
     public void addSubscription(Subscription sub){
+        if(this.subscriptions == null)
+            this.subscriptions = new HashSet<>();
         this.subscriptions.add(sub);
         sub.getTopics().add(this);
     }

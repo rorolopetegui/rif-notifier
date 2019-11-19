@@ -160,8 +160,8 @@ public class SubscribeController {
 
         return new ResponseEntity<>(resp, resp.getStatus());
     }
-    @ApiOperation(value = "Subscribes to a lumino event",
-               response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @ApiOperation(value = "Subscribes to a lumino open channel event",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/subscribeToOpenChannel", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> subscribeToOpenChannel(
@@ -177,7 +177,49 @@ public class SubscribeController {
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
                 if(luminoEventServices.isToken(token)){
-                    topic = luminoEventServices.getTopicForToken(token, participantOne, participantTwo);
+                    topic = luminoEventServices.getChannelOpenedTopicForToken(token, participantOne, participantTwo);
+                    if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
+                        subscribeServices.subscribeToTopic(topic, sub);
+                    }else{
+                        //Return an error because the user is sending a topic that he's already subscribed
+                        resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
+                        resp.setStatus(HttpStatus.CONFLICT);
+                    }
+                }else{
+                    //Return an error because the user send a incorrect token
+                    resp.setMessage(ResponseConstants.INCORRECT_TOKEN);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
+            } else {
+                //Return an error because the user still did not create the subscription
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
+        } else {
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
+    @ApiOperation(value = "Subscribes to a lumino close channel event",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/subscribeToCloseChannel", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> subscribeToCloseChannel(
+            @RequestParam(name = "token") String token,
+            @RequestParam(name = "channelidentifier", required = false) Integer channelIdentifier,
+            @RequestParam(name = "closingparticipant", required = false) String closingParticipant,
+            @RequestHeader(value="apiKey") String apiKey) {
+        Topic topic = null;
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if (us != null) {
+            //Check if the user did subscribe
+            Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
+            if (sub != null) {
+                if(luminoEventServices.isToken(token)){
+                    topic = luminoEventServices.getChannelClosedTopicForToken(token, channelIdentifier, closingParticipant);
                     if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
                         subscribeServices.subscribeToTopic(topic, sub);
                     }else{

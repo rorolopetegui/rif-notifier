@@ -5,10 +5,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.rif.notifier.managers.DbManagerFacade;
-import org.rif.notifier.models.entities.Subscription;
-import org.rif.notifier.models.entities.SubscriptionType;
-import org.rif.notifier.models.entities.Topic;
-import org.rif.notifier.models.entities.User;
+import org.rif.notifier.models.entities.*;
 import org.rif.notifier.services.SubscribeServices;
 import org.rif.notifier.services.blockchain.lumino.LuminoInvoice;
 
@@ -42,6 +39,40 @@ public class SubscribeServiceTest {
 
         // then
         assertEquals(luminoVal, retVal);
+    }
+    @Test
+    public void canSubscribeToTopicNewTopic() throws IOException {
+        // given
+        Subscription subscription = mockTestData.mockSubscription();
+        Topic topic = mockTestData.mockTopic();
+
+        doReturn(topic).when(dbManagerFacade).saveTopic(topic.getType(), "" + topic.hashCode(), subscription);
+
+        // when
+        subscribeServices.subscribeToTopic(topic, subscription);
+
+        // then
+        for (TopicParams param : topic.getTopicParams()) {
+            verify(dbManagerFacade, times(1)).saveTopicParams(
+                    topic, param.getType(), param.getValue(), param.getOrder(), param.getValueType(), param.getIndexed(), param.getFilter()
+            );
+        }
+
+        //verify(dbManagerFacade, times(1)).updateTopic(topic);
+    }
+    @Test
+    public void canSubscribeToTopicUpdateTopic() throws IOException {
+        // given
+        Subscription subscription = mockTestData.mockSubscription();
+        Topic topic = mockTestData.mockTopic();
+
+        doReturn(topic).when(dbManagerFacade).getTopicByHashCode(topic.hashCode());
+
+        // when
+        subscribeServices.subscribeToTopic(topic, subscription);
+
+        // then
+        verify(dbManagerFacade, times(1)).updateTopic(topic);
     }
     @Test
     public void errorCreateSubscriptionNotProvidingUser(){
@@ -119,7 +150,15 @@ public class SubscribeServiceTest {
         assertTrue(retVal);
     }
     @Test
-    public void errorValidateTopicInvalid() throws IOException {
+    public void errorValidateTopicInvalidParams() throws IOException {
+        Topic topic = mockTestData.mockInvalidTopic();
+
+        boolean retVal = subscribeServices.validateTopic(topic);
+
+        assertFalse(retVal);
+    }
+    @Test
+    public void errorValidateTopicInvalidTopicType() throws IOException {
         Topic topic = mockTestData.mockInvalidTopic();
 
         boolean retVal = subscribeServices.validateTopic(topic);
