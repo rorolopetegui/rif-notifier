@@ -10,6 +10,10 @@ public interface ResponseConstants {
 
     String ADDRESS_NOT_PROVIDED = "Address is a required param, please insert a correct address";
 
+    String SIGNED_ADDRESS_NOT_PROVIDED = "You need to provide your Address signed in the body of the request";
+
+    String INCORRECT_SIGNED_ADDRESS = "The signed address provided is wrong";
+
     String SUBSCRIPTION_NOT_FOUND = "Subscription not found, first try to subscribe";
 
     String NO_ACTIVE_SUBSCRIPTION = "No active subscription found, check if you are subscribed first, or have a invoice pending of payment";
