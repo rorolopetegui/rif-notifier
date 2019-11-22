@@ -96,12 +96,31 @@ public class DataFetchingJob {
         dbManagerFacade.saveLastBlock(to);
 
 
+        blockTasks.forEach(listCompletableFuture -> {
+            listCompletableFuture.whenComplete((fetchedBlocks, throwable) -> {
+                long end = System.currentTimeMillis();
+                logger.info(Thread.currentThread().getId() + " - End fetching blocks task = " + (end - start));
+                logger.info(Thread.currentThread().getId() + " - Completed fetching blocks: " + fetchedBlocks);
+                fetchedBlocks.forEach(fetchedBlock -> {
+                    if(fetchedBlock.getBlock().getTransactions() != null && fetchedBlock.getBlock().getTransactions().size() > 0) {
+                        RawData rwDt = new RawData(EthereumBasedListenableTypes.NEW_BLOCK.toString(), fetchedBlock.toString(), false, fetchedBlock.getBlock().getNumber(), fetchedBlock.getTopicId());
+                        logger.info(Thread.currentThread().getId() + " - myItem: " + rwDt.toString());
+                    }
+                });
+                List<RawData> rawTrs = fetchedBlocks.stream().map(fetchedBlock -> new RawData(EthereumBasedListenableTypes.NEW_BLOCK.toString(), fetchedBlock.toString(), false, fetchedBlock.getBlock().getNumber(), fetchedBlock.getTopicId())).
+                        collect(Collectors.toList());
+                if(!rawTrs.isEmpty()){
+                    dbManagerFacade.saveRawDataBatch(rawTrs);
+                }
+            });
+        });
+
         transactionTasks.forEach(listCompletableFuture -> {
             listCompletableFuture.whenComplete((fetchedTransactions, throwable) -> {
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching transactions task = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching transactions: " + fetchedTransactions);
-                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.getTransaction().toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), fetchedTransaction.getTopicId())).
+                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), fetchedTransaction.getTopicId())).
                         collect(Collectors.toList());
                 if(!rawTrs.isEmpty()){
                     dbManagerFacade.saveRawDataBatch(rawTrs);

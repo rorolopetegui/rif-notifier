@@ -47,7 +47,7 @@ public abstract class EthereumBasedService extends BlockchainService<EthereumBas
 
     @Override
     public CompletableFuture<List<FetchedBlock>> getBlocks(EthereumBasedListenable listenable, BigInteger from, BigInteger to) {
-        return CompletableFuture.completedFuture(new ArrayList<>());
+        return blockDataFetcher.fetch(listenable, from, to, web3j);
     }
 
     @Override

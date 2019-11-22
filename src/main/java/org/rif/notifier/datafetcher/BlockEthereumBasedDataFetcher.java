@@ -7,11 +7,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.methods.response.EthBlock;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class BlockEthereumBasedDataFetcher extends EthereumBasedDataFetcher {
@@ -23,11 +27,22 @@ public class BlockEthereumBasedDataFetcher extends EthereumBasedDataFetcher {
     public CompletableFuture<List<FetchedBlock>> fetch(EthereumBasedListenable ethereumBasedListenable, BigInteger from, BigInteger to, Web3j web3j) {
         long start = System.currentTimeMillis();
         logger.info(Thread.currentThread().getId() + " - Starting block events for subscription: " + ethereumBasedListenable);
-        //TODO not implemented yet!
-
-        long end = System.currentTimeMillis();
-        logger.info(Thread.currentThread().getId() + " - End block events for subscription = " + (end - start));
-        return CompletableFuture.completedFuture(new ArrayList<>());
+        return CompletableFuture.supplyAsync(() -> {
+            List<FetchedBlock> blocks = new ArrayList<>();
+            try {
+                for(BigInteger i = from; i.compareTo(to) <= 0; i=i.add(BigInteger.ONE)){
+                    blocks.add(new FetchedBlock(web3j.ethGetBlockByNumber(DefaultBlockParameter.valueOf(i), false).send().getBlock(), ethereumBasedListenable.getTopicId()));
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            long end = System.currentTimeMillis();
+            logger.info(Thread.currentThread().getId() + " - End block events for subscription = " + (end - start));
+            return blocks;
+        }).exceptionally(throwable -> {
+            logger.error(Thread.currentThread().getId() + " - Error fetching blocks data for subscription: "+ ethereumBasedListenable, throwable);
+            return new ArrayList<>();
+        });
     }
 
 

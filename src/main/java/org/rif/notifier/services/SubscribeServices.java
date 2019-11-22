@@ -182,6 +182,7 @@ public class SubscribeServices  {
                 case PENDING_TRANSACTIONS:
                 case NEW_BLOCK:
                 case NEW_TRANSACTIONS:
+                    return true;
             }
         }
         return false;

@@ -19,12 +19,25 @@ public class FetchedTransaction extends FetchedData {
         this.transaction = transaction;
     }
 
-    //TODO modify tostring because web3j transaction toString isnt implemented.
     @Override
     public String toString() {
-        return "FetchedTransaction{" +
-                "transaction=" + transaction +
-                ",topicId=" + super.getTopicId() +
+        return "{" +
+                "\"transaction\": {" +
+                    "\"hash\": \"" + transaction.getHash() + "\"," +
+                    "\"nonce\": " + transaction.getNonce() + "," +
+                    "\"blockHash\": \"" + transaction.getBlockHash() + "\"," +
+                    "\"blockNumber\": " + transaction.getBlockNumber() + "," +
+                    "\"transactionIndex\": " + transaction.getTransactionIndex() + "," +
+                    "\"from\": \"" + transaction.getFrom() + "\"," +
+                    "\"to\": \"" + transaction.getTo() + "\"," +
+                    "\"value\": " + transaction.getValue() + "," +
+                    "\"gasPrice\": " + transaction.getGasPrice() + "," +
+                    "\"gas\": " + transaction.getGas() + "," +
+                    "\"r\": \"" + transaction.getR() + "\"," +
+                    "\"s\": \"" + transaction.getS() + "\"," +
+                    "\"v\": " + transaction.getV() +
+                "}," +
+                "\"topicId\": " + super.getTopicId() +
                 '}';
     }
 }

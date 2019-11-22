@@ -66,11 +66,13 @@ public class EthereumBasedListenable extends Listenable {
     public String toString() {
         StringBuilder fields = new StringBuilder("[");
         int counter = 1;
-        for(TypeReference tr : eventFields){
-            fields.append(tr.getType().getTypeName());
-            if(counter < eventFields.size())
-                fields.append(",");
-            counter++;
+        if(eventFields != null) {
+            for (TypeReference tr : eventFields) {
+                fields.append(tr.getType().getTypeName());
+                if (counter < eventFields.size())
+                    fields.append(",");
+                counter++;
+            }
         }
         fields.append("]");
 
