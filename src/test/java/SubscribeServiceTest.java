@@ -32,7 +32,7 @@ public class SubscribeServiceTest {
         Subscription sub = mockTestData.mockSubscription();
         String luminoVal = LuminoInvoice.generateInvoice(user.getAddress());
 
-        doReturn(type).when(dbManagerFacade).getSubscriptionTypeByType(0);
+        //doReturn(type).when(dbManagerFacade).getSubscriptionTypeByType(0);
 
         // when
         String retVal = subscribeServices.createSubscription(user, type);
@@ -98,6 +98,7 @@ public class SubscribeServiceTest {
         // then
         assertEquals("", retVal);
     }
+    /*
     @Test
     public void errorCreateSubscriptionInvalidType(){
         // given
@@ -111,6 +112,7 @@ public class SubscribeServiceTest {
         // then
         assertEquals("", retVal);
     }
+     */
     @Test
     public void isSubscriptionTypeValid() {
         SubscriptionType type = mockTestData.mockSubscriptionType();

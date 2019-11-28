@@ -380,7 +380,7 @@ public class SubscribeControllerTest {
 
         assertEquals(dto.getMessage(), dtResponse.getMessage());
     }
-    @Test
+    /*@Test
     public void errorSubscribeIncorrectType() throws Exception {
         String address = "0x0";
         DTOResponse dto = new DTOResponse();
@@ -403,6 +403,7 @@ public class SubscribeControllerTest {
 
         assertEquals(dto.getMessage(), dtResponse.getMessage());
     }
+     */
     @Test
     public void errorSubscribeNotProvidingApiKey() throws Exception {
         mockMvc.perform(
@@ -411,6 +412,7 @@ public class SubscribeControllerTest {
         )
                 .andExpect(status().isBadRequest());
     }
+    /*
     @Test
     public void errorSubscribeNotProvidingType() throws Exception {
         String apiKey = Utils.generateNewToken();
@@ -421,5 +423,5 @@ public class SubscribeControllerTest {
         )
                 .andExpect(status().isBadRequest());
     }
-
+    */
 }

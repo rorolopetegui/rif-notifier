@@ -48,8 +48,8 @@ public class SubscribeController {
 //            SubscriptionType subType = subscribeServices.getSubscriptionTypeByType(type);
 //            if(subType != null) {
                 if (subscribeServices.getActiveSubscriptionByAddress(us.getAddress()) == null) {
-                    SubscriptionType subType = new SubscriptionType(Integer.MAX_VALUE);
-                    resp.setData(subscribeServices.createSubscription(us, subType));
+                    SubscriptionType subTypeMocked = new SubscriptionType(Integer.MAX_VALUE);
+                    resp.setData(subscribeServices.createSubscription(us, subTypeMocked));
                 }else{
                     resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ADDED);
                     resp.setStatus(HttpStatus.CONFLICT);
