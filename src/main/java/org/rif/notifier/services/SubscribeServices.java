@@ -40,11 +40,12 @@ public class SubscribeServices  {
     public String createSubscription(User user, SubscriptionType type){
         String retVal = "";
         if(user != null && type != null) {
-            if(isSubscriptionTypeValid(type.getId())) {
-                Subscription sub = dbManagerFacade.createSubscription(new Date(), user.getAddress(), type, SubscriptionConstants.PENDING_PAYMENT);
-                //Pending to generate a lumino-invoice
-                retVal = LuminoInvoice.generateInvoice(user.getAddress());
-            }
+//            if(isSubscriptionTypeValid(type.getId())) {
+            //Subscription sub = dbManagerFacade.createSubscription(new Date(), user.getAddress(), type, SubscriptionConstants.PENDING_PAYMENT);
+            Subscription sub = dbManagerFacade.createSubscription(new Date(), user.getAddress(), type, SubscriptionConstants.PAYED_PAYMENT);
+            //Pending to generate a lumino-invoice
+            retVal = LuminoInvoice.generateInvoice(user.getAddress());
+//            }
         }
         return retVal;
     }

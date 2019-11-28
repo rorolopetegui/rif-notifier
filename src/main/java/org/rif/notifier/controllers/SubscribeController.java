@@ -40,23 +40,24 @@ public class SubscribeController {
     @RequestMapping(value = "/subscribe", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> subscribe(
-            @RequestParam(name = "type") int type,
+            @RequestParam(name = "type", required = false) Integer type,
             @RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
         if(us != null){
-            SubscriptionType subType = subscribeServices.getSubscriptionTypeByType(type);
-            if(subType != null) {
+//            SubscriptionType subType = subscribeServices.getSubscriptionTypeByType(type);
+//            if(subType != null) {
                 if (subscribeServices.getActiveSubscriptionByAddress(us.getAddress()) == null) {
+                    SubscriptionType subType = new SubscriptionType(Integer.MAX_VALUE);
                     resp.setData(subscribeServices.createSubscription(us, subType));
                 }else{
                     resp.setMessage(ResponseConstants.SUBSCRIPTION_ALREADY_ADDED);
                     resp.setStatus(HttpStatus.CONFLICT);
                 }
-            }else{
-                resp.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
-                resp.setStatus(HttpStatus.CONFLICT);
-            }
+//            }else{
+//                resp.setMessage(ResponseConstants.SUBSCRIPTION_INCORRECT_TYPE);
+//                resp.setStatus(HttpStatus.CONFLICT);
+//            }
         }else{
             resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
             resp.setStatus(HttpStatus.CONFLICT);
