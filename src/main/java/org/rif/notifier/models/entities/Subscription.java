@@ -20,7 +20,7 @@ public class Subscription {
     private String userAddress;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "type", nullable = false)
+    @JoinColumn(name = "type")
     private SubscriptionType type;
 
     private String state;

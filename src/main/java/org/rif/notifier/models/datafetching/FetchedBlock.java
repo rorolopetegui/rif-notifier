@@ -1,6 +1,7 @@
 package org.rif.notifier.models.datafetching;
 import org.web3j.protocol.core.methods.response.EthBlock.Block;
 
+import java.math.BigInteger;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FetchedBlock extends FetchedData {
@@ -33,13 +34,19 @@ public class FetchedBlock extends FetchedData {
             });
         }
         transactionJson.append("]");
+        BigInteger nonce = new BigInteger("0");
+        try {
+            nonce = block.getNonce();
+        }catch (Exception ignored){
+
+        }
 
         return "{" +
                 "\"block\": {" +
                 "\"number\": " + block.getNumber() + "," +
                 "\"hash\": \"" + block.getHash() + "\"," +
                 "\"parentHash\": \"" + block.getParentHash() + "\"," +
-                "\"nonce\": " + block.getNonce() + "," +
+                "\"nonce\": " + nonce.toString() + "," +
                 "\"sha3Uncles\": \"" + block.getSha3Uncles() + "\"," +
                 "\"transactionsRoot\": \"" + block.getTransactionsRoot() + "\"," +
                 "\"stateRoot\": \"" + block.getStateRoot() + "\"," +
