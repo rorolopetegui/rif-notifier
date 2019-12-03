@@ -84,7 +84,7 @@ public class SubscribeController {
                 if(sub != null) {
                     if(subscribeServices.validateTopic(topic)){
                         if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
-                            subscribeServices.subscribeToTopic(topic, sub);
+                            resp.setMessage("{\"idTopic\": " + subscribeServices.subscribeToTopic(topic, sub) + "}");
                         }else{
                             //Return an error because the user is sending a topic that he's already subscribed
                             resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
@@ -180,7 +180,7 @@ public class SubscribeController {
                 if(luminoEventServices.isToken(token)){
                     topic = luminoEventServices.getChannelOpenedTopicForToken(token, participantOne, participantTwo);
                     if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
-                        subscribeServices.subscribeToTopic(topic, sub);
+                        resp.setMessage("{\"idTopic\": " + subscribeServices.subscribeToTopic(topic, sub) + "}");
                     }else{
                         //Return an error because the user is sending a topic that he's already subscribed
                         resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
@@ -222,7 +222,7 @@ public class SubscribeController {
                 if(luminoEventServices.isToken(token)){
                     topic = luminoEventServices.getChannelClosedTopicForToken(token, channelIdentifier, closingParticipant);
                     if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
-                        subscribeServices.subscribeToTopic(topic, sub);
+                        resp.setMessage("{\"idTopic\": " + subscribeServices.subscribeToTopic(topic, sub) + "}");
                     }else{
                         //Return an error because the user is sending a topic that he's already subscribed
                         resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
