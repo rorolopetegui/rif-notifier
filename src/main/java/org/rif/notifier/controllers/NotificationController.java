@@ -43,7 +43,8 @@ public class NotificationController {
     public ResponseEntity<DTOResponse> GetNotifications(
             @RequestHeader(value="apiKey") String apiKey,
             @RequestParam(name = "fromId", required = false) Integer id,
-            @RequestParam(name = "lastRows", required = false) Integer lastRows
+            @RequestParam(name = "lastRows", required = false) Integer lastRows,
+            @RequestParam(name = "idTopic", required = false) Integer idTopic
     ) {
         DTOResponse resp = new DTOResponse();
         List<Notification> notifications;
@@ -51,7 +52,7 @@ public class NotificationController {
             User us = userServices.getUserByApiKey(apiKey);
             if(us != null){
                 Subscription subscription = subscribeServices.getSubscriptionByAddress(us.getAddress());
-                notifications = notificationManager.getNotificationsForAddress(us.getAddress(), id, lastRows);
+                notifications = notificationManager.getNotificationsForAddress(us.getAddress(), id, lastRows, idTopic);
                 if(notifications.size() > 0) {
                     resp.setData(notifications);
                 }else{

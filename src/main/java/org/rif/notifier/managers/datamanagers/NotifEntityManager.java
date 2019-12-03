@@ -26,11 +26,21 @@ public class NotifEntityManager {
         notificationRepository.findByToAddress(user_address).forEach(lst::add);
         return lst;
     }
+    public List<Notification> getNotificationsByUserAddressAndIdTopic(String user_address, Integer idTopic){
+        List<Notification> lst = new ArrayList<>();
+        notificationRepository.findByToAddressAndIdTopic(user_address, idTopic).forEach(lst::add);
+        return lst;
+    }
     public List<Notification> getNotificationsByUserAddressAndGraterThanId(String user_address, Integer id){
         return new ArrayList<>(notificationRepository.findByToAddressAndIdGraterThanId(user_address, id));
     }
-
+    public List<Notification> getNotificationsByUserAddressAndGraterThanIdAndIdTopic(String user_address, Integer id, Integer idTopic){
+        return new ArrayList<>(notificationRepository.findByToAddressAndIdGraterThanIdAndIdTopic(user_address, id, idTopic));
+    }
     public List<Notification> getNotificationsByUserAddressLastRows(String user_address, Integer lastRows){
         return new ArrayList<>(notificationRepository.findByToAddressAndGetLastRows(user_address, lastRows));
+    }
+    public List<Notification> getNotificationsByUserAddressLastRowsAndIdTopic(String user_address, Integer lastRows, Integer idTopic){
+        return new ArrayList<>(notificationRepository.findByToAddressAndGetLastRowsAndIdTopic(user_address, idTopic, lastRows));
     }
 }

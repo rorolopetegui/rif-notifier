@@ -30,13 +30,13 @@ public class NotificationManager {
      * @param address Address of a user to be notified
      * @return List<Notification> with all the notifications of a user address
      */
-    public List<Notification> getNotificationsForAddress(String address, Integer id, Integer lastRows){
+    public List<Notification> getNotificationsForAddress(String address, Integer id, Integer lastRows, Integer idTopic){
         List<Notification> lst = new ArrayList<>();
         Subscription sub = dbManagerFacade.getActiveSubscriptionByAddress(address);
         if(sub != null) {
             //This will need to be migrated by topic
             if (sub.getActive() )
-                lst = dbManagerFacade.getNotificationByUserAddress(address, id, lastRows);
+                lst = dbManagerFacade.getNotificationByUserAddress(address, id, lastRows, idTopic);
         }
         return lst;
     }
@@ -47,7 +47,7 @@ public class NotificationManager {
     public void notificateUsers(){
         List<Subscription> activeSubs = dbManagerFacade.getAllActiveSubscriptions();
         for(Subscription sub : activeSubs){
-            List<Notification> notifications = dbManagerFacade.getNotificationByUserAddress(sub.getUserAddress(), null, null);
+            List<Notification> notifications = dbManagerFacade.getNotificationByUserAddress(sub.getUserAddress(), null, null, null);
             for(NotificationPreferences preference : sub.getNotificationPreferences()){
                 NotificationService notificationService;
                 switch (preference.getNotificationService()){

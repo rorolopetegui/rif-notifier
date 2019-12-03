@@ -143,11 +143,17 @@ public class DbManagerFacade {
         ).collect(Collectors.toList());
     }
 
-    public List<Notification> getNotificationByUserAddress(String user_address, Integer id, Integer lastRows){
-        if(id != null)
+    public List<Notification> getNotificationByUserAddress(String user_address, Integer id, Integer lastRows, Integer idTopic){
+        if(id != null && idTopic != null)
+            return notifEntityManager.getNotificationsByUserAddressAndGraterThanIdAndIdTopic(user_address, id, idTopic);
+        else if(id != null)
             return notifEntityManager.getNotificationsByUserAddressAndGraterThanId(user_address, id);
+        if(lastRows != null && idTopic != null)
+            return notifEntityManager.getNotificationsByUserAddressLastRowsAndIdTopic(user_address, lastRows, idTopic);
         else if(lastRows != null)
             return notifEntityManager.getNotificationsByUserAddressLastRows(user_address, lastRows);
+        else if(idTopic != null)
+            return notifEntityManager.getNotificationsByUserAddressAndIdTopic(user_address, idTopic);
         else
             return notifEntityManager.getNotificationsByUserAddress(user_address);
 

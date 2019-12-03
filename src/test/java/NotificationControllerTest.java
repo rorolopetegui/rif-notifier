@@ -63,7 +63,7 @@ public class NotificationControllerTest {
         when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
         when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(subscription);
         //Return notifications
-        when(notificationManager.getNotificationsForAddress(us.getAddress(), null, null)).thenReturn(notifs);
+        when(notificationManager.getNotificationsForAddress(us.getAddress(), null, null, null)).thenReturn(notifs);
         mockMvc.perform(
                 get("/getNotifications")
                         .header("apiKey", apiKey)
