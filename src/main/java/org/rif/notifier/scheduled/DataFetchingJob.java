@@ -54,6 +54,9 @@ public class DataFetchingJob {
 
     private boolean fetchedTokens = false;
 
+    @Value("${notifier.blocks.startFromLast}")
+    private boolean onInit;
+
     /**
      * Creates listeneables, then try to get the blockchain events related.
      * When all the events are fetched try to process the rawdata getted calling methods
@@ -62,103 +65,114 @@ public class DataFetchingJob {
     public void run() throws Exception {
         // Get latest block for this run
         BigInteger to = rskBlockchainService.getLastBlock();
-        BigInteger from = dbManagerFacade.getLastBlock();
-        from = from.add(new BigInteger("1"));
-
-        //Fetching
-        logger.info(Thread.currentThread().getId() + String.format(" - Starting fetching from %s to %s", from, to));
-
-        long start = System.currentTimeMillis();
-        List<CompletableFuture<List<FetchedBlock>>> blockTasks = new ArrayList<>();
-        List<CompletableFuture<List<FetchedTransaction>>> transactionTasks = new ArrayList<>();
-        List<CompletableFuture<List<FetchedEvent>>> eventTasks = new ArrayList<>();
-        List<EthereumBasedListenable> ethereumBasedListenables = getListeneables();
-        if(fetchedTokens){
-            ethereumBasedListenables.add(getTokensNetwork());
+        BigInteger from;
+        if(onInit) {
+            //Saving lastblock so it starts fetching from here
+            dbManagerFacade.saveLastBlock(to);
+            from = to;
+            onInit = false;
+        }else {
+            from = dbManagerFacade.getLastBlock();
+            from = from.add(new BigInteger("1"));
         }
-        for (EthereumBasedListenable subscriptionChannel : ethereumBasedListenables) {
-            try {
-                switch (subscriptionChannel.getKind()) {
-                    case NEW_BLOCK:
-                        blockTasks.add(rskBlockchainService.getBlocks(subscriptionChannel, from, to));
-                        break;
-                    case CONTRACT_EVENT:
-                        eventTasks.add(rskBlockchainService.getContractEvents(subscriptionChannel, from, to));
-                        break;
-                    case NEW_TRANSACTIONS:
-                        transactionTasks.add(rskBlockchainService.getTransactions(subscriptionChannel, from, to));
-                        break;
-                }
-            } catch (Exception e) {
-                logger.error("Error during DataFetching job: ", e);
+        if(from.compareTo(to) < 0) {
+            //Fetching
+            logger.info(Thread.currentThread().getId() + String.format(" - Starting fetching from %s to %s", from, to));
+
+            long start = System.currentTimeMillis();
+            List<CompletableFuture<List<FetchedBlock>>> blockTasks = new ArrayList<>();
+            List<CompletableFuture<List<FetchedTransaction>>> transactionTasks = new ArrayList<>();
+            List<CompletableFuture<List<FetchedEvent>>> eventTasks = new ArrayList<>();
+            List<EthereumBasedListenable> ethereumBasedListenables = getListeneables();
+            if (fetchedTokens) {
+                ethereumBasedListenables.add(getTokensNetwork());
             }
-        }
-        dbManagerFacade.saveLastBlock(to);
+            for (EthereumBasedListenable subscriptionChannel : ethereumBasedListenables) {
+                try {
+                    switch (subscriptionChannel.getKind()) {
+                        case NEW_BLOCK:
+                            blockTasks.add(rskBlockchainService.getBlocks(subscriptionChannel, from, to));
+                            break;
+                        case CONTRACT_EVENT:
+                            eventTasks.add(rskBlockchainService.getContractEvents(subscriptionChannel, from, to));
+                            break;
+                        case NEW_TRANSACTIONS:
+                            transactionTasks.add(rskBlockchainService.getTransactions(subscriptionChannel, from, to));
+                            break;
+                    }
+                } catch (Exception e) {
+                    logger.error("Error during DataFetching job: ", e);
+                }
+            }
+            dbManagerFacade.saveLastBlock(to);
 
 
-        blockTasks.forEach(listCompletableFuture -> {
-            listCompletableFuture.whenComplete((fetchedBlocks, throwable) -> {
-                long end = System.currentTimeMillis();
-                logger.info(Thread.currentThread().getId() + " - End fetching blocks task = " + (end - start));
-                logger.info(Thread.currentThread().getId() + " - Completed fetching blocks: " + fetchedBlocks);
-                fetchedBlocks.forEach(fetchedBlock -> {
-                    if(fetchedBlock.getBlock().getTransactions() != null && fetchedBlock.getBlock().getTransactions().size() > 0) {
-                        RawData rwDt = new RawData(EthereumBasedListenableTypes.NEW_BLOCK.toString(), fetchedBlock.toString(), false, fetchedBlock.getBlock().getNumber(), fetchedBlock.getTopicId());
-                        logger.info(Thread.currentThread().getId() + " - myItem: " + rwDt.toString());
+            blockTasks.forEach(listCompletableFuture -> {
+                listCompletableFuture.whenComplete((fetchedBlocks, throwable) -> {
+                    long end = System.currentTimeMillis();
+                    logger.info(Thread.currentThread().getId() + " - End fetching blocks task = " + (end - start));
+                    logger.info(Thread.currentThread().getId() + " - Fetchedblocks size: " + fetchedBlocks.size());
+                    logger.info(Thread.currentThread().getId() + " - Completed fetching blocks: " + fetchedBlocks);
+                    fetchedBlocks.forEach(fetchedBlock -> {
+                        if (fetchedBlock.getBlock().getTransactions() != null && fetchedBlock.getBlock().getTransactions().size() > 0) {
+                            RawData rwDt = new RawData(EthereumBasedListenableTypes.NEW_BLOCK.toString(), fetchedBlock.toString(), false, fetchedBlock.getBlock().getNumber(), fetchedBlock.getTopicId());
+                        }
+                    });
+                    List<RawData> rawTrs = fetchedBlocks.stream().map(fetchedBlock -> new RawData(EthereumBasedListenableTypes.NEW_BLOCK.toString(), fetchedBlock.toString(), false, fetchedBlock.getBlock().getNumber(), fetchedBlock.getTopicId())).
+                            collect(Collectors.toList());
+                    if (!rawTrs.isEmpty()) {
+                        dbManagerFacade.saveRawDataBatch(rawTrs);
                     }
                 });
-                List<RawData> rawTrs = fetchedBlocks.stream().map(fetchedBlock -> new RawData(EthereumBasedListenableTypes.NEW_BLOCK.toString(), fetchedBlock.toString(), false, fetchedBlock.getBlock().getNumber(), fetchedBlock.getTopicId())).
-                        collect(Collectors.toList());
-                if(!rawTrs.isEmpty()){
-                    dbManagerFacade.saveRawDataBatch(rawTrs);
-                }
             });
-        });
 
-        transactionTasks.forEach(listCompletableFuture -> {
-            listCompletableFuture.whenComplete((fetchedTransactions, throwable) -> {
-                long end = System.currentTimeMillis();
-                logger.info(Thread.currentThread().getId() + " - End fetching transactions task = " + (end - start));
-                logger.info(Thread.currentThread().getId() + " - Completed fetching transactions: " + fetchedTransactions);
-                List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), fetchedTransaction.getTopicId())).
-                        collect(Collectors.toList());
-                if(!rawTrs.isEmpty()){
-                    dbManagerFacade.saveRawDataBatch(rawTrs);
-                }
+            transactionTasks.forEach(listCompletableFuture -> {
+                listCompletableFuture.whenComplete((fetchedTransactions, throwable) -> {
+                    long end = System.currentTimeMillis();
+                    logger.info(Thread.currentThread().getId() + " - End fetching transactions task = " + (end - start));
+                    logger.info(Thread.currentThread().getId() + " - Completed fetching transactions: " + fetchedTransactions);
+                    List<RawData> rawTrs = fetchedTransactions.stream().map(fetchedTransaction -> new RawData(EthereumBasedListenableTypes.NEW_TRANSACTIONS.toString(), fetchedTransaction.toString(), false, fetchedTransaction.getTransaction().getBlockNumber(), fetchedTransaction.getTopicId())).
+                            collect(Collectors.toList());
+                    if (!rawTrs.isEmpty()) {
+                        dbManagerFacade.saveRawDataBatch(rawTrs);
+                    }
+                });
             });
-        });
 
-        eventTasks.forEach(listCompletableFuture -> {
-            listCompletableFuture.whenComplete((fetchedEvents, throwable) -> {
-                long end = System.currentTimeMillis();
-                logger.info(Thread.currentThread().getId() + " - End fetching events task = " + (end - start));
-                logger.info(Thread.currentThread().getId() + " - Completed fetching events: " + fetchedEvents);
-                //Check if tokens were registered we can filter by idTopic -1
-                if(fetchedTokens){
-                    fetchedEvents.stream().filter(item -> item.getTopicId() == -1).forEach(item -> {
-                        //if(luminoEventServices.isToken())
-                        luminoEventServices.addToken(item.getValues().get(1).getValue().toString());
-                    });
-                }
-                processFetchedEvents(fetchedEvents);
-            });
-        });
-        ///////////////////////////////////Token Registry extract///////////////////////////////////////////
-        if(!fetchedTokens){
-            List<CompletableFuture<List<FetchedEvent>>> tokenTasks = new ArrayList<>();
-            tokenTasks.add(rskBlockchainService.getContractEvents(getTokensNetwork(), new BigInteger("0"), to));
-
-            tokenTasks.forEach(listCompletableFuture -> {
+            eventTasks.forEach(listCompletableFuture -> {
                 listCompletableFuture.whenComplete((fetchedEvents, throwable) -> {
                     long end = System.currentTimeMillis();
-                    logger.info(Thread.currentThread().getId() + " - End fetching tokens = " + (end - start));
-                    logger.info(Thread.currentThread().getId() + " - Completed fetching tokens: " + fetchedEvents);
-                    for(FetchedEvent fetchedEvent : fetchedEvents){
-                        luminoEventServices.addToken(fetchedEvent.getValues().get(1).getValue().toString());
+                    logger.info(Thread.currentThread().getId() + " - End fetching events task = " + (end - start));
+                    logger.info(Thread.currentThread().getId() + " - Completed fetching events: " + fetchedEvents);
+                    //Check if tokens were registered we can filter by idTopic -1
+                    if (fetchedTokens) {
+                        fetchedEvents.stream().filter(item -> item.getTopicId() == -1).forEach(item -> {
+                            //if(luminoEventServices.isToken())
+                            luminoEventServices.addToken(item.getValues().get(1).getValue().toString());
+                        });
                     }
+                    processFetchedEvents(fetchedEvents);
                 });
             });
-            fetchedTokens = true;
+            ///////////////////////////////////Token Registry extract///////////////////////////////////////////
+            if (!fetchedTokens) {
+                List<CompletableFuture<List<FetchedEvent>>> tokenTasks = new ArrayList<>();
+                tokenTasks.add(rskBlockchainService.getContractEvents(getTokensNetwork(), new BigInteger("0"), to));
+
+                tokenTasks.forEach(listCompletableFuture -> {
+                    listCompletableFuture.whenComplete((fetchedEvents, throwable) -> {
+                        long end = System.currentTimeMillis();
+                        logger.info(Thread.currentThread().getId() + " - End fetching tokens = " + (end - start));
+                        logger.info(Thread.currentThread().getId() + " - Completed fetching tokens: " + fetchedEvents);
+                        for (FetchedEvent fetchedEvent : fetchedEvents) {
+                            luminoEventServices.addToken(fetchedEvent.getValues().get(1).getValue().toString());
+                        }
+                    });
+                });
+                fetchedTokens = true;
+            }
+        }else{
+            logger.info(Thread.currentThread().getId() + " - Nothing to fetch yet -");
         }
     }
 

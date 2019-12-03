@@ -10,9 +10,8 @@ import javax.persistence.Id;
 @Entity
 public class Notification {
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
-    private String id;
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
+    private int id;
 
     @Column(name = "to_address")
     private String toAddress;
@@ -23,20 +22,24 @@ public class Notification {
 
     private String data;
 
+    @Column(name = "id_topic")
+    private int idTopic;
+
     public Notification(){}
 
-    public Notification(String to_address, String timestamp, boolean sended, String data) {
+    public Notification(String to_address, String timestamp, boolean sended, String data, int idTopic) {
         this.toAddress = to_address;
         this.timestamp = timestamp;
         this.sended = sended;
         this.data = data;
+        this.idTopic = idTopic;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -70,5 +73,21 @@ public class Notification {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public String getToAddress() {
+        return toAddress;
+    }
+
+    public void setToAddress(String toAddress) {
+        this.toAddress = toAddress;
+    }
+
+    public int getIdTopic() {
+        return idTopic;
+    }
+
+    public void setIdTopic(int idTopic) {
+        this.idTopic = idTopic;
     }
 }

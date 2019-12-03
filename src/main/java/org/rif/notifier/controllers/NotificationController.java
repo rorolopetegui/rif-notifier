@@ -40,14 +40,18 @@ public class NotificationController {
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/getNotifications", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
-    public ResponseEntity<DTOResponse> GetNotifications(@RequestHeader(value="apiKey") String apiKey) {
+    public ResponseEntity<DTOResponse> GetNotifications(
+            @RequestHeader(value="apiKey") String apiKey,
+            @RequestParam(name = "fromId", required = false) Integer id,
+            @RequestParam(name = "lastRows", required = false) Integer lastRows
+    ) {
         DTOResponse resp = new DTOResponse();
         List<Notification> notifications;
         if(apiKey != null && !apiKey.isEmpty()){
             User us = userServices.getUserByApiKey(apiKey);
             if(us != null){
                 Subscription subscription = subscribeServices.getSubscriptionByAddress(us.getAddress());
-                notifications = notificationManager.getNotificationsForAddress(us.getAddress());
+                notifications = notificationManager.getNotificationsForAddress(us.getAddress(), id, lastRows);
                 if(notifications.size() > 0) {
                     resp.setData(notifications);
                 }else{

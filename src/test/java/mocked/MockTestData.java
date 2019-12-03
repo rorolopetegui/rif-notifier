@@ -192,7 +192,7 @@ public class MockTestData {
         List<Notification> retLst = new ArrayList<>();
         Date date = new Date();
         for(int i=0;i<10;i++) {
-            Notification notif = new Notification("0x0", new Timestamp(date.getTime()).toString(), false, "{id: " + i + ", counter: " + i + "}");
+            Notification notif = new Notification("0x0", new Timestamp(date.getTime()).toString(), false, "{id: " + i + ", counter: " + i + "}", 0);
             retLst.add(notif);
         }
         return retLst;

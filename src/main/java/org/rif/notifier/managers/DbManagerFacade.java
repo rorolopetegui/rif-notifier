@@ -139,12 +139,18 @@ public class DbManagerFacade {
     @Transactional
     public List<Notification> saveNotificationBatch(List<Notification> notifications){
         return notifications.stream().map(notificationItem ->
-                notifEntityManager.insert(notificationItem.getTo_address(), notificationItem.getTimestamp(), notificationItem.isSended(), notificationItem.getData())
+                notifEntityManager.insert(notificationItem.getTo_address(), notificationItem.getTimestamp(), notificationItem.isSended(), notificationItem.getData(), notificationItem.getIdTopic())
         ).collect(Collectors.toList());
     }
 
-    public List<Notification> getNotificationByUserAddress(String user_address){
-        return notifEntityManager.getNotificationsByUserAddress(user_address);
+    public List<Notification> getNotificationByUserAddress(String user_address, Integer id, Integer lastRows){
+        if(id != null)
+            return notifEntityManager.getNotificationsByUserAddressAndGraterThanId(user_address, id);
+        else if(lastRows != null)
+            return notifEntityManager.getNotificationsByUserAddressLastRows(user_address, id);
+        else
+            return notifEntityManager.getNotificationsByUserAddress(user_address);
+
     }
 
     public User saveUser(String address, String apiKey){
