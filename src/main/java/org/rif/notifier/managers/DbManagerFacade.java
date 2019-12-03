@@ -147,7 +147,7 @@ public class DbManagerFacade {
         if(id != null)
             return notifEntityManager.getNotificationsByUserAddressAndGraterThanId(user_address, id);
         else if(lastRows != null)
-            return notifEntityManager.getNotificationsByUserAddressLastRows(user_address, id);
+            return notifEntityManager.getNotificationsByUserAddressLastRows(user_address, lastRows);
         else
             return notifEntityManager.getNotificationsByUserAddress(user_address);
 
