@@ -119,7 +119,8 @@ public class Topic {
         }
         params.append("]");
         return "{" +
-                "\"type\":\"" + type + "\"" +
+                "\"id\":\"" + id + "\"" +
+                ",\"type\":\"" + type + "\"" +
                 "," + params +
                 "}";
     }

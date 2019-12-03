@@ -171,6 +171,15 @@ public class SubscribeServices  {
         return dbManagerFacade.getTopicByHashCodeAndIdSubscription(topic.hashCode(), idSubscription);
     }
 
+    public boolean unsubscribeFromTopic(Subscription sub, Topic tp){
+        tp.getSubscriptions().remove(sub);
+        return dbManagerFacade.updateTopic(tp) != null;
+    }
+
+    public Topic getTopicById(int idTopic){
+        return dbManagerFacade.getTopicById(idTopic);
+    }
+
     /**
      * Validates a given Topic, it checks if all required fields are correctly setted.
      * For CONTRACT_EVENT it checks that it has all Params like CONTRACT_EVENT_ADDRESS, CONTRACT_EVENT_NAME and at least one CONTRACT_EVENT_PARAM

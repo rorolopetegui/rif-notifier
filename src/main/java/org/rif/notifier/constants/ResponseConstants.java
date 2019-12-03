@@ -26,6 +26,10 @@ public interface ResponseConstants {
 
     String TOPIC_VALIDATION_FAILED = "Topic structure failed, please review your json";
 
+    String INVALID_TOPIC_ID = "The given topic id doesn't exist";
+
+    String UNSUBSCRIBED_FROM_TOPIC_FAILED = "There was an error unsubscribing from the topic, please try again";
+
     String AlREADY_SUBSCRIBED_TO_TOPIC = "This user is already subscribed to this topic";
 
     String SUBSCRIPTION_OUT_OF_BALANCE = "Your subscription ran out of notification balance, please refill your subscription";

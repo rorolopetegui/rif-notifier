@@ -245,4 +245,38 @@ public class SubscribeController {
 
         return new ResponseEntity<>(resp, resp.getStatus());
     }
+    @ApiOperation(value = "Unsubscribes from a topic given an id",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/unsubscribeFromTopic", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> unsubscribeFromTopic(
+            @RequestHeader(value="apiKey") String apiKey,
+            @RequestParam(value="idTopic") int idTopic) {
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if(us != null){
+            //Check if the user did subscribe
+            Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
+            if(sub != null) {
+                Topic tp = subscribeServices.getTopicById(idTopic);
+                if(tp != null){
+                    if(!subscribeServices.unsubscribeFromTopic(sub, tp)){
+                        resp.setMessage(ResponseConstants.UNSUBSCRIBED_FROM_TOPIC_FAILED);
+                        resp.setStatus(HttpStatus.CONFLICT);
+                    }
+                }else{
+                    resp.setMessage(ResponseConstants.INVALID_TOPIC_ID);
+                    resp.setStatus(HttpStatus.CONFLICT);
+                }
+            }else{
+                //Return an error because the user still did not create the subscription
+                resp.setMessage(ResponseConstants.NO_ACTIVE_SUBSCRIPTION);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
+        }else{
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
 }
