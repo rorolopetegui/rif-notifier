@@ -26,7 +26,7 @@ CREATE TABLE `datafetcher` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `last_block` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,13 +63,14 @@ DROP TABLE IF EXISTS `notification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notification` (
-  `id` varchar(45) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `to_address` varchar(45) NOT NULL,
   `timestamp` varchar(45) DEFAULT NULL,
   `sended` tinyint(4) DEFAULT '0',
   `data` varchar(1000) NOT NULL,
+  `id_topic` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=63546 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +200,7 @@ CREATE TABLE `topic_params` (
   `is_indexed` tinyint(4) DEFAULT '0',
   `filter` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=158 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,4 +225,4 @@ CREATE TABLE `user_topic` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-12-01 20:25:04
+-- Dump completed on 2019-12-03 11:11:42
