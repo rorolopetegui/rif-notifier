@@ -208,6 +208,55 @@ public class SubscribeControllerTest {
         verify(subscribeServices, times(1)).subscribeToTopic(tp, sub);
     }
     @Test
+    public void canUnsubscribeFromTopic() throws Exception {
+        int idTopic = 35;
+        String apiKey = Utils.generateNewToken();
+        User us = mockTestData.mockUser();
+        Subscription sub = mockTestData.mockSubscription();
+        Topic tp = mockTestData.mockTopic();
+        when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
+        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
+        when(subscribeServices.getTopicById(idTopic)).thenReturn(tp);
+        when(subscribeServices.unsubscribeFromTopic(sub, tp)).thenReturn(true);
+
+        MvcResult result = mockMvc.perform(
+                post("/unsubscribeFromTopic")
+                        .header("apiKey", apiKey)
+                        .param("idTopic", String.valueOf(idTopic))
+        )
+                .andExpect(status().isOk())
+                .andReturn();
+
+        verify(subscribeServices, times(1)).unsubscribeFromTopic(sub, tp);
+    }
+    @Test
+    public void errorUnsubscribeFromTopicWhenTopicDoesntExists() throws Exception {
+        DTOResponse dto = new DTOResponse();
+        dto.setMessage(ResponseConstants.INVALID_TOPIC_ID);
+        int idTopic = 35;
+        String apiKey = Utils.generateNewToken();
+        User us = mockTestData.mockUser();
+        Subscription sub = mockTestData.mockSubscription();
+        Topic tp = mockTestData.mockTopic();
+        when(userServices.getUserByApiKey(apiKey)).thenReturn(us);
+        when(subscribeServices.getSubscriptionByAddress(us.getAddress())).thenReturn(sub);
+        when(subscribeServices.getTopicById(idTopic)).thenReturn(null);
+
+        MvcResult result = mockMvc.perform(
+                post("/unsubscribeFromTopic")
+                        .header("apiKey", apiKey)
+                        .param("idTopic", String.valueOf(idTopic))
+        )
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        DTOResponse dtResponse = new ObjectMapper().readValue(
+                result.getResponse().getContentAsByteArray(),
+                DTOResponse.class);
+
+        assertEquals(dto.getMessage(), dtResponse.getMessage());
+    }
+    @Test
     public void errorSubscribeToOpenChannelNoTokenProvided() throws Exception {
         String apiKey = Utils.generateNewToken();
 

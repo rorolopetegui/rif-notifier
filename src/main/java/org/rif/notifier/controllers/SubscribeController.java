@@ -253,7 +253,7 @@ public class SubscribeController {
             @RequestHeader(value="apiKey") String apiKey,
             @RequestParam(value="idTopic") int idTopic) {
         DTOResponse resp = new DTOResponse();
-        User us = userServices.getUserByApiKey(apiKey);
+         User us = userServices.getUserByApiKey(apiKey);
         if(us != null){
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
