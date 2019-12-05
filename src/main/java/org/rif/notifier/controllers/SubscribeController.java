@@ -292,6 +292,8 @@ public class SubscribeController {
     @RequestMapping(value = "/subscribeToLuminoOpenChannels", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> subscribeToLuminoOpenChannels(
+            @RequestParam(name = "participantone", required = false) String participantOne,
+            @RequestParam(name = "participanttwo", required = false) String participantTwo,
             @RequestHeader(value="apiKey") String apiKey) {
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
@@ -301,7 +303,7 @@ public class SubscribeController {
             if (sub != null) {
                 List<Integer> lstTopicId = new ArrayList<>();
                 luminoEventServices.getTokens().forEach(token -> {
-                    Topic openChannelTopic = luminoEventServices.getChannelOpenedTopicForToken(token, null, null);
+                    Topic openChannelTopic = luminoEventServices.getChannelOpenedTopicForToken(token, participantOne, participantTwo);
                     Topic topic = subscribeServices.getTopicByHashCodeAndIdSubscription(openChannelTopic, sub.getId());
                     if(topic == null) {
                         int idTopic = subscribeServices.subscribeToTopic(openChannelTopic, sub);
