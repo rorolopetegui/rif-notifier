@@ -12,6 +12,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -143,17 +144,17 @@ public class DbManagerFacade {
         ).collect(Collectors.toList());
     }
 
-    public List<Notification> getNotificationByUserAddress(String user_address, Integer id, Integer lastRows, Integer idTopic){
-        if(id != null && idTopic != null)
-            return notifEntityManager.getNotificationsByUserAddressAndGraterThanIdAndIdTopic(user_address, id, idTopic);
+    public List<Notification> getNotificationByUserAddress(String user_address, Integer id, Integer lastRows, Set<Integer> idTopics){
+        if(id != null && idTopics != null && idTopics.size() > 0)
+            return notifEntityManager.getNotificationsByUserAddressAndGraterThanIdAndIdTopic(user_address, id, idTopics);
         else if(id != null)
             return notifEntityManager.getNotificationsByUserAddressAndGraterThanId(user_address, id);
-        if(lastRows != null && idTopic != null)
-            return notifEntityManager.getNotificationsByUserAddressLastRowsAndIdTopic(user_address, lastRows, idTopic);
+        if(lastRows != null && idTopics != null && idTopics.size() > 0)
+            return notifEntityManager.getNotificationsByUserAddressLastRowsAndIdTopic(user_address, lastRows, idTopics);
         else if(lastRows != null)
             return notifEntityManager.getNotificationsByUserAddressLastRows(user_address, lastRows);
-        else if(idTopic != null)
-            return notifEntityManager.getNotificationsByUserAddressAndIdTopic(user_address, idTopic);
+        else if(idTopics != null && idTopics.size() > 0)
+            return notifEntityManager.getNotificationsByUserAddressAndIdTopic(user_address, idTopics);
         else
             return notifEntityManager.getNotificationsByUserAddress(user_address);
 

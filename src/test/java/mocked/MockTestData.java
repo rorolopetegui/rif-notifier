@@ -245,7 +245,7 @@ public class MockTestData {
         return sub;
     }
     public User mockUser(){
-        return new User("0x0", "123456789");
+        return new User("0x7bDB21b2d21EE4b30FB4Bb791781F7D17f465309", "123456789");
     }
     public SubscriptionType mockSubscriptionType(){
         return new SubscriptionType(1000);

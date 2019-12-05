@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Api(tags = {"Onboarding Resource"})
 @RestController
@@ -73,21 +75,23 @@ public class SubscribeController {
             @RequestHeader(value="apiKey") String apiKey,
             @RequestBody String userTopic) {
         ObjectMapper mapper = new ObjectMapper();
-        Topic topic = null;
+        Topic userSendedTopic = null;
         DTOResponse resp = new DTOResponse();
         try {
-            topic = mapper.readValue(userTopic, Topic.class);
+            userSendedTopic = mapper.readValue(userTopic, Topic.class);
             User us = userServices.getUserByApiKey(apiKey);
             if(us != null){
                 //Check if the user did subscribe
                 Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
                 if(sub != null) {
-                    if(subscribeServices.validateTopic(topic)){
-                        if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
-                            resp.setMessage("{\"idTopic\": " + subscribeServices.subscribeToTopic(topic, sub) + "}");
+                    if(subscribeServices.validateTopic(userSendedTopic)){
+                        Topic topic = subscribeServices.getTopicByHashCodeAndIdSubscription(userSendedTopic, sub.getId());
+                        if(topic == null) {
+                            resp.setData("{\"topicId\": " + subscribeServices.subscribeToTopic(userSendedTopic, sub) + "}");
                         }else{
                             //Return an error because the user is sending a topic that he's already subscribed
                             resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
+                            resp.setData("{\"topicId\": " + topic.getId() + "}");
                             resp.setStatus(HttpStatus.CONFLICT);
                         }
                     }else{
@@ -170,20 +174,22 @@ public class SubscribeController {
             @RequestParam(name = "participantone", required = false) String participantOne,
             @RequestParam(name = "participanttwo", required = false) String participantTwo,
             @RequestHeader(value="apiKey") String apiKey) {
-        Topic topic = null;
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
         if (us != null) {
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
+                token = token.toLowerCase();
                 if(luminoEventServices.isToken(token)){
-                    topic = luminoEventServices.getChannelOpenedTopicForToken(token, participantOne, participantTwo);
-                    if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
-                        resp.setMessage("{\"idTopic\": " + subscribeServices.subscribeToTopic(topic, sub) + "}");
+                    Topic openChannelTopic = luminoEventServices.getChannelOpenedTopicForToken(token, null, null);
+                    Topic topic = subscribeServices.getTopicByHashCodeAndIdSubscription(openChannelTopic, sub.getId());
+                    if(topic == null) {
+                        resp.setData("{\"topicId\": " + subscribeServices.subscribeToTopic(openChannelTopic, sub) + "}");
                     }else{
                         //Return an error because the user is sending a topic that he's already subscribed
                         resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
+                        resp.setData("{\"topicId\": " + topic.getId() + "}");
                         resp.setStatus(HttpStatus.CONFLICT);
                     }
                 }else{
@@ -212,20 +218,22 @@ public class SubscribeController {
             @RequestParam(name = "channelidentifier", required = false) Integer channelIdentifier,
             @RequestParam(name = "closingparticipant", required = false) String closingParticipant,
             @RequestHeader(value="apiKey") String apiKey) {
-        Topic topic = null;
         DTOResponse resp = new DTOResponse();
         User us = userServices.getUserByApiKey(apiKey);
         if (us != null) {
             //Check if the user did subscribe
             Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
             if (sub != null) {
+                token = token.toLowerCase();
                 if(luminoEventServices.isToken(token)){
-                    topic = luminoEventServices.getChannelClosedTopicForToken(token, channelIdentifier, closingParticipant);
-                    if(subscribeServices.getTopicByHashCodeAndIdSubscription(topic, sub.getId()) == null) {
-                        resp.setMessage("{\"idTopic\": " + subscribeServices.subscribeToTopic(topic, sub) + "}");
+                    Topic closeChannelTopic = luminoEventServices.getChannelClosedTopicForToken(token, channelIdentifier, closingParticipant);
+                    Topic topic = subscribeServices.getTopicByHashCodeAndIdSubscription(closeChannelTopic, sub.getId());
+                    if(topic == null) {
+                        resp.setMessage("{\"topicId\": " + subscribeServices.subscribeToTopic(closeChannelTopic, sub) + "}");
                     }else{
                         //Return an error because the user is sending a topic that he's already subscribed
                         resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_TOPIC);
+                        resp.setData("{\"topicId\": " + topic.getId() + "}");
                         resp.setStatus(HttpStatus.CONFLICT);
                     }
                 }else{
@@ -277,6 +285,54 @@ public class SubscribeController {
             resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
             resp.setStatus(HttpStatus.CONFLICT);
         }
+        return new ResponseEntity<>(resp, resp.getStatus());
+    }
+    @ApiOperation(value = "Subscribes to all lumino open channel events",
+            response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
+    @RequestMapping(value = "/subscribeToLuminoOpenChannels", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @ResponseBody
+    public ResponseEntity<DTOResponse> subscribeToLuminoOpenChannels(
+            @RequestHeader(value="apiKey") String apiKey) {
+        DTOResponse resp = new DTOResponse();
+        User us = userServices.getUserByApiKey(apiKey);
+        if (us != null) {
+            //Check if the user did subscribe
+            Subscription sub = subscribeServices.getSubscriptionByAddress(us.getAddress());
+            if (sub != null) {
+                List<Integer> lstTopicId = new ArrayList<>();
+                luminoEventServices.getTokens().forEach(token -> {
+                    Topic openChannelTopic = luminoEventServices.getChannelOpenedTopicForToken(token, null, null);
+                    Topic topic = subscribeServices.getTopicByHashCodeAndIdSubscription(openChannelTopic, sub.getId());
+                    if(topic == null) {
+                        int idTopic = subscribeServices.subscribeToTopic(openChannelTopic, sub);
+                        lstTopicId.add(idTopic);
+                    }else{
+                        //Return an error because the user is sending a topic that he's already subscribed
+                        resp.setMessage(ResponseConstants.AlREADY_SUBSCRIBED_TO_SOME_TOPICS);
+                        lstTopicId.add(topic.getId());
+                        resp.setStatus(HttpStatus.CONFLICT);
+                    }
+                });
+                StringBuilder retData = new StringBuilder("[");
+                int counter = 1;
+                for(int id : lstTopicId){
+                    retData.append("{\"topicId\": ").append(id).append("}");
+                    if(counter < lstTopicId.size())
+                        retData.append(",");
+                    counter++;
+                };
+                retData.append("]");
+                resp.setData(retData);
+            } else {
+                //Return an error because the user still did not create the subscription
+                resp.setMessage(ResponseConstants.SUBSCRIPTION_NOT_FOUND);
+                resp.setStatus(HttpStatus.CONFLICT);
+            }
+        } else {
+            resp.setMessage(ResponseConstants.INCORRECT_APIKEY);
+            resp.setStatus(HttpStatus.CONFLICT);
+        }
+
         return new ResponseEntity<>(resp, resp.getStatus());
     }
 }

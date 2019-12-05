@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.rif.notifier.constants.ControllerConstants;
 import org.rif.notifier.constants.ResponseConstants;
 import org.rif.notifier.models.DTO.DTOResponse;
+import org.rif.notifier.models.entities.User;
 import org.rif.notifier.services.UserServices;
 import org.rif.notifier.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,12 @@ public class UserController {
         if(address != null && !address.isEmpty()){
             if(signedAddress != null && !signedAddress.isEmpty()) {
                 if (Utils.canRecoverAddress(address, signedAddress)) {
-                    if (!userServices.userExists(address)) {
+                    User user = userServices.userExists(address);
+                    if (user == null) {
                         resp.setData(userServices.saveUser(address));
                     } else {
                         //User already have an apikey
-                        resp.setMessage(ResponseConstants.APIKEY_ALREADY_ADDED);
-                        resp.setStatus(HttpStatus.CONFLICT);
+                        resp.setData(user);
                     }
                 } else {
                     resp.setMessage(ResponseConstants.INCORRECT_SIGNED_ADDRESS);

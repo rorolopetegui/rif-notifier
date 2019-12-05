@@ -29,7 +29,7 @@ public class UserServicesTest {
         doReturn(user).when(dbManagerFacade).getUserByAddress(user.getAddress());
 
         // when
-        boolean retVal = userServices.userExists(user.getAddress());
+        boolean retVal = userServices.userExists(user.getAddress()) != null;
 
         // then
         assertTrue(retVal);
@@ -42,7 +42,7 @@ public class UserServicesTest {
         doReturn(null).when(dbManagerFacade).getUserByAddress(user.getAddress());
 
         // when
-        boolean retVal = userServices.userExists(user.getAddress());
+        boolean retVal = userServices.userExists(user.getAddress()) != null;
 
         // then
         assertFalse(retVal);

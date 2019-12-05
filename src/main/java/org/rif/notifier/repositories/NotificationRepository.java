@@ -6,22 +6,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public interface NotificationRepository extends JpaRepository<Notification, String> {
-    public List<Notification> findByToAddress(String to_address);
+    List<Notification> findByToAddress(String to_address);
 
-    public List<Notification> findByToAddressAndIdTopic(String to_address, Integer idTopic);
+    List<Notification> findByToAddressAndIdTopicIn(String to_address, Set<Integer> idTopic);
 
     @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 AND A.id > ?2", nativeQuery = true)
-    public List<Notification> findByToAddressAndIdGraterThanId(String to_address, Integer id);
+    List<Notification> findByToAddressAndIdGraterThanId(String to_address, Integer id);
 
-    @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 AND A.id > ?2 AND A.id_topic = ?3", nativeQuery = true)
-    public List<Notification> findByToAddressAndIdGraterThanIdAndIdTopic(String to_address, Integer id, Integer idTopic);
+    //findByToAddressAndIdGraterThanIdAndIdTopicIn
+    //List<Notification> findBy(String to_address, Integer id, Set<Integer> idTopic);
+    List<Notification> findAllByToAddressAndIdGreaterThanAndIdTopicIn(String to_address, Integer id, Set<Integer> idTopic);
+
 
     @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 ORDER BY A.id DESC LIMIT ?2", nativeQuery = true)
-    public List<Notification> findByToAddressAndGetLastRows(String to_address, Integer lastRow);
+    List<Notification> findByToAddressAndGetLastRows(String to_address, Integer lastRow);
 
-    @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 AND A.id_topic = ?2 ORDER BY A.id DESC LIMIT ?3", nativeQuery = true)
-    public List<Notification> findByToAddressAndGetLastRowsAndIdTopic(String to_address, Integer idTopic, Integer lastRow);
+    @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 AND A.id_topic in (?2) ORDER BY A.id DESC LIMIT ?3", nativeQuery = true)
+    List<Notification> findByToAddressAndGetLastRowsAndIdTopic(String to_address, Set<Integer> idTopics, Integer lastRow);
 }

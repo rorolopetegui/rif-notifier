@@ -172,8 +172,11 @@ public class SubscribeServices  {
     }
 
     public boolean unsubscribeFromTopic(Subscription sub, Topic tp){
-        tp.getSubscriptions().remove(sub);
-        return dbManagerFacade.updateTopic(tp) != null;
+        if(tp.getSubscriptions().contains(sub)) {
+            tp.getSubscriptions().remove(sub);
+            return dbManagerFacade.updateTopic(tp) != null;
+        }
+        return false;
     }
 
     public Topic getTopicById(int idTopic){

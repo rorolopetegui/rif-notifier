@@ -28,9 +28,11 @@ public interface ResponseConstants {
 
     String INVALID_TOPIC_ID = "The given topic id doesn't exist";
 
-    String UNSUBSCRIBED_FROM_TOPIC_FAILED = "There was an error unsubscribing from the topic, please try again";
+    String UNSUBSCRIBED_FROM_TOPIC_FAILED = "There was an error unsubscribing from the topic, or you're not subscribed to this topic";
 
     String AlREADY_SUBSCRIBED_TO_TOPIC = "This user is already subscribed to this topic";
+
+    String AlREADY_SUBSCRIBED_TO_SOME_TOPICS = "This user is already subscribed to some topics of this list";
 
     String SUBSCRIPTION_OUT_OF_BALANCE = "Your subscription ran out of notification balance, please refill your subscription";
 

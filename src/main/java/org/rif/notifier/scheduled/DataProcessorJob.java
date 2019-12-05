@@ -36,10 +36,12 @@ public class DataProcessorJob {
             List<Notification> ntfsData = new ArrayList<>();
             List<Subscription> subscriptionsWithNotif = new ArrayList<>();
             rawData.forEach(rawDataItem -> {
+                logger.info(Thread.currentThread().getId() + String.format(" - Voy a procesar esto = %s", rawDataItem));
                 String dataForNotification = "";
                 //Bring subs with notification balance also
                 List<Subscription> activeSubs = dbManagerFacade.getActiveSubscriptionsByTopicIdWithBalance(rawDataItem.getIdTopic());
                 //logger.info(Thread.currentThread().getId() + String.format(" - Active subscriptions for the topic_id (%d) = %d", rawDataItem.getIdTopic(), activeSubs.size()));
+                logger.info(Thread.currentThread().getId() + " - Subscription activas por topico = " + activeSubs.size());
                 for (Subscription sub : activeSubs) {
                     //Here we can add some logic to each type of event
                     switch (TopicTypes.valueOf(rawDataItem.getType())) {

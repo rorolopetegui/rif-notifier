@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class NotifEntityManager {
@@ -26,21 +27,21 @@ public class NotifEntityManager {
         notificationRepository.findByToAddress(user_address).forEach(lst::add);
         return lst;
     }
-    public List<Notification> getNotificationsByUserAddressAndIdTopic(String user_address, Integer idTopic){
+    public List<Notification> getNotificationsByUserAddressAndIdTopic(String user_address, Set<Integer> idTopics){
         List<Notification> lst = new ArrayList<>();
-        notificationRepository.findByToAddressAndIdTopic(user_address, idTopic).forEach(lst::add);
+        notificationRepository.findByToAddressAndIdTopicIn(user_address, idTopics).forEach(lst::add);
         return lst;
     }
     public List<Notification> getNotificationsByUserAddressAndGraterThanId(String user_address, Integer id){
         return new ArrayList<>(notificationRepository.findByToAddressAndIdGraterThanId(user_address, id));
     }
-    public List<Notification> getNotificationsByUserAddressAndGraterThanIdAndIdTopic(String user_address, Integer id, Integer idTopic){
-        return new ArrayList<>(notificationRepository.findByToAddressAndIdGraterThanIdAndIdTopic(user_address, id, idTopic));
+    public List<Notification> getNotificationsByUserAddressAndGraterThanIdAndIdTopic(String user_address, Integer id, Set<Integer> idTopics){
+        return new ArrayList<>(notificationRepository.findAllByToAddressAndIdGreaterThanAndIdTopicIn(user_address, id, idTopics));
     }
     public List<Notification> getNotificationsByUserAddressLastRows(String user_address, Integer lastRows){
         return new ArrayList<>(notificationRepository.findByToAddressAndGetLastRows(user_address, lastRows));
     }
-    public List<Notification> getNotificationsByUserAddressLastRowsAndIdTopic(String user_address, Integer lastRows, Integer idTopic){
-        return new ArrayList<>(notificationRepository.findByToAddressAndGetLastRowsAndIdTopic(user_address, idTopic, lastRows));
+    public List<Notification> getNotificationsByUserAddressLastRowsAndIdTopic(String user_address, Integer lastRows, Set<Integer> idTopics){
+        return new ArrayList<>(notificationRepository.findByToAddressAndGetLastRowsAndIdTopic(user_address, idTopics, lastRows));
     }
 }

@@ -16,8 +16,8 @@ public class UserServices {
      * @param address will be used to check if the user is registered
      * @return boolean value, true if the address exists, false otherwise
      */
-    public boolean userExists(String address){
-        return dbManagerFacade.getUserByAddress(address) != null;
+    public User userExists(String address){
+        return dbManagerFacade.getUserByAddress(address);
     }
 
     /**

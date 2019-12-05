@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.rif.notifier.constants.NotificationConstants.*;
 
@@ -30,7 +31,7 @@ public class NotificationManager {
      * @param address Address of a user to be notified
      * @return List<Notification> with all the notifications of a user address
      */
-    public List<Notification> getNotificationsForAddress(String address, Integer id, Integer lastRows, Integer idTopic){
+    public List<Notification> getNotificationsForAddress(String address, Integer id, Integer lastRows, Set<Integer> idTopic){
         List<Notification> lst = new ArrayList<>();
         Subscription sub = dbManagerFacade.getActiveSubscriptionByAddress(address);
         if(sub != null) {

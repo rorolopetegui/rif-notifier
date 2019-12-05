@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Api(tags = {"Notification Resource"})
 @RestController
@@ -44,7 +45,7 @@ public class NotificationController {
             @RequestHeader(value="apiKey") String apiKey,
             @RequestParam(name = "fromId", required = false) Integer id,
             @RequestParam(name = "lastRows", required = false) Integer lastRows,
-            @RequestParam(name = "idTopic", required = false) Integer idTopic
+            @RequestParam(name = "idTopic", required = false) Set<Integer> idTopic
     ) {
         DTOResponse resp = new DTOResponse();
         List<Notification> notifications;
