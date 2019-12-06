@@ -182,7 +182,7 @@ public class SubscribeController {
             if (sub != null) {
                 token = token.toLowerCase();
                 if(luminoEventServices.isToken(token)){
-                    Topic openChannelTopic = luminoEventServices.getChannelOpenedTopicForToken(token, null, null);
+                    Topic openChannelTopic = luminoEventServices.getChannelOpenedTopicForToken(token, participantOne, participantTwo);
                     Topic topic = subscribeServices.getTopicByHashCodeAndIdSubscription(openChannelTopic, sub.getId());
                     if(topic == null) {
                         resp.setData("{\"topicId\": " + subscribeServices.subscribeToTopic(openChannelTopic, sub) + "}");
