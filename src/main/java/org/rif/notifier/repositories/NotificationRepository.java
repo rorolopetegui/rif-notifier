@@ -11,21 +11,12 @@ import java.util.Set;
 
 @Service
 public interface NotificationRepository extends JpaRepository<Notification, String> {
-    List<Notification> findAllByToAddress(String to_address, Pageable pageable);
-
-    List<Notification> findByToAddressAndIdTopicIn(String to_address, Set<Integer> idTopic, Pageable pageable);
-
-    @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 AND A.id > ?2", nativeQuery = true)
-    List<Notification> findByToAddressAndIdGraterThanId(String to_address, Integer id, Pageable pageable);
-
-    //findByToAddressAndIdGraterThanIdAndIdTopicIn
-    //List<Notification> findBy(String to_address, Integer id, Set<Integer> idTopic);
     List<Notification> findAllByToAddressAndIdGreaterThanAndIdTopicIn(String to_address, Integer id, Set<Integer> idTopic, Pageable pageable);
 
+    @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 AND A.id > ?2", nativeQuery = true)
+    List<Notification> findAllByToAddressAndIdGraterThan(String to_address, Integer id, Pageable pageable);
 
-    @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 ORDER BY A.id DESC", nativeQuery = true)
-    List<Notification> findByToAddressAndGetLastRows(String to_address, Pageable pageable);
+    List<Notification> findAllByToAddressAndIdTopicIn(String to_address, Set<Integer> idTopic, Pageable pageable);
 
-    @Query(value = "SELECT * FROM notification A WHERE A.to_address = ?1 AND A.id_topic in (?2) ORDER BY A.id DESC", nativeQuery = true)
-    List<Notification> findByToAddressAndGetLastRowsAndIdTopic(String to_address, Set<Integer> idTopics, Pageable pageable);
+    List<Notification> findAllByToAddress(String to_address, Pageable pageable);
 }

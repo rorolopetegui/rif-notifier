@@ -145,19 +145,22 @@ public class DbManagerFacade {
     }
 
     public List<Notification> getNotificationByUserAddress(String user_address, Integer id, Integer lastRows, Set<Integer> idTopics){
-        if(id != null && idTopics != null && idTopics.size() > 0)
-            return notifEntityManager.getNotificationsByUserAddressAndGraterThanIdAndIdTopic(user_address, id, idTopics);
+        if(id != null && lastRows != null && idTopics != null && idTopics.size() > 0)
+            return notifEntityManager.getNotificationsByUserAddressAndIdAndIdTopicsWithLastRows(user_address, id, lastRows, idTopics);
+        else if(lastRows == null && id != null && idTopics != null && idTopics.size() > 0)
+            return notifEntityManager.getNotificationsByUserAddressAndIdGraterThanAndIdTopic(user_address, id, idTopics);
+        else if(id != null && lastRows != null)
+            return notifEntityManager.getNotificationsByUserAddressAndIdGraterThanWithLastRows(user_address, id, lastRows);
+        else if(lastRows != null && idTopics != null && idTopics.size() > 0)
+            return notifEntityManager.getNotificationsByUserAddressIdTopicIn(user_address, idTopics, lastRows);
         else if(id != null)
-            return notifEntityManager.getNotificationsByUserAddressAndGraterThanId(user_address, id);
-        if(lastRows != null && idTopics != null && idTopics.size() > 0)
-            return notifEntityManager.getNotificationsByUserAddressLastRowsAndIdTopic(user_address, lastRows, idTopics);
+            return notifEntityManager.getNotificationsByUserAddressAndIdGraterThan(user_address, id);
         else if(lastRows != null)
-            return notifEntityManager.getNotificationsByUserAddressLastRows(user_address, lastRows);
+            return notifEntityManager.getNotificationsByUserAddressWithLastRows(user_address, lastRows);
         else if(idTopics != null && idTopics.size() > 0)
             return notifEntityManager.getNotificationsByUserAddressAndIdTopic(user_address, idTopics);
         else
             return notifEntityManager.getNotificationsByUserAddress(user_address);
-
     }
 
     public User saveUser(String address, String apiKey){

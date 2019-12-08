@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,28 +29,36 @@ public class NotifEntityManager {
 
     }
 
-    public List<Notification> getNotificationsByUserAddress(String user_address){
-        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY);
-        return new ArrayList<>(notificationRepository.findAllByToAddress(user_address, DEFAULT_PAGEABLE));
+    public List<Notification> getNotificationsByUserAddressAndIdAndIdTopicsWithLastRows(String user_address, Integer id, Integer lastRows, Set<Integer> idTopics){
+        Pageable pageable = PageRequest.of(0, MAX_LIMIT_QUERY < lastRows ? MAX_LIMIT_QUERY : lastRows, Sort.by("id").descending());
+        return new ArrayList<>(notificationRepository.findAllByToAddressAndIdGreaterThanAndIdTopicIn(user_address, id, idTopics, pageable));
     }
-    public List<Notification> getNotificationsByUserAddressAndIdTopic(String user_address, Set<Integer> idTopics){
-        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY);
-        return new ArrayList<>(notificationRepository.findByToAddressAndIdTopicIn(user_address, idTopics, DEFAULT_PAGEABLE));
-    }
-    public List<Notification> getNotificationsByUserAddressAndGraterThanId(String user_address, Integer id){
-        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY);
-        return new ArrayList<>(notificationRepository.findByToAddressAndIdGraterThanId(user_address, id, DEFAULT_PAGEABLE));
-    }
-    public List<Notification> getNotificationsByUserAddressAndGraterThanIdAndIdTopic(String user_address, Integer id, Set<Integer> idTopics){
-        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY);
+    public List<Notification> getNotificationsByUserAddressAndIdGraterThanAndIdTopic(String user_address, Integer id, Set<Integer> idTopics){
+        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY, Sort.by("id").descending());
         return new ArrayList<>(notificationRepository.findAllByToAddressAndIdGreaterThanAndIdTopicIn(user_address, id, idTopics, DEFAULT_PAGEABLE));
     }
-    public List<Notification> getNotificationsByUserAddressLastRows(String user_address, Integer lastRows){
-        Pageable pageable = PageRequest.of(0, MAX_LIMIT_QUERY < lastRows ? MAX_LIMIT_QUERY : lastRows);
-        return new ArrayList<>(notificationRepository.findByToAddressAndGetLastRows(user_address, pageable));
+    public List<Notification> getNotificationsByUserAddressAndIdGraterThanWithLastRows(String user_address, Integer id, Integer lastRows){
+        Pageable pageable = PageRequest.of(0, MAX_LIMIT_QUERY < lastRows ? MAX_LIMIT_QUERY : lastRows, Sort.by("id").descending());
+        return new ArrayList<>(notificationRepository.findAllByToAddressAndIdGraterThan(user_address, id, pageable));
     }
-    public List<Notification> getNotificationsByUserAddressLastRowsAndIdTopic(String user_address, Integer lastRows, Set<Integer> idTopics){
-        Pageable pageable = PageRequest.of(0, MAX_LIMIT_QUERY < lastRows ? MAX_LIMIT_QUERY : lastRows);
-        return new ArrayList<>(notificationRepository.findByToAddressAndGetLastRowsAndIdTopic(user_address, idTopics, pageable));
+    public List<Notification> getNotificationsByUserAddressIdTopicIn(String user_address, Set<Integer> idTopics, Integer lastRows){
+        Pageable pageable = PageRequest.of(0, MAX_LIMIT_QUERY < lastRows ? MAX_LIMIT_QUERY : lastRows, Sort.by("id").descending());
+        return new ArrayList<>(notificationRepository.findAllByToAddressAndIdTopicIn(user_address, idTopics, pageable));
+    }
+    public List<Notification> getNotificationsByUserAddressAndIdGraterThan(String user_address, Integer id){
+        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY, Sort.by("id").descending());
+        return new ArrayList<>(notificationRepository.findAllByToAddressAndIdGraterThan(user_address, id, DEFAULT_PAGEABLE));
+    }
+    public List<Notification> getNotificationsByUserAddressWithLastRows(String user_address, Integer lastRows){
+        Pageable pageable = PageRequest.of(0, MAX_LIMIT_QUERY < lastRows ? MAX_LIMIT_QUERY : lastRows, Sort.by("id").descending());
+        return new ArrayList<>(notificationRepository.findAllByToAddress(user_address, pageable));
+    }
+    public List<Notification> getNotificationsByUserAddressAndIdTopic(String user_address, Set<Integer> idTopics){
+        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY, Sort.by("id").descending());
+        return new ArrayList<>(notificationRepository.findAllByToAddressAndIdTopicIn(user_address, idTopics, DEFAULT_PAGEABLE));
+    }
+    public List<Notification> getNotificationsByUserAddress(String user_address){
+        Pageable DEFAULT_PAGEABLE = PageRequest.of(0, MAX_LIMIT_QUERY, Sort.by("id").descending());
+        return new ArrayList<>(notificationRepository.findAllByToAddress(user_address, DEFAULT_PAGEABLE));
     }
 }
