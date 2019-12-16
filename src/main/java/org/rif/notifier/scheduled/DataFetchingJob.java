@@ -187,6 +187,8 @@ public class DataFetchingJob {
         List<RawData> rawEvts = new ArrayList<>();
         fetchedEvents.forEach(fetchedEvent -> {
             try {
+                if(fetchedEvent.getValues().get(2).getValue().equals("0x2f548d54b2f32498638759caee36e6a51fac2ae8"))
+                    logger.info(Thread.currentThread().getId() + " - Debug -");
                 String rawEvent = mapper.writeValueAsString(fetchedEvent);
                 EventRawData rwDt = mapper.readValue(rawEvent, EventRawData.class);
                 List<Subscription> subs = dbManagerFacade.findByContractAddressAndSubscriptionActive(rwDt.getContractAddress());
@@ -235,7 +237,7 @@ public class DataFetchingJob {
                         if (tryAdd.get()) {
                             if (rawEvts.size() > 0) {
                                 //Rawdata was not added and need to be added
-                                if (rawEvts.stream().noneMatch(raw -> raw.getBlock().equals(newItem.getBlock()) && raw.getIdTopic() == tp.getId()))
+                                if (rawEvts.stream().noneMatch(raw -> raw.getBlock().equals(newItem.getBlock()) && raw.getIdTopic() == tp.getId() && raw.getData().equals(newItem.getData())))
                                     rawEvts.add(newItem);
                             } else {
                                 rawEvts.add(newItem);
