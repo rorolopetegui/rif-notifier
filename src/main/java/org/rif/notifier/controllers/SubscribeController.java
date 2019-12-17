@@ -117,7 +117,7 @@ public class SubscribeController {
     }
     @ApiOperation(value = "Gets the subscription info",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
-    @RequestMapping(value = "/getSubscriptionInfo", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @RequestMapping(value = "/getSubscriptionInfo", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> getSubscriptionInfo(
             @RequestHeader(value="apiKey") String apiKey) {
@@ -142,7 +142,7 @@ public class SubscribeController {
     }
     @ApiOperation(value = "Gets all preloaded events",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
-    @RequestMapping(value = "/getLuminoTokens", method = RequestMethod.POST, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
+    @RequestMapping(value = "/getLuminoTokens", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody
     public ResponseEntity<DTOResponse> getLuminoTokens(
             @RequestHeader(value="apiKey") String apiKey) {
