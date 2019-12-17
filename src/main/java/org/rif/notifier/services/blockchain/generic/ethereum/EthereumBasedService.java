@@ -57,14 +57,12 @@ public abstract class EthereumBasedService extends BlockchainService<EthereumBas
 
     @Override
     public BigInteger getLastBlock() throws IOException {
-            BigInteger blockNumber =
-                    web3j
-                            .ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
-                            .send()
-                            .getBlock()
-                            .getNumber();
 
-            return blockNumber;
+        return web3j
+                .ethGetBlockByNumber(DefaultBlockParameterName.LATEST, false)
+                .send()
+                .getBlock()
+                .getNumber();
 
     }
 }

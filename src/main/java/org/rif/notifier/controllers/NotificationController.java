@@ -37,7 +37,7 @@ public class NotificationController {
     @Autowired
     private SubscribeServices subscribeServices;
 
-    @ApiOperation(value = "Retrieve notifications for a address",
+    @ApiOperation(value = "Retrieve notifications for an address",
             response = DTOResponse.class, responseContainer = ControllerConstants.LIST_RESPONSE_CONTAINER)
     @RequestMapping(value = "/getNotifications", method = RequestMethod.GET, produces = {ControllerConstants.CONTENT_TYPE_APPLICATION_JSON})
     @ResponseBody

@@ -24,6 +24,12 @@ public class Datafetcher {
 
     private static final String PATH_TO_TYPES = "org.web3j.abi.datatypes.";
 
+    /**
+     * Creates a EthereumBasedListenable for a contract event from a given Topic, the Topic needs to be validated before calling this method
+     * @param tp
+     * @return
+     * @throws ClassNotFoundException
+     */
     private static EthereumBasedListenable CreateContractEventListeneable(Topic tp) throws ClassNotFoundException {
         List<TypeReference<?>> params = new ArrayList<>();
         //Streaming to get the address, eventName and parameters to create the listeneable
@@ -56,6 +62,12 @@ public class Datafetcher {
         return new EthereumBasedListenable(address, EthereumBasedListenableTypes.CONTRACT_EVENT, params, eventName, tp.getId());
     }
 
+    /**
+     * Returns a EthereumBasedListenable of a type of event
+     * @param tp
+     * @return
+     * @throws ClassNotFoundException
+     */
     public static EthereumBasedListenable getEthereumBasedListenableFromTopic(Topic tp) throws ClassNotFoundException {
         EthereumBasedListenable rtn = null;
         switch (tp.getType()){

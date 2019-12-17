@@ -171,6 +171,12 @@ public class SubscribeServices  {
         return dbManagerFacade.getTopicByHashCodeAndIdSubscription(topic.hashCode(), idSubscription);
     }
 
+    /***
+     * Given a subscription and a topic it deletes the relationship between them
+     * @param sub Subscription of the user that dont want to listen to topic
+     * @param tp Topic to be devinculated from subscription
+     * @return
+     */
     public boolean unsubscribeFromTopic(Subscription sub, Topic tp){
         if(tp.getSubscriptions().contains(sub)) {
             tp.getSubscriptions().remove(sub);
@@ -179,6 +185,11 @@ public class SubscribeServices  {
         return false;
     }
 
+    /**
+     * Retrieves a Topic from a given id
+     * @param idTopic to be searched
+     * @return
+     */
     public Topic getTopicById(int idTopic){
         return dbManagerFacade.getTopicById(idTopic);
     }

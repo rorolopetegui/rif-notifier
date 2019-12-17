@@ -19,6 +19,11 @@ public class Utils {
 
     private static final String PERSONAL_MESSAGE_PREFIX = "\u0019Ethereum Signed Message:\n";
 
+    /**
+     * Try to parse the classname, returns true if it's a valid one
+     * @param className
+     * @return
+     */
     public static Boolean isClass(String className){
         try  {
             Class.forName(className);
@@ -28,6 +33,10 @@ public class Utils {
         }
     }
 
+    /**
+     * Used to generate apiKey for users
+     * @return apiKey
+     */
     public static String generateNewToken() {
         byte[] randomBytes = new byte[24];
         secureRandom.nextBytes(randomBytes);

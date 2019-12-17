@@ -22,6 +22,14 @@ public class BlockEthereumBasedDataFetcher extends EthereumBasedDataFetcher {
 
     private static final Logger logger = LoggerFactory.getLogger(BlockEthereumBasedDataFetcher.class);
 
+    /***
+     * Generates a list of fetched blocks from the blockchain, using the getLogs method
+     * @param ethereumBasedListenable
+     * @param from Block number from, to fetch
+     * @param to Block number to, to fetch
+     * @param web3j Library
+     * @return When finished it returns fetched blocks from the blockchain
+     */
     @Async
     @Override
     public CompletableFuture<List<FetchedBlock>> fetch(EthereumBasedListenable ethereumBasedListenable, BigInteger from, BigInteger to, Web3j web3j) {
