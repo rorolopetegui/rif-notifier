@@ -94,7 +94,7 @@ CREATE TABLE `notification` (
   `to_address` varchar(45) NOT NULL,
   `timestamp` varchar(45) DEFAULT NULL,
   `sended` tinyint(4) DEFAULT '0',
-  `data` varchar(1000) NOT NULL,
+  `data` varchar(2000) NOT NULL,
   `id_topic` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=96155 DEFAULT CHARSET=latin1;
@@ -167,7 +167,7 @@ DROP TABLE IF EXISTS `raw_data`;
 CREATE TABLE `raw_data` (
   `id` varchar(45) NOT NULL,
   `type` varchar(45) NOT NULL,
-  `data` varchar(1000) NOT NULL,
+  `data` varchar(2000) NOT NULL,
   `processed` tinyint(1) NOT NULL DEFAULT '0',
   `block` bigint(45) NOT NULL,
   `id_topic` int(11) DEFAULT NULL,
