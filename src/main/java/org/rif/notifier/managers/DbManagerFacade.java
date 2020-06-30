@@ -179,7 +179,15 @@ public class DbManagerFacade {
         return dataFetcherManager.insert(lastBlock);
     }
 
+    public DataFetcherEntity saveLastBlockChainAdddresses(BigInteger lastBlock){
+        return dataFetcherManager.insertLastBlockChainAddress(lastBlock);
+    }
+
     public BigInteger getLastBlock(){
         return dataFetcherManager.get();
+    }
+
+    public BigInteger getLastBlockForChainAddresses(){
+        return dataFetcherManager.getBlockChainAddresses();
     }
 }

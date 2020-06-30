@@ -18,8 +18,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.TypeReference;
+import org.web3j.utils.Numeric;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.generated.Bytes4;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -52,6 +55,9 @@ public class DataFetchingJob {
     @Value("${rsk.blockchain.tokennetworkregistry}")
     private String tokenNetworkRegistry;
 
+    @Value("${rsk.blockchain.multichaincontract}")
+    private String multiChainContract;
+
     private boolean fetchedTokens = false;
 
     @Value("${notifier.blocks.startFromLast}")
@@ -66,12 +72,13 @@ public class DataFetchingJob {
         // Get latest block for this run
         BigInteger to = rskBlockchainService.getLastBlock();
         BigInteger from;
-        if(onInit) {
+        BigInteger fromChainAddresses;
+        if (onInit) {
             //Saving lastblock so it starts fetching from here
             dbManagerFacade.saveLastBlock(to);
             from = to;
             onInit = false;
-        }else {
+        } else {
             from = dbManagerFacade.getLastBlock();
             from = from.add(new BigInteger("1"));
         }
@@ -173,6 +180,33 @@ public class DataFetchingJob {
         }else{
             logger.info(Thread.currentThread().getId() + " - Nothing to fetch yet -");
         }
+    }
+
+    @Scheduled(fixedRateString = "${notifier.run.fixedRateFetchingChainAddresses}", initialDelayString = "${notifier.run.fixedDelayFetchingChainAddresses}")
+    public void runChainAddresses() throws Exception {
+        // Get latest block for this run
+        BigInteger to = rskBlockchainService.getLastBlock();
+        BigInteger fromChainAddresses;
+        fromChainAddresses = dbManagerFacade.getLastBlockForChainAddresses();
+        fromChainAddresses = fromChainAddresses.add(new BigInteger("1"));
+        long start = System.currentTimeMillis();
+        List<CompletableFuture<List<FetchedEvent>>> chainAddresses = new ArrayList<>();
+        chainAddresses.add(rskBlockchainService.getContractEvents(getAddrChanged(), fromChainAddresses, to));
+        chainAddresses.add(rskBlockchainService.getContractEvents(getChainAddrChanged(), fromChainAddresses, to));
+
+        chainAddresses.forEach(listCompletableFuture -> {
+            listCompletableFuture.whenComplete((fetchedEvents, throwable) -> {
+                long end = System.currentTimeMillis();
+                logger.info(Thread.currentThread().getId() + " - End fetching chainaddres = " + (end - start));
+                logger.info(Thread.currentThread().getId() + " - Completed fetching chainaddresses: " + fetchedEvents.size());
+                for (FetchedEvent fetchedEvent : fetchedEvents) {
+                    logger.info(Thread.currentThread().getId() + " - TOHEX: " + Numeric.toHexString((byte[]) fetchedEvent.getValues().get(0).getValue()));
+                    // TODO Rodrigo
+                    // Here i have the fetched events that i need, now just rest to store them
+                }
+            });
+        });
+        dbManagerFacade.saveLastBlockChainAdddresses(to);
     }
 
     /**
@@ -296,9 +330,32 @@ public class DataFetchingJob {
      * @return EthereumBasedListenable to get tokens
      */
     private EthereumBasedListenable getTokensNetwork(){
-        return new EthereumBasedListenable(tokenNetworkRegistry, EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
+        return new EthereumBasedListenable(multiChainContract, EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
                 new TypeReference<Address>(true) {},
                 new TypeReference<Address>(true) {}
         ), "TokenNetworkCreated", -1);
+    }
+
+    /**
+     * Creates a EthereumBasedListeneable to get all events AddrChanged
+     * @return EthereumBasedListenable to get event AddrChanged
+     */
+    private EthereumBasedListenable getAddrChanged(){
+        return new EthereumBasedListenable(multiChainContract, EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
+                new TypeReference<Bytes32>(true) {},
+                new TypeReference<Address>(false) {}
+        ), "AddrChanged", -2);
+    }
+
+    /**
+     * Creates a EthereumBasedListeneable to get all events chainAddrChanged
+     * @return EthereumBasedListenable to get event chainAddrChanged
+     */
+    private EthereumBasedListenable getChainAddrChanged(){
+        return new EthereumBasedListenable(multiChainContract, EthereumBasedListenableTypes.CONTRACT_EVENT, Arrays.asList(
+                new TypeReference<Bytes32>(true) {},
+                new TypeReference<Bytes4>(false) {},
+                new TypeReference<Utf8String>(false) {}
+        ), "ChainAddrChanged", -3);
     }
 }
