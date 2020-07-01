@@ -298,7 +298,7 @@ CREATE TABLE `topic_params` (
   `param_order` int(11) DEFAULT '0',
   `value_type` varchar(45) DEFAULT 'string',
   `is_indexed` tinyint(4) DEFAULT '0',
-  `filter` varchar(150) DEFAULT NULL,
+  `filter` TEXT DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

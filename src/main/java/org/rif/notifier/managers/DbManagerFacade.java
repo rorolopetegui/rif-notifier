@@ -36,6 +36,9 @@ public class DbManagerFacade {
     private NotifEntityManager notifEntityManager;
 
     @Autowired
+    private ChainAddressManager chainAddressManager;
+
+    @Autowired
     private UserManager userManager;
 
     @Autowired
@@ -189,5 +192,12 @@ public class DbManagerFacade {
 
     public BigInteger getLastBlockForChainAddresses(){
         return dataFetcherManager.getBlockChainAddresses();
+    }
+
+    @Transactional
+    public List<ChainAddressEvent> saveChainAddressesEvents(List<ChainAddressEvent> chainAddressEvents){
+        return chainAddressEvents.stream().map(chainAddressEvent ->
+                chainAddressManager.insert(chainAddressEvent.getNodehash(), chainAddressEvent.getEventName(), chainAddressEvent.getChain(), chainAddressEvent.getAddress())
+        ).collect(Collectors.toList());
     }
 }

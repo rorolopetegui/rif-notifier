@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static org.rif.notifier.constants.CommonConstants.RSK_SLIP_ADDRESS;
 import static org.rif.notifier.constants.TopicParamTypes.*;
 import static org.rif.notifier.constants.TopicTypes.*;
 
@@ -196,13 +197,31 @@ public class DataFetchingJob {
 
         chainAddresses.forEach(listCompletableFuture -> {
             listCompletableFuture.whenComplete((fetchedEvents, throwable) -> {
+                List<ChainAddressEvent> chainsEvents = new ArrayList<>();
                 long end = System.currentTimeMillis();
                 logger.info(Thread.currentThread().getId() + " - End fetching chainaddres = " + (end - start));
                 logger.info(Thread.currentThread().getId() + " - Completed fetching chainaddresses: " + fetchedEvents.size());
-                for (FetchedEvent fetchedEvent : fetchedEvents) {
-                    logger.info(Thread.currentThread().getId() + " - TOHEX: " + Numeric.toHexString((byte[]) fetchedEvent.getValues().get(0).getValue()));
-                    // TODO Rodrigo
-                    // Here i have the fetched events that i need, now just rest to store them
+                // I need to filter by topics, cause here we have chainaddresses events for RSK and other chains that has different params in the event
+                fetchedEvents.stream().filter(item -> item.getTopicId() == -2).forEach(item -> {
+                    // RSK AddrChanged event
+                    String nodehash = Numeric.toHexString((byte[]) item.getValues().get(0).getValue());
+                    String eventName = "AddrChanged";
+                    String address = item.getValues().get(1).getValue().toString();
+                    ChainAddressEvent rskChain = new ChainAddressEvent(nodehash, eventName, RSK_SLIP_ADDRESS, address);
+                    chainsEvents.add(rskChain);
+                });
+                fetchedEvents.stream().filter(item -> item.getTopicId() == -3).forEach(item -> {
+                    // ChainAddrChanged event
+                    String nodehash = Numeric.toHexString((byte[]) item.getValues().get(0).getValue());
+                    String chain = Numeric.toHexString((byte[]) item.getValues().get(1).getValue());
+                    String address = item.getValues().get(2).getValue().toString();
+                    String eventName = "ChainAddrChanged";
+                    ChainAddressEvent chainAddr = new ChainAddressEvent(nodehash, eventName, chain, address);
+                    chainsEvents.add(chainAddr);
+                });
+
+                if (!chainsEvents.isEmpty()) {
+                    dbManagerFacade.saveChainAddressesEvents(chainsEvents);
                 }
             });
         });
