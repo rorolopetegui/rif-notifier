@@ -56,8 +56,8 @@ public class ChainAddressesController {
                     resp.setData(chainAddresses);
                 }else{
                     //It may be happend that the user has no notifications cause the balance of the subscription is 0
-                    if(subscription.getNotificationBalance() == 0) {
-                        resp.setMessage(ResponseConstants.SUBSCRIPTION_OUT_OF_BALANCE);
+                    if(!subscription.getActive()) {
+                        resp.setMessage(ResponseConstants.NO_ACTIVE_SUBSCRIPTION);
                         resp.setStatus(HttpStatus.CONFLICT);
                     }
                 }
